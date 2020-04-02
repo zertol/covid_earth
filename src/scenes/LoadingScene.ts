@@ -87,5 +87,6 @@ export class LoadingScene extends Phaser.Scene {
 
   create() {
     var logo = this.add.image(400, 300, "logo");
+    
   }
 }
