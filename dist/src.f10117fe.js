@@ -128,6 +128,8 @@ exports.CST = {
     LOAD: "LOAD"
   }
 };
+},{}],"images/zenvalogo.png":[function(require,module,exports) {
+module.exports = "/zenvalogo.2dc1a0e3.png";
 },{}],"src/scenes/LoadingScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -157,11 +159,20 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var CST_1 = require("../CST");
+var CST_1 = require("../CST"); //@ts-ignore
+
+
+var zenvalogo_png_1 = __importDefault(require("../../images/zenvalogo.png"));
 
 var LoadingScene =
 /** @class */
@@ -176,13 +187,85 @@ function (_super) {
 
   LoadingScene.prototype.preload = function () {
     console.log("Working");
+    var progressBar = this.add.graphics();
+    var progressBox = this.add.graphics();
+    progressBox.fillStyle(0x222222, 0.8);
+    progressBox.fillRect(240, 270, 320, 50);
+    var width = this.cameras.main.width;
+    var height = this.cameras.main.height;
+    var loadingText = this.make.text({
+      x: width / 2,
+      y: height / 2 - 50,
+      text: "Loading...",
+      style: {
+        font: "20px monospace",
+        fill: "#ffffff"
+      }
+    });
+    loadingText.setOrigin(0.5, 0.5);
+    var percentText = this.make.text({
+      x: width / 2,
+      y: height / 2 - 5,
+      text: "0%",
+      style: {
+        font: "18px monospace",
+        fill: "#ffffff"
+      }
+    });
+    percentText.setOrigin(0.5, 0.5);
+    var assetText = this.make.text({
+      x: width / 2,
+      y: height / 2 + 50,
+      text: "",
+      style: {
+        font: "18px monospace",
+        fill: "#ffffff"
+      }
+    });
+    assetText.setOrigin(0.5, 0.5);
+    this.load.on("progress", function (value) {
+      //@ts-ignore
+      percentText.setText(parseInt(value * 100) + "%");
+      progressBar.clear();
+      progressBar.fillStyle(0xffffff, 1); //@ts-ignore
+
+      progressBar.fillRect(250, 280, 300 * value, 30);
+    }); //@ts-ignore
+
+    var files = [];
+    this.load.on("fileprogress", function (file) {
+      //@ts-ignore
+      assetText.setText("Loading asset: " + file.key);
+      files.push(file);
+    });
+    this.load.on("complete", function () {
+      progressBar.destroy();
+      progressBox.destroy();
+      loadingText.destroy();
+      percentText.destroy();
+      assetText.destroy();
+
+      for (var i = 0; i < 500; i++) {
+        //@ts-ignore
+        files[i].destroy();
+      }
+    });
+    this.load.image("logo", zenvalogo_png_1.default);
+
+    for (var i = 0; i < 500; i++) {
+      this.load.image("logo" + i, zenvalogo_png_1.default);
+    }
+  };
+
+  LoadingScene.prototype.create = function () {
+    var logo = this.add.image(400, 300, "logo");
   };
 
   return LoadingScene;
 }(Phaser.Scene);
 
 exports.LoadingScene = LoadingScene;
-},{"../CST":"src/CST.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../../images/zenvalogo.png":"images/zenvalogo.png"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -226,7 +309,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54469" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63501" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
