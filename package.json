@@ -1,0 +1,15 @@
+{
+  "name": "covid_earth",
+  "version": "1.0.0",
+  "description": "HTML5 Game to play. Phaser3 Framework integrated.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^3.8.3"
+  }
+}
