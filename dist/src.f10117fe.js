@@ -125,11 +125,22 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.CST = {
   SCENES: {
-    LOAD: "LOAD"
+    LOAD: "LOAD",
+    MAIN: "MAIN",
+    GAME: "GAME"
+  },
+  IMAGES: {
+    LOGO: "LOGO",
+    BACKGROUND: "BACKGROUND",
+    GLOBE: "GLOBE"
   }
 };
 },{}],"images/zenvalogo.png":[function(require,module,exports) {
 module.exports = "/zenvalogo.2dc1a0e3.png";
+},{}],"images/background.jpg":[function(require,module,exports) {
+module.exports = "/background.565aafb9.jpg";
+},{}],"images/globe.png":[function(require,module,exports) {
+module.exports = "/globe.25a31ad8.png";
 },{}],"src/scenes/LoadingScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -172,7 +183,13 @@ Object.defineProperty(exports, "__esModule", {
 var CST_1 = require("../CST"); //@ts-ignore
 
 
-var zenvalogo_png_1 = __importDefault(require("../../images/zenvalogo.png"));
+var zenvalogo_png_1 = __importDefault(require("../../images/zenvalogo.png")); //@ts-ignore
+
+
+var background_jpg_1 = __importDefault(require("../../images/background.jpg")); //@ts-ignore
+
+
+var globe_png_1 = __importDefault(require("../../images/globe.png"));
 
 var LoadingScene =
 /** @class */
@@ -186,13 +203,14 @@ function (_super) {
   }
 
   LoadingScene.prototype.preload = function () {
-    console.log("Working");
+    var _this = this;
+
+    var width = this.game.renderer.width;
+    var height = this.game.renderer.height;
     var progressBar = this.add.graphics();
     var progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
-    progressBox.fillRect(240, 270, 320, 50);
-    var width = this.cameras.main.width;
-    var height = this.cameras.main.height;
+    progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
     var loadingText = this.make.text({
       x: width / 2,
       y: height / 2 - 50,
@@ -205,7 +223,7 @@ function (_super) {
     loadingText.setOrigin(0.5, 0.5);
     var percentText = this.make.text({
       x: width / 2,
-      y: height / 2 - 5,
+      y: height / 2,
       text: "0%",
       style: {
         font: "18px monospace",
@@ -229,7 +247,7 @@ function (_super) {
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1); //@ts-ignore
 
-      progressBar.fillRect(250, 280, 300 * value, 30);
+      progressBar.fillRect(width / 2 - 140, height / 2 - 15, 280 * value, 30);
     }); //@ts-ignore
 
     var files = [];
@@ -249,23 +267,179 @@ function (_super) {
         //@ts-ignore
         files[i].destroy();
       }
+
+      setTimeout(function () {
+        _this.scene.start(CST_1.CST.SCENES.MAIN);
+      }, 1000);
     });
-    this.load.image("logo", zenvalogo_png_1.default);
+    this.load.image(CST_1.CST.IMAGES.LOGO, zenvalogo_png_1.default);
 
     for (var i = 0; i < 500; i++) {
-      this.load.image("logo" + i, zenvalogo_png_1.default);
+      this.load.image(CST_1.CST.IMAGES.LOGO + i, zenvalogo_png_1.default);
     }
+
+    this.load.image(CST_1.CST.IMAGES.BACKGROUND, background_jpg_1.default);
+    this.load.image(CST_1.CST.IMAGES.GLOBE, globe_png_1.default);
   };
 
   LoadingScene.prototype.create = function () {
-    var logo = this.add.image(400, 300, "logo");
+    var logo = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, CST_1.CST.IMAGES.LOGO);
   };
 
   return LoadingScene;
 }(Phaser.Scene);
 
 exports.LoadingScene = LoadingScene;
-},{"../CST":"src/CST.ts","../../images/zenvalogo.png":"images/zenvalogo.png"}],"src/index.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../images/globe.png":"images/globe.png"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var CST_1 = require("../CST");
+
+var MainScene =
+/** @class */
+function (_super) {
+  __extends(MainScene, _super);
+
+  function MainScene() {
+    return _super.call(this, {
+      key: CST_1.CST.SCENES.MAIN
+    }) || this;
+  }
+
+  MainScene.prototype.preload = function () {};
+
+  MainScene.prototype.create = function () {
+    var _this = this;
+
+    var w = window.innerWidth;
+    this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
+    var playButton = this.make.text({
+      x: this.game.renderer.width / 2,
+      y: this.game.renderer.height / 2 - 25,
+      origin: {
+        x: 0.5,
+        y: 0.5
+      },
+      text: "Start Game",
+      padding: 10,
+      style: {
+        font: "40px monospace",
+        fill: "#ffffff",
+        backgroundColor: "rgba(255,255,255,0.2)"
+      }
+    }).setDepth(1);
+
+    if (w < 480) {
+      playButton.setFontSize(30);
+    }
+
+    playButton.setInteractive({
+      useHandCursor: true
+    });
+    playButton.on("pointerup", function () {
+      _this.scene.start(CST_1.CST.SCENES.GAME);
+    });
+  };
+
+  return MainScene;
+}(Phaser.Scene);
+
+exports.MainScene = MainScene;
+},{"../CST":"src/CST.ts"}],"src/scenes/GameScene.ts":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var CST_1 = require("../CST");
+
+var GameScene =
+/** @class */
+function (_super) {
+  __extends(GameScene, _super);
+
+  function GameScene() {
+    return _super.call(this, {
+      key: CST_1.CST.SCENES.GAME
+    }) || this;
+  }
+
+  GameScene.prototype.preload = function () {};
+
+  GameScene.prototype.create = function () {
+    this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0); // this.globe = this.add.image(0, 0, CST.IMAGES.GLOBE).setDepth(1);
+    // Phaser.Display.Align.In.BottomCenter(this.globe, this.background);
+    // this.globe = this.add.sprite(0,0,CST.IMAGES.GLOBE);
+    // this.globe.
+    // this.scene.add(CST.SCENES.LOAD,this.game..scene.con);
+  };
+
+  GameScene.prototype.update = function () {
+    this.background.tilePositionY -= 2;
+  };
+
+  return GameScene;
+}(Phaser.Scene);
+
+exports.GameScene = GameScene;
+},{"../CST":"src/CST.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -274,14 +448,27 @@ Object.defineProperty(exports, "__esModule", {
 
 var LoadingScene_1 = require("./scenes/LoadingScene");
 
+var MainScene_1 = require("./scenes/MainScene");
+
+var GameScene_1 = require("./scenes/GameScene"); //Scaling manually the canvas for a better display on different devices.
+
+
+var w = window.innerWidth;
+var h = window.innerHeight;
+var isMobile = navigator.userAgent.indexOf("Mobile");
+
+if (isMobile == -1) {
+  w = 768;
+} //Start the game object
+
+
 var game = new Phaser.Game({
-  scale: {
-    parent: 'game-container',
-    mode: Phaser.Scale.FIT
-  },
-  scene: [LoadingScene_1.LoadingScene]
+  parent: 'game-container',
+  height: h,
+  width: w,
+  scene: [LoadingScene_1.LoadingScene, MainScene_1.MainScene, GameScene_1.GameScene]
 });
-},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts"}],"../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -309,7 +496,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63501" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "12962" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -485,5 +672,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
+},{}]},{},["../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
 //# sourceMappingURL=/src.f10117fe.js.map
