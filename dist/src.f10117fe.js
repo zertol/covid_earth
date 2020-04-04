@@ -139,8 +139,8 @@ exports.CST = {
 module.exports = "/zenvalogo.2dc1a0e3.png";
 },{}],"images/background.jpg":[function(require,module,exports) {
 module.exports = "/background.565aafb9.jpg";
-},{}],"images/globe.png":[function(require,module,exports) {
-module.exports = "/globe.25a31ad8.png";
+},{}],"images/BreusingGeometric2H.png":[function(require,module,exports) {
+module.exports = "/BreusingGeometric2H.8b4db5df.png";
 },{}],"src/scenes/LoadingScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -187,9 +187,10 @@ var zenvalogo_png_1 = __importDefault(require("../../images/zenvalogo.png")); //
 
 
 var background_jpg_1 = __importDefault(require("../../images/background.jpg")); //@ts-ignore
+// import GLOBE from "../../images/globe.png";
 
 
-var globe_png_1 = __importDefault(require("../../images/globe.png"));
+var BreusingGeometric2H_png_1 = __importDefault(require("../../images/BreusingGeometric2H.png"));
 
 var LoadingScene =
 /** @class */
@@ -279,18 +280,28 @@ function (_super) {
     }
 
     this.load.image(CST_1.CST.IMAGES.BACKGROUND, background_jpg_1.default);
-    this.load.image(CST_1.CST.IMAGES.GLOBE, globe_png_1.default);
+    this.load.spritesheet(CST_1.CST.IMAGES.GLOBE, BreusingGeometric2H_png_1.default, {
+      frameWidth: 1000,
+      frameHeight: 1000
+    });
   };
 
   LoadingScene.prototype.create = function () {
     var logo = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, CST_1.CST.IMAGES.LOGO);
+    this.anims.create({
+      key: "earth_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST_1.CST.IMAGES.GLOBE),
+      frameRate: 0.2,
+      repeat: -1
+    });
   };
 
   return LoadingScene;
 }(Phaser.Scene);
 
 exports.LoadingScene = LoadingScene;
-},{"../CST":"src/CST.ts","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../images/globe.png":"images/globe.png"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../images/BreusingGeometric2H.png":"images/BreusingGeometric2H.png"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -424,8 +435,11 @@ function (_super) {
   GameScene.prototype.preload = function () {};
 
   GameScene.prototype.create = function () {
-    this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0); // this.globe = this.add.image(0, 0, CST.IMAGES.GLOBE).setDepth(1);
-    // Phaser.Display.Align.In.BottomCenter(this.globe, this.background);
+    this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
+    this.globe = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 25, CST_1.CST.IMAGES.GLOBE).setDepth(1).setScale(0.8, 0.8); //@ts-ignore
+
+    this.globe.play("earth_anim");
+    this.globe.setInteractive(); // Phaser.Display.Align.In.BottomCenter(this.globe, this.background);
     // this.globe = this.add.sprite(0,0,CST.IMAGES.GLOBE);
     // this.globe.
     // this.scene.add(CST.SCENES.LOAD,this.game..scene.con);
@@ -433,6 +447,7 @@ function (_super) {
 
   GameScene.prototype.update = function () {
     this.background.tilePositionY -= 2;
+    this.globe.rotation += 0.009;
   };
 
   return GameScene;
@@ -468,7 +483,7 @@ var game = new Phaser.Game({
   width: w,
   scene: [LoadingScene_1.LoadingScene, MainScene_1.MainScene, GameScene_1.GameScene]
 });
-},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts"}],"../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -496,7 +511,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "12962" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51653" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -672,5 +687,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
+},{}]},{},["../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
 //# sourceMappingURL=/src.f10117fe.js.map

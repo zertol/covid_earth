@@ -2,10 +2,9 @@ import { CST } from "../CST";
 //@ts-ignore
 import LOGO from "../../images/zenvalogo.png";
 //@ts-ignore
-import BACKGROUND from '../../images/background.jpg';
+import BACKGROUND from "../../images/background.jpg";
 //@ts-ignore
-import GLOBE from '../../images/globe.png';
-
+import GLOBE from "../../images/BreusingGeometric2H.png";
 export class LoadingScene extends Phaser.Scene {
   constructor() {
     super({
@@ -14,7 +13,6 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   preload() {
-
     let width = this.game.renderer.width;
     let height = this.game.renderer.height;
 
@@ -64,7 +62,6 @@ export class LoadingScene extends Phaser.Scene {
       progressBar.fillStyle(0xffffff, 1);
       //@ts-ignore
       progressBar.fillRect(width / 2 - 140, height / 2 - 15, 280 * value, 30);
-
     });
     //@ts-ignore
     let files = [];
@@ -89,8 +86,6 @@ export class LoadingScene extends Phaser.Scene {
       setTimeout(() => {
         this.scene.start(CST.SCENES.MAIN);
       }, 1000);
-
-
     });
 
     this.load.image(CST.IMAGES.LOGO, LOGO);
@@ -99,11 +94,24 @@ export class LoadingScene extends Phaser.Scene {
     }
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
-    this.load.image(CST.IMAGES.GLOBE,GLOBE);
-
+    this.load.spritesheet(CST.IMAGES.GLOBE, GLOBE, {
+      frameWidth: 1000,
+      frameHeight: 1000
+    });
   }
 
   create() {
-    let logo = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, CST.IMAGES.LOGO);
+    let logo = this.add.image(
+      this.game.renderer.width / 2,
+      this.game.renderer.height / 2,
+      CST.IMAGES.LOGO
+    );
+    this.anims.create({
+      key: "earth_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.IMAGES.GLOBE),
+      frameRate: 0.2,
+      repeat: -1
+    });
   }
 }
