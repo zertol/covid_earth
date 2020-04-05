@@ -4,7 +4,13 @@ import LOGO from "../../images/zenvalogo.png";
 //@ts-ignore
 import BACKGROUND from "../../images/background.jpg";
 //@ts-ignore
-import GLOBE from "../../images/BreusingGeometric2H.png";
+import GLOBE from "../../sprites/BreusingGeometric2H.png";
+//@ts-ignore
+import BLUECOVID19 from "../../sprites/bluevirussprite.png";
+//@ts-ignore
+import GREENCOVID19 from "../../sprites/greenvirussprite.png";
+//@ts-ignore
+import REDCOVID19 from "../../sprites/redvirussprite.png";
 export class LoadingScene extends Phaser.Scene {
   constructor() {
     super({
@@ -94,9 +100,21 @@ export class LoadingScene extends Phaser.Scene {
     }
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
-    this.load.spritesheet(CST.IMAGES.GLOBE, GLOBE, {
+    this.load.spritesheet(CST.SPRITES.GLOBE, GLOBE, {
       frameWidth: 1000,
       frameHeight: 1000
+    });
+    this.load.spritesheet(CST.SPRITES.BLUECOVID19, BLUECOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
+    this.load.spritesheet(CST.SPRITES.GREENCOVID19, GREENCOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
+    this.load.spritesheet(CST.SPRITES.REDCOVID19, REDCOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
     });
   }
 
@@ -109,9 +127,39 @@ export class LoadingScene extends Phaser.Scene {
     this.anims.create({
       key: "earth_anim",
       //@ts-ignore
-      frames: this.anims.generateFrameNumbers(CST.IMAGES.GLOBE),
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.GLOBE),
       frameRate: 0.2,
       repeat: -1
+    });
+    this.anims.create({
+      key: "bluevirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BLUECOVID19,{
+        start:0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
+    });
+    this.anims.create({
+      key: "greenvirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.GREENCOVID19,{
+        start:0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
+    });
+    this.anims.create({
+      key: "redvirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.REDCOVID19,{
+        start:0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
     });
   }
 }
