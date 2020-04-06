@@ -1,12 +1,17 @@
 export const CST = {
-    SCENES: {
-        LOAD: "LOAD",
-        MAIN: "MAIN",
-        GAME: "GAME"
-    },
-    IMAGES: {
-        LOGO: "LOGO",
-        BACKGROUND: "BACKGROUND",
-        GLOBE:"GLOBE"
-    }
-}
+  SCENES: {
+    LOAD: "LOAD",
+    MAIN: "MAIN",
+    GAME: "GAME"
+  },
+  IMAGES: {
+    LOGO: "LOGO",
+    BACKGROUND: "BACKGROUND"
+  },
+  SPRITES: {
+    GLOBE: "GLOBE",
+    BLUECOVID19: "BLUECOVID19",
+    GREENCOVID19: "GREENCOVID19",
+    REDCOVID19: "REDCOVID19"
+  }
+};

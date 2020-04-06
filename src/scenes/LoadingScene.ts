@@ -2,10 +2,15 @@ import { CST } from "../CST";
 //@ts-ignore
 import LOGO from "../../images/zenvalogo.png";
 //@ts-ignore
-import BACKGROUND from '../../images/background.jpg';
+import BACKGROUND from "../../images/background.jpg";
 //@ts-ignore
-import GLOBE from '../../images/globe.png';
-
+import GLOBE from "../../sprites/BreusingGeometric2H.png";
+//@ts-ignore
+import BLUECOVID19 from "../../sprites/bluevirussprite.png";
+//@ts-ignore
+import GREENCOVID19 from "../../sprites/greenvirussprite.png";
+//@ts-ignore
+import REDCOVID19 from "../../sprites/redvirussprite.png";
 export class LoadingScene extends Phaser.Scene {
   constructor() {
     super({
@@ -14,7 +19,6 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   preload() {
-
     let width = this.game.renderer.width;
     let height = this.game.renderer.height;
 
@@ -64,7 +68,6 @@ export class LoadingScene extends Phaser.Scene {
       progressBar.fillStyle(0xffffff, 1);
       //@ts-ignore
       progressBar.fillRect(width / 2 - 140, height / 2 - 15, 280 * value, 30);
-
     });
     //@ts-ignore
     let files = [];
@@ -89,8 +92,6 @@ export class LoadingScene extends Phaser.Scene {
       setTimeout(() => {
         this.scene.start(CST.SCENES.MAIN);
       }, 1000);
-
-
     });
 
     this.load.image(CST.IMAGES.LOGO, LOGO);
@@ -99,11 +100,66 @@ export class LoadingScene extends Phaser.Scene {
     }
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
-    this.load.image(CST.IMAGES.GLOBE,GLOBE);
-
+    this.load.spritesheet(CST.SPRITES.GLOBE, GLOBE, {
+      frameWidth: 1000,
+      frameHeight: 1000
+    });
+    this.load.spritesheet(CST.SPRITES.BLUECOVID19, BLUECOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
+    this.load.spritesheet(CST.SPRITES.GREENCOVID19, GREENCOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
+    this.load.spritesheet(CST.SPRITES.REDCOVID19, REDCOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
   }
 
   create() {
-    let logo = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, CST.IMAGES.LOGO);
+    let logo = this.add.image(
+      this.game.renderer.width / 2,
+      this.game.renderer.height / 2,
+      CST.IMAGES.LOGO
+    );
+    this.anims.create({
+      key: "earth_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.GLOBE),
+      frameRate: 0.2,
+      repeat: -1
+    });
+    this.anims.create({
+      key: "bluevirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BLUECOVID19,{
+        start:0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
+    });
+    this.anims.create({
+      key: "greenvirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.GREENCOVID19,{
+        start:0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
+    });
+    this.anims.create({
+      key: "redvirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.REDCOVID19,{
+        start:0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
+    });
   }
 }

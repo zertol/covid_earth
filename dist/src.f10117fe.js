@@ -131,16 +131,27 @@ exports.CST = {
   },
   IMAGES: {
     LOGO: "LOGO",
-    BACKGROUND: "BACKGROUND",
-    GLOBE: "GLOBE"
+    BACKGROUND: "BACKGROUND"
+  },
+  SPRITES: {
+    GLOBE: "GLOBE",
+    BLUECOVID19: "BLUECOVID19",
+    GREENCOVID19: "GREENCOVID19",
+    REDCOVID19: "REDCOVID19"
   }
 };
 },{}],"images/zenvalogo.png":[function(require,module,exports) {
 module.exports = "/zenvalogo.2dc1a0e3.png";
 },{}],"images/background.jpg":[function(require,module,exports) {
 module.exports = "/background.565aafb9.jpg";
-},{}],"images/globe.png":[function(require,module,exports) {
-module.exports = "/globe.25a31ad8.png";
+},{}],"sprites/BreusingGeometric2H.png":[function(require,module,exports) {
+module.exports = "/BreusingGeometric2H.6d7f647f.png";
+},{}],"sprites/bluevirussprite.png":[function(require,module,exports) {
+module.exports = "/bluevirussprite.0e57acd7.png";
+},{}],"sprites/greenvirussprite.png":[function(require,module,exports) {
+module.exports = "/greenvirussprite.ec3e8ed8.png";
+},{}],"sprites/redvirussprite.png":[function(require,module,exports) {
+module.exports = "/redvirussprite.ed04ed27.png";
 },{}],"src/scenes/LoadingScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -189,7 +200,16 @@ var zenvalogo_png_1 = __importDefault(require("../../images/zenvalogo.png")); //
 var background_jpg_1 = __importDefault(require("../../images/background.jpg")); //@ts-ignore
 
 
-var globe_png_1 = __importDefault(require("../../images/globe.png"));
+var BreusingGeometric2H_png_1 = __importDefault(require("../../sprites/BreusingGeometric2H.png")); //@ts-ignore
+
+
+var bluevirussprite_png_1 = __importDefault(require("../../sprites/bluevirussprite.png")); //@ts-ignore
+
+
+var greenvirussprite_png_1 = __importDefault(require("../../sprites/greenvirussprite.png")); //@ts-ignore
+
+
+var redvirussprite_png_1 = __importDefault(require("../../sprites/redvirussprite.png"));
 
 var LoadingScene =
 /** @class */
@@ -279,18 +299,70 @@ function (_super) {
     }
 
     this.load.image(CST_1.CST.IMAGES.BACKGROUND, background_jpg_1.default);
-    this.load.image(CST_1.CST.IMAGES.GLOBE, globe_png_1.default);
+    this.load.spritesheet(CST_1.CST.SPRITES.GLOBE, BreusingGeometric2H_png_1.default, {
+      frameWidth: 1000,
+      frameHeight: 1000
+    });
+    this.load.spritesheet(CST_1.CST.SPRITES.BLUECOVID19, bluevirussprite_png_1.default, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
+    this.load.spritesheet(CST_1.CST.SPRITES.GREENCOVID19, greenvirussprite_png_1.default, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
+    this.load.spritesheet(CST_1.CST.SPRITES.REDCOVID19, redvirussprite_png_1.default, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
   };
 
   LoadingScene.prototype.create = function () {
     var logo = this.add.image(this.game.renderer.width / 2, this.game.renderer.height / 2, CST_1.CST.IMAGES.LOGO);
+    this.anims.create({
+      key: "earth_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.GLOBE),
+      frameRate: 0.2,
+      repeat: -1
+    });
+    this.anims.create({
+      key: "bluevirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.BLUECOVID19, {
+        start: 0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
+    });
+    this.anims.create({
+      key: "greenvirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.GREENCOVID19, {
+        start: 0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
+    });
+    this.anims.create({
+      key: "redvirus_anim",
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.REDCOVID19, {
+        start: 0,
+        end: 7
+      }),
+      frameRate: 5,
+      repeat: 0
+    });
   };
 
   return LoadingScene;
 }(Phaser.Scene);
 
 exports.LoadingScene = LoadingScene;
-},{"../CST":"src/CST.ts","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../images/globe.png":"images/globe.png"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../sprites/BreusingGeometric2H.png":"sprites/BreusingGeometric2H.png","../../sprites/bluevirussprite.png":"sprites/bluevirussprite.png","../../sprites/greenvirussprite.png":"sprites/greenvirussprite.png","../../sprites/redvirussprite.png":"sprites/redvirussprite.png"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -416,23 +488,52 @@ function (_super) {
   __extends(GameScene, _super);
 
   function GameScene() {
-    return _super.call(this, {
+    var _this = _super.call(this, {
       key: CST_1.CST.SCENES.GAME
     }) || this;
+
+    _this.moveVirus = function (virus, speed) {
+      virus.y += speed;
+
+      if (virus.y > _this.game.renderer.height) {
+        _this.resetVirusPos(virus);
+      }
+    };
+
+    _this.resetVirusPos = function (virus) {
+      virus.y = 0;
+      var randomX = Phaser.Math.Between(0, _this.game.renderer.width);
+      virus.x = randomX;
+    };
+
+    return _this;
   }
 
   GameScene.prototype.preload = function () {};
 
   GameScene.prototype.create = function () {
-    this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0); // this.globe = this.add.image(0, 0, CST.IMAGES.GLOBE).setDepth(1);
-    // Phaser.Display.Align.In.BottomCenter(this.globe, this.background);
-    // this.globe = this.add.sprite(0,0,CST.IMAGES.GLOBE);
-    // this.globe.
-    // this.scene.add(CST.SCENES.LOAD,this.game..scene.con);
+    this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
+    this.globe = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 25, CST_1.CST.SPRITES.GLOBE).setDepth(1).setScale(0.5, 0.5); //@ts-ignore
+
+    this.globe.play("earth_anim");
+    this.globe.setInteractive();
+    this.bluevirus = this.add.sprite(this.game.renderer.width / 2 - 100, 25, CST_1.CST.SPRITES.BLUECOVID19).setDepth(2);
+    this.greenvirus = this.add.sprite(this.game.renderer.width / 2, 25, CST_1.CST.SPRITES.GREENCOVID19).setDepth(3);
+    this.redvirus = this.add.sprite(this.game.renderer.width / 2 + 100, 25, CST_1.CST.SPRITES.REDCOVID19).setDepth(4);
+    this.bluevirus.play("bluevirus_anim");
+    this.bluevirus.setInteractive();
+    this.greenvirus.play("greenvirus_anim");
+    this.greenvirus.setInteractive();
+    this.redvirus.play("redvirus_anim");
+    this.redvirus.setInteractive();
   };
 
   GameScene.prototype.update = function () {
     this.background.tilePositionY -= 2;
+    this.globe.rotation += 0.009;
+    this.moveVirus(this.bluevirus, 3);
+    this.moveVirus(this.greenvirus, 3);
+    this.moveVirus(this.redvirus, 3);
   };
 
   return GameScene;
@@ -468,7 +569,7 @@ var game = new Phaser.Game({
   width: w,
   scene: [LoadingScene_1.LoadingScene, MainScene_1.MainScene, GameScene_1.GameScene]
 });
-},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts"}],"../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -496,7 +597,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "12962" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53991" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -672,5 +773,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
+},{}]},{},["../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
 //# sourceMappingURL=/src.f10117fe.js.map
