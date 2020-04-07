@@ -11,6 +11,7 @@ import BLUECOVID19 from "../../sprites/bluevirussprite.png";
 import GREENCOVID19 from "../../sprites/greenvirussprite.png";
 //@ts-ignore
 import REDCOVID19 from "../../sprites/redvirussprite.png";
+
 export class LoadingScene extends Phaser.Scene {
   constructor() {
     super({
@@ -102,7 +103,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
     this.load.spritesheet(CST.SPRITES.GLOBE, GLOBE, {
       frameWidth: 1000,
-      frameHeight: 1000
+      frameHeight: 990
     });
     this.load.spritesheet(CST.SPRITES.BLUECOVID19, BLUECOVID19, {
       frameWidth: 266,
@@ -128,7 +129,7 @@ export class LoadingScene extends Phaser.Scene {
       key: "earth_anim",
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.GLOBE),
-      frameRate: 0.2,
+      frameRate: 0.7,
       repeat: -1
     });
     this.anims.create({
@@ -136,9 +137,9 @@ export class LoadingScene extends Phaser.Scene {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.BLUECOVID19,{
         start:0,
-        end: 7
+        end: 3
       }),
-      frameRate: 5,
+      frameRate: 15,
       repeat: 0
     });
     this.anims.create({
@@ -146,9 +147,9 @@ export class LoadingScene extends Phaser.Scene {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.GREENCOVID19,{
         start:0,
-        end: 7
+        end: 4
       }),
-      frameRate: 5,
+      frameRate: 15,
       repeat: 0
     });
     this.anims.create({
@@ -156,9 +157,9 @@ export class LoadingScene extends Phaser.Scene {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.REDCOVID19,{
         start:0,
-        end: 7
+        end: 5
       }),
-      frameRate: 5,
+      frameRate: 15,
       repeat: 0
     });
   }

@@ -1,13 +1,13 @@
 import { LoadingScene } from './scenes/LoadingScene';
 import { MainScene } from './scenes/MainScene';
 import { GameScene } from './scenes/GameScene';
+import {CST} from './CST';
 
 //Scaling manually the canvas for a better display on different devices.
 let w = window.innerWidth;
 let h = window.innerHeight;
 
-let isMobile = navigator.userAgent.indexOf("Mobile");
-if (isMobile == -1) {
+if (CST.WINDOW.ISMOBILE) {
     w = 768;
 }
 
@@ -16,5 +16,11 @@ let game = new Phaser.Game({
     parent: 'game-container',
     height: h,
     width: w,
-    scene: [LoadingScene, MainScene, GameScene]
+    scene: [LoadingScene, MainScene, GameScene],
+    physics: {
+        default: "arcade",
+        arcade: {
+            debug: false
+        }
+    }
 });

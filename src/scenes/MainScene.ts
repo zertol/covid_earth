@@ -11,7 +11,6 @@ export class MainScene extends Phaser.Scene {
 
     }
     create() {
-        let w = window.innerWidth;
 
         this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
 
@@ -29,7 +28,7 @@ export class MainScene extends Phaser.Scene {
         }).setDepth(1);
 
         
-        if (w < 480) {
+        if (CST.WINDOW.ISMOBILE) {
             playButton.setFontSize(30);
         }
 
