@@ -138,6 +138,9 @@ exports.CST = {
     BLUECOVID19: "BLUECOVID19",
     GREENCOVID19: "GREENCOVID19",
     REDCOVID19: "REDCOVID19"
+  },
+  WINDOW: {
+    ISMOBILE: navigator.userAgent.indexOf("Mobile") != -1
   }
 };
 },{}],"images/zenvalogo.png":[function(require,module,exports) {
@@ -301,7 +304,7 @@ function (_super) {
     this.load.image(CST_1.CST.IMAGES.BACKGROUND, background_jpg_1.default);
     this.load.spritesheet(CST_1.CST.SPRITES.GLOBE, BreusingGeometric2H_png_1.default, {
       frameWidth: 1000,
-      frameHeight: 1000
+      frameHeight: 990
     });
     this.load.spritesheet(CST_1.CST.SPRITES.BLUECOVID19, bluevirussprite_png_1.default, {
       frameWidth: 266,
@@ -323,7 +326,7 @@ function (_super) {
       key: "earth_anim",
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.GLOBE),
-      frameRate: 0.2,
+      frameRate: 0.7,
       repeat: -1
     });
     this.anims.create({
@@ -331,9 +334,9 @@ function (_super) {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.BLUECOVID19, {
         start: 0,
-        end: 7
+        end: 3
       }),
-      frameRate: 5,
+      frameRate: 15,
       repeat: 0
     });
     this.anims.create({
@@ -341,9 +344,9 @@ function (_super) {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.GREENCOVID19, {
         start: 0,
-        end: 7
+        end: 4
       }),
-      frameRate: 5,
+      frameRate: 15,
       repeat: 0
     });
     this.anims.create({
@@ -351,9 +354,9 @@ function (_super) {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.REDCOVID19, {
         start: 0,
-        end: 7
+        end: 5
       }),
-      frameRate: 5,
+      frameRate: 15,
       repeat: 0
     });
   };
@@ -413,7 +416,6 @@ function (_super) {
   MainScene.prototype.create = function () {
     var _this = this;
 
-    var w = window.innerWidth;
     this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
     var playButton = this.make.text({
       x: this.game.renderer.width / 2,
@@ -431,7 +433,7 @@ function (_super) {
       }
     }).setDepth(1);
 
-    if (w < 480) {
+    if (CST_1.CST.WINDOW.ISMOBILE) {
       playButton.setFontSize(30);
     }
 
@@ -447,7 +449,7 @@ function (_super) {
 }(Phaser.Scene);
 
 exports.MainScene = MainScene;
-},{"../CST":"src/CST.ts"}],"src/scenes/GameScene.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts"}],"src/sprites/Virus.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -480,7 +482,74 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var Virus =
+/** @class */
+function (_super) {
+  __extends(Virus, _super);
+
+  function Virus(scene, x, y, name, animation, depth) {
+    var _this = _super.call(this, scene, x, y, name) || this;
+
+    _this.animation = animation;
+    _this.depth = depth;
+    scene.add.existing(_this);
+
+    _this.setInteractive();
+
+    _this.play(_this.animation);
+
+    scene.physics.world.enableBody(_this);
+    return _this;
+  }
+
+  Virus.prototype.update = function () {};
+
+  return Virus;
+}(Phaser.GameObjects.Sprite);
+
+exports.default = Virus;
+},{}],"src/scenes/GameScene.ts":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var CST_1 = require("../CST");
+
+var Virus_1 = __importDefault(require("../sprites/Virus"));
 
 var GameScene =
 /** @class */
@@ -492,6 +561,12 @@ function (_super) {
       key: CST_1.CST.SCENES.GAME
     }) || this;
 
+    _this.hitEarth = function (globe, enemy) {
+      globe.setAlpha(globe.alpha - 0.0001);
+
+      _this.resetVirusPos(enemy);
+    };
+
     _this.moveVirus = function (virus, speed) {
       virus.y += speed;
 
@@ -502,7 +577,9 @@ function (_super) {
 
     _this.resetVirusPos = function (virus) {
       virus.y = 0;
-      var randomX = Phaser.Math.Between(0, _this.game.renderer.width);
+
+      var randomX = Math.random() * _this.game.renderer.width;
+
       virus.x = randomX;
     };
 
@@ -513,34 +590,52 @@ function (_super) {
 
   GameScene.prototype.create = function () {
     this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
-    this.globe = this.add.sprite(this.game.renderer.width / 2, this.game.renderer.height - 25, CST_1.CST.SPRITES.GLOBE).setDepth(1).setScale(0.5, 0.5); //@ts-ignore
+    this.globe = this.physics.add.sprite(this.game.renderer.width / 2, this.game.renderer.height + 400, CST_1.CST.SPRITES.GLOBE).setDepth(1); //@ts-ignore
 
-    this.globe.play("earth_anim");
-    this.globe.setInteractive();
-    this.bluevirus = this.add.sprite(this.game.renderer.width / 2 - 100, 25, CST_1.CST.SPRITES.BLUECOVID19).setDepth(2);
-    this.greenvirus = this.add.sprite(this.game.renderer.width / 2, 25, CST_1.CST.SPRITES.GREENCOVID19).setDepth(3);
-    this.redvirus = this.add.sprite(this.game.renderer.width / 2 + 100, 25, CST_1.CST.SPRITES.REDCOVID19).setDepth(4);
-    this.bluevirus.play("bluevirus_anim");
-    this.bluevirus.setInteractive();
-    this.greenvirus.play("greenvirus_anim");
-    this.greenvirus.setInteractive();
-    this.redvirus.play("redvirus_anim");
-    this.redvirus.setInteractive();
+    this.globe.play("earth_anim"); // let graphics = this.add.graphics();
+    // let line = new Phaser.Geom.Line(0, this.globe.y - this.globe.height/2, this.game.renderer.width, this.globe.y - this.globe.height/2);
+    // graphics.lineStyle(2, 0xffff, 0.5);
+    // // graphics.beginPath();
+    // // graphics.strokePath();
+    // graphics.strokeLineShape(line);
+    // this.physics.world.enable(graphics);
+    // let graphPhysics = this.physics.add.group();
+    // graphPhysics.add(graphics);
+
+    this.enemies = this.physics.add.group();
+    this.bluevirus = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.BLUECOVID19, "bluevirus_anim", 1);
+    this.bluevirusR = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.BLUECOVID19, "bluevirus_anim", 1);
+    this.greenvirus = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.GREENCOVID19, "greenvirus_anim", 1);
+    this.greenvirusR = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.GREENCOVID19, "greenvirus_anim", 1);
+    this.redvirus = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.REDCOVID19, "redvirus_anim", 1);
+    this.enemies.add(this.bluevirus);
+    this.enemies.add(this.bluevirusR);
+    this.enemies.add(this.greenvirus);
+    this.enemies.add(this.greenvirusR);
+    this.enemies.add(this.redvirus); //The single Sprite comes before a group so the order is single,group in the callback function
+
+    this.physics.add.overlap(this.enemies, this.globe, this.hitEarth, undefined, this);
+
+    if (CST_1.CST.WINDOW.ISMOBILE) {
+      this.globe.y += 55;
+    }
   };
 
   GameScene.prototype.update = function () {
-    this.background.tilePositionY -= 2;
+    this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
-    this.moveVirus(this.bluevirus, 3);
+    this.moveVirus(this.bluevirus, 1.8);
+    this.moveVirus(this.bluevirusR, 2.4);
     this.moveVirus(this.greenvirus, 3);
-    this.moveVirus(this.redvirus, 3);
+    this.moveVirus(this.greenvirusR, 4.6);
+    this.moveVirus(this.redvirus, 5);
   };
 
   return GameScene;
 }(Phaser.Scene);
 
 exports.GameScene = GameScene;
-},{"../CST":"src/CST.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../sprites/Virus":"src/sprites/Virus.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -551,14 +646,15 @@ var LoadingScene_1 = require("./scenes/LoadingScene");
 
 var MainScene_1 = require("./scenes/MainScene");
 
-var GameScene_1 = require("./scenes/GameScene"); //Scaling manually the canvas for a better display on different devices.
+var GameScene_1 = require("./scenes/GameScene");
+
+var CST_1 = require("./CST"); //Scaling manually the canvas for a better display on different devices.
 
 
 var w = window.innerWidth;
 var h = window.innerHeight;
-var isMobile = navigator.userAgent.indexOf("Mobile");
 
-if (isMobile == -1) {
+if (CST_1.CST.WINDOW.ISMOBILE) {
   w = 768;
 } //Start the game object
 
@@ -567,9 +663,15 @@ var game = new Phaser.Game({
   parent: 'game-container',
   height: h,
   width: w,
-  scene: [LoadingScene_1.LoadingScene, MainScene_1.MainScene, GameScene_1.GameScene]
+  scene: [LoadingScene_1.LoadingScene, MainScene_1.MainScene, GameScene_1.GameScene],
+  physics: {
+    default: "arcade",
+    arcade: {
+      debug: false
+    }
+  }
 });
-},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts","./CST":"src/CST.ts"}],"../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -597,7 +699,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53991" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "4828" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -773,5 +875,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
+},{}]},{},["../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
 //# sourceMappingURL=/src.f10117fe.js.map
