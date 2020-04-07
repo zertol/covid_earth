@@ -1,5 +1,7 @@
 import { CST } from "../CST";
 //@ts-ignore
+import PLAYER from "../../images/spaceship-png-images-transparent.png";
+//@ts-ignore
 import LOGO from "../../images/zenvalogo.png";
 //@ts-ignore
 import BACKGROUND from "../../images/background.jpg";
@@ -11,6 +13,8 @@ import BLUECOVID19 from "../../sprites/bluevirussprite.png";
 import GREENCOVID19 from "../../sprites/greenvirussprite.png";
 //@ts-ignore
 import REDCOVID19 from "../../sprites/redvirussprite.png";
+//@ts-ignore
+import LEVELSJSON from "../scripts/gamelevels.json";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -28,6 +32,8 @@ export class LoadingScene extends Phaser.Scene {
 
     progressBox.fillStyle(0x222222, 0.8);
     progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
+
+    this.load.json('levelData', LEVELSJSON);
 
     let loadingText = this.make.text({
       x: width / 2,
@@ -99,6 +105,9 @@ export class LoadingScene extends Phaser.Scene {
     for (let i = 0; i < 500; i++) {
       this.load.image(CST.IMAGES.LOGO + i, LOGO);
     }
+
+    
+    this.load.image(CST.IMAGES.PLAYER, PLAYER);
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
     this.load.spritesheet(CST.SPRITES.GLOBE, GLOBE, {

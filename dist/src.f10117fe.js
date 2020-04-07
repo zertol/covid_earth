@@ -131,7 +131,8 @@ exports.CST = {
   },
   IMAGES: {
     LOGO: "LOGO",
-    BACKGROUND: "BACKGROUND"
+    BACKGROUND: "BACKGROUND",
+    PLAYER: "PLYAER"
   },
   SPRITES: {
     GLOBE: "GLOBE",
@@ -143,6 +144,8 @@ exports.CST = {
     ISMOBILE: navigator.userAgent.indexOf("Mobile") != -1
   }
 };
+},{}],"images/spaceship-png-images-transparent.png":[function(require,module,exports) {
+module.exports = "/spaceship-png-images-transparent.2625ceed.png";
 },{}],"images/zenvalogo.png":[function(require,module,exports) {
 module.exports = "/zenvalogo.2dc1a0e3.png";
 },{}],"images/background.jpg":[function(require,module,exports) {
@@ -155,6 +158,25 @@ module.exports = "/bluevirussprite.0e57acd7.png";
 module.exports = "/greenvirussprite.ec3e8ed8.png";
 },{}],"sprites/redvirussprite.png":[function(require,module,exports) {
 module.exports = "/redvirussprite.ed04ed27.png";
+},{}],"src/scripts/gamelevels.json":[function(require,module,exports) {
+module.exports = {
+  "numberOfLevels": 2,
+  "levels": [{
+    "levelNumber": 1,
+    "virusDistribution": {
+      "redVirus": 2,
+      "greenVirus": 2,
+      "blueVirus": 3
+    }
+  }, {
+    "levelNumber": 2,
+    "virusDistribution": {
+      "redVirus": 4,
+      "greenVirus": 4,
+      "blueVirus": 6
+    }
+  }]
+};
 },{}],"src/scenes/LoadingScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -197,6 +219,9 @@ Object.defineProperty(exports, "__esModule", {
 var CST_1 = require("../CST"); //@ts-ignore
 
 
+var spaceship_png_images_transparent_png_1 = __importDefault(require("../../images/spaceship-png-images-transparent.png")); //@ts-ignore
+
+
 var zenvalogo_png_1 = __importDefault(require("../../images/zenvalogo.png")); //@ts-ignore
 
 
@@ -212,7 +237,10 @@ var bluevirussprite_png_1 = __importDefault(require("../../sprites/bluevirusspri
 var greenvirussprite_png_1 = __importDefault(require("../../sprites/greenvirussprite.png")); //@ts-ignore
 
 
-var redvirussprite_png_1 = __importDefault(require("../../sprites/redvirussprite.png"));
+var redvirussprite_png_1 = __importDefault(require("../../sprites/redvirussprite.png")); //@ts-ignore
+
+
+var gamelevels_json_1 = __importDefault(require("../scripts/gamelevels.json"));
 
 var LoadingScene =
 /** @class */
@@ -234,6 +262,7 @@ function (_super) {
     var progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
     progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
+    this.load.json('levelData', gamelevels_json_1.default);
     var loadingText = this.make.text({
       x: width / 2,
       y: height / 2 - 50,
@@ -301,6 +330,7 @@ function (_super) {
       this.load.image(CST_1.CST.IMAGES.LOGO + i, zenvalogo_png_1.default);
     }
 
+    this.load.image(CST_1.CST.IMAGES.PLAYER, spaceship_png_images_transparent_png_1.default);
     this.load.image(CST_1.CST.IMAGES.BACKGROUND, background_jpg_1.default);
     this.load.spritesheet(CST_1.CST.SPRITES.GLOBE, BreusingGeometric2H_png_1.default, {
       frameWidth: 1000,
@@ -365,7 +395,7 @@ function (_super) {
 }(Phaser.Scene);
 
 exports.LoadingScene = LoadingScene;
-},{"../CST":"src/CST.ts","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../sprites/BreusingGeometric2H.png":"sprites/BreusingGeometric2H.png","../../sprites/bluevirussprite.png":"sprites/bluevirussprite.png","../../sprites/greenvirussprite.png":"sprites/greenvirussprite.png","../../sprites/redvirussprite.png":"sprites/redvirussprite.png"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../../images/spaceship-png-images-transparent.png":"images/spaceship-png-images-transparent.png","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../sprites/BreusingGeometric2H.png":"sprites/BreusingGeometric2H.png","../../sprites/bluevirussprite.png":"sprites/bluevirussprite.png","../../sprites/greenvirussprite.png":"sprites/greenvirussprite.png","../../sprites/redvirussprite.png":"sprites/redvirussprite.png","../scripts/gamelevels.json":"src/scripts/gamelevels.json"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -564,6 +594,16 @@ function (_super) {
     _this.hitEarth = function (globe, enemy) {
       globe.setAlpha(globe.alpha - 0.0001);
 
+      if (globe.alpha == 0) {
+        _this.add.text(_this.game.renderer.width / 2, _this.game.renderer.height / 2, "you just lost");
+
+        _this.enemies.clear(true);
+
+        _this.enemies.destroy();
+
+        return;
+      }
+
       _this.resetVirusPos(enemy);
     };
 
@@ -581,6 +621,65 @@ function (_super) {
       var randomX = Math.random() * _this.game.renderer.width;
 
       virus.x = randomX;
+    };
+
+    _this.adjustingGlobeBarrier = function () {
+      var widthToAjdust = _this.game.renderer.width - _this.globe.width; //@ts-ignore
+
+      _this.globe.body.offset.x = -widthToAjdust / 2; //@ts-ignore
+
+      _this.globe.body.width += widthToAjdust;
+    };
+
+    _this.adjustingEnemyCollisionBox = function () {
+      var viruses = _this.enemies.getChildren();
+
+      for (var i = 0; i < viruses.length; i++) {
+        var virus = viruses[i]; //@ts-ignore
+
+        virus.body.height -= virus.body.height / 3;
+      }
+    };
+
+    _this.LoadingEnemiesByLevel = function (level) {
+      var data = _this.cache.json.get("levelData");
+
+      var levelsData = data.levels; //@ts-ignore
+
+      var levelToLooad = data.levels.filter(function (x) {
+        return x.levelNumber == level;
+      })[0]; //@ts-ignore
+
+      var virusDistribution = levelToLooad.virusDistribution;
+
+      for (var virusKey in virusDistribution) {
+        console.log(virusKey);
+
+        switch (virusKey) {
+          case "redVirus":
+            _this.addVirusByType("redvirus_anim", CST_1.CST.SPRITES.REDCOVID19, virusDistribution[virusKey]);
+
+            break;
+
+          case "greenVirus":
+            _this.addVirusByType("greenvirus_anim", CST_1.CST.SPRITES.GREENCOVID19, virusDistribution[virusKey]);
+
+            break;
+
+          case "blueVirus":
+            _this.addVirusByType("bluevirus_anim", CST_1.CST.SPRITES.BLUECOVID19, virusDistribution[virusKey]);
+
+            break;
+        }
+      }
+    };
+
+    _this.addVirusByType = function (animationKey, virusType, numberOfVirusToAdd) {
+      for (var k = 0; k < numberOfVirusToAdd; k++) {
+        var virusToAdd = new Virus_1.default(_this, (Math.floor(Math.random() * 2) + 1) * _this.game.renderer.width, 0, virusType, animationKey, 1);
+
+        _this.enemies.add(virusToAdd);
+      }
     };
 
     return _this;
@@ -602,19 +701,14 @@ function (_super) {
     // let graphPhysics = this.physics.add.group();
     // graphPhysics.add(graphics);
 
+    this.player = this.physics.add.image(this.game.renderer.width / 2 - 8, this.game.renderer.height - 130, CST_1.CST.IMAGES.PLAYER).setScale(0.1, 0.1).setDepth(2);
     this.enemies = this.physics.add.group();
-    this.bluevirus = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.BLUECOVID19, "bluevirus_anim", 1);
-    this.bluevirusR = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.BLUECOVID19, "bluevirus_anim", 1);
-    this.greenvirus = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.GREENCOVID19, "greenvirus_anim", 1);
-    this.greenvirusR = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.GREENCOVID19, "greenvirus_anim", 1);
-    this.redvirus = new Virus_1.default(this, Math.random() * this.game.renderer.width, 0, CST_1.CST.SPRITES.REDCOVID19, "redvirus_anim", 1);
-    this.enemies.add(this.bluevirus);
-    this.enemies.add(this.bluevirusR);
-    this.enemies.add(this.greenvirus);
-    this.enemies.add(this.greenvirusR);
-    this.enemies.add(this.redvirus); //The single Sprite comes before a group so the order is single,group in the callback function
+    this.LoadingEnemiesByLevel(1);
+    this.adjustingEnemyCollisionBox();
+    this.adjustingGlobeBarrier(); //The single Sprite comes before a group so the order is single,group in the callback function
+    //this.physics.add.overlap(this.enemies, this.globe, this.hitEarth, undefined, this);
 
-    this.physics.add.overlap(this.enemies, this.globe, this.hitEarth, undefined, this);
+    this.physics.add.collider(this.enemies, this.globe, this.hitEarth, undefined, this);
 
     if (CST_1.CST.WINDOW.ISMOBILE) {
       this.globe.y += 55;
@@ -622,13 +716,14 @@ function (_super) {
   };
 
   GameScene.prototype.update = function () {
+    var _this = this;
+
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
-    this.moveVirus(this.bluevirus, 1.8);
-    this.moveVirus(this.bluevirusR, 2.4);
-    this.moveVirus(this.greenvirus, 3);
-    this.moveVirus(this.greenvirusR, 4.6);
-    this.moveVirus(this.redvirus, 5);
+    this.enemies.getChildren().forEach(function (element) {
+      //@ts-ignore
+      _this.moveVirus(element, Math.floor(Math.random() * 4) + 1);
+    });
   };
 
   return GameScene;
@@ -667,11 +762,11 @@ var game = new Phaser.Game({
   physics: {
     default: "arcade",
     arcade: {
-      debug: false
+      debug: true
     }
   }
 });
-},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts","./CST":"src/CST.ts"}],"../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts","./CST":"src/CST.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -699,7 +794,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "4828" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59428" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -875,5 +970,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
+},{}]},{},["../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
 //# sourceMappingURL=/src.f10117fe.js.map
