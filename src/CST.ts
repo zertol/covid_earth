@@ -6,7 +6,8 @@ export const CST = {
   },
   IMAGES: {
     LOGO: "LOGO",
-    BACKGROUND: "BACKGROUND"
+    BACKGROUND: "BACKGROUND",
+    PLAYER : "PLYAER"
   },
   SPRITES: {
     GLOBE: "GLOBE",
