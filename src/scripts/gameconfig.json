@@ -1,0 +1,46 @@
+{
+    "player":{
+        "speed": 450
+    },
+    "levels": [
+        {
+            "levelNumber": 1,
+            "virusDistribution": {
+                "blue": 2,
+                "green": 2,
+                "red": 3
+            },
+            "speedDistribution": {
+                "blue": 1.5,
+                "green": 2,
+                "red": 2.5
+            }
+        },
+        {
+            "levelNumber": 2,
+            "virusDistribution": {
+                "blue": 3,
+                "green": 3,
+                "red": 4
+            },
+            "speedDistribution": {
+                "blue": 1.8,
+                "green": 2.4,
+                "red": 3
+            }
+        },
+        {
+            "levelNumber": 3,
+            "virusDistribution": {
+                "blue": 3,
+                "green": 3,
+                "red": 4
+            },
+            "speedDistribution": {
+                "blue": 2.4,
+                "green": 3.5,
+                "red": 4.8
+            }
+        }
+    ]
+}

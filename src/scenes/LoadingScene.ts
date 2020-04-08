@@ -1,6 +1,6 @@
 import { CST } from "../CST";
 //@ts-ignore
-import PLAYER from "../../images/spaceship-png-images-transparent.png";
+import PLAYER from "../../sprites/spaceship.png";
 //@ts-ignore
 import LOGO from "../../images/zenvalogo.png";
 //@ts-ignore
@@ -14,7 +14,7 @@ import GREENCOVID19 from "../../sprites/greenvirussprite.png";
 //@ts-ignore
 import REDCOVID19 from "../../sprites/redvirussprite.png";
 //@ts-ignore
-import LEVELSJSON from "../scripts/gamelevels.json";
+import LEVELSJSON from "../scripts/gameconfig.json";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -33,7 +33,7 @@ export class LoadingScene extends Phaser.Scene {
     progressBox.fillStyle(0x222222, 0.8);
     progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
 
-    this.load.json('levelData', LEVELSJSON);
+    this.load.json('levelsData', LEVELSJSON);
 
     let loadingText = this.make.text({
       x: width / 2,
@@ -91,7 +91,7 @@ export class LoadingScene extends Phaser.Scene {
       percentText.destroy();
       assetText.destroy();
 
-      for (let i = 0; i < 500; i++) {
+      for (let i = 0; i < 100; i++) {
         //@ts-ignore
         files[i].destroy();
       }
@@ -102,12 +102,9 @@ export class LoadingScene extends Phaser.Scene {
     });
 
     this.load.image(CST.IMAGES.LOGO, LOGO);
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 100; i++) {
       this.load.image(CST.IMAGES.LOGO + i, LOGO);
     }
-
-    
-    this.load.image(CST.IMAGES.PLAYER, PLAYER);
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
     this.load.spritesheet(CST.SPRITES.GLOBE, GLOBE, {
@@ -126,6 +123,10 @@ export class LoadingScene extends Phaser.Scene {
       frameWidth: 266,
       frameHeight: 266
     });
+    this.load.spritesheet(CST.SPRITES.PLAYER, PLAYER, {
+      frameWidth: 715,
+      frameHeight: 858
+    })
   }
 
   create() {
@@ -135,41 +136,48 @@ export class LoadingScene extends Phaser.Scene {
       CST.IMAGES.LOGO
     );
     this.anims.create({
-      key: "earth_anim",
+      key: CST.ANIMATIONS.EARTH_ANIM,
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.GLOBE),
       frameRate: 0.7,
       repeat: -1
     });
     this.anims.create({
-      key: "bluevirus_anim",
+      key: CST.ANIMATIONS.BLUECOVID19_ANIM,
       //@ts-ignore
-      frames: this.anims.generateFrameNumbers(CST.SPRITES.BLUECOVID19,{
-        start:0,
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BLUECOVID19, {
+        start: 0,
         end: 3
       }),
       frameRate: 15,
       repeat: 0
     });
     this.anims.create({
-      key: "greenvirus_anim",
+      key: CST.ANIMATIONS.GREENCOVID19_ANIM,
       //@ts-ignore
-      frames: this.anims.generateFrameNumbers(CST.SPRITES.GREENCOVID19,{
-        start:0,
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.GREENCOVID19, {
+        start: 0,
         end: 4
       }),
       frameRate: 15,
       repeat: 0
     });
     this.anims.create({
-      key: "redvirus_anim",
+      key: CST.ANIMATIONS.REDCOVID19_ANIM,
       //@ts-ignore
-      frames: this.anims.generateFrameNumbers(CST.SPRITES.REDCOVID19,{
-        start:0,
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.REDCOVID19, {
+        start: 0,
         end: 5
       }),
       frameRate: 15,
       repeat: 0
     });
+    this.anims.create({
+      key: CST.ANIMATIONS.PLAYER_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.PLAYER),
+      frameRate: 33,
+      repeat: -1
+    })
   }
 }
