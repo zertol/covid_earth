@@ -17,6 +17,8 @@ import REDCOVID19 from "../../sprites/redvirussprite.png";
 import LEVELSJSON from "../scripts/gameconfig.json";
 //@ts-ignore
 import EXPLOSION from "../../sprites/explosion.png";
+//@ts-ignore
+import BEAM from "../../sprites/bullet.png";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -109,6 +111,10 @@ export class LoadingScene extends Phaser.Scene {
     }
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
+    this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
+      frameWidth: 42,
+      frameHeight: 72
+    });
     this.load.spritesheet(CST.SPRITES.GLOBE, GLOBE, {
       frameWidth: 1000,
       frameHeight: 990
@@ -192,6 +198,13 @@ export class LoadingScene extends Phaser.Scene {
       frameRate: 128,
       repeat: 0,
       hideOnComplete: true
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.BEAM_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BEAM),
+      frameRate: 20,
+      repeat: -1
     });
   }
 }
