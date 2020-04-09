@@ -94,7 +94,14 @@ export class GameScene extends Phaser.Scene {
       undefined,
       this
     );
-
+    this.physics.add.overlap(
+      this.player,
+      this.enemies,
+      //@ts-ignore
+      this.hurtPlayer,
+      null,
+      this
+    );
     this.physics.add.overlap(
       this.projectiles,
       this.enemies,
@@ -112,6 +119,46 @@ export class GameScene extends Phaser.Scene {
   }
 
   returnToEarth = (player: any, globe: any) => {};
+
+  hurtPlayer = (player : Phaser.Physics.Arcade.Sprite, enemy : Virus) : void => {
+    enemy.resetVirusPos();
+    if (player.alpha < 1){
+      return;
+    }
+    var explosion = new Explosion(
+      this,
+      player.x,
+      player.y,
+      CST.SPRITES.COVID19_EXPLOSION,
+      CST.ANIMATIONS.COVID19_EXPLOSION_ANIM
+    );
+    player.disableBody(true,true);
+    this.time.addEvent({
+      delay : 1000,
+      callback : this.resetPlayer,
+      callbackScope : this,
+      loop : false
+    })
+  };
+
+  resetPlayer = () => {
+    var x = this.game.renderer.width / 2 - 8;
+    var y = this.game.renderer.height - 128;
+    this.player.enableBody(true,x,this.game.renderer.height,true,true);
+    this.player.alpha = 0.5;
+
+    var tween = this.tweens.add({
+      targets : this.player,
+      y : y,
+      duration : 1500,
+      repeat : 0,
+      onComplete : function(){
+        //@ts-ignore
+        this.player.alpha = 1;
+      },
+      callbackScope : this
+    });
+  };
 
   hitEarth = (globe: any, enemy: any): void => {
     globe.setAlpha(globe.alpha - 0.1);
@@ -190,7 +237,7 @@ export class GameScene extends Phaser.Scene {
     }
   };
 
-  shootBeam = () => {
+  shootBeam = () : void => {
     var beam = new Beam(
       this,
       this.player.x,
@@ -202,7 +249,7 @@ export class GameScene extends Phaser.Scene {
     this.projectiles.add(beam);
   };
 
-  hitVirus = (projectile: Beam, virus: Virus): void => {
+  hitVirus = (projectile: Beam, virus: Virus) : void => {
     var explosion = new Explosion(
       this,
       virus.x,

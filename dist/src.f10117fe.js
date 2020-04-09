@@ -851,6 +851,45 @@ function (_super) {
 
     _this.returnToEarth = function (player, globe) {};
 
+    _this.hurtPlayer = function (player, enemy) {
+      enemy.resetVirusPos();
+
+      if (player.alpha < 1) {
+        return;
+      }
+
+      var explosion = new Explosion_1.default(_this, player.x, player.y, CST_1.CST.SPRITES.COVID19_EXPLOSION, CST_1.CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+      player.disableBody(true, true);
+
+      _this.time.addEvent({
+        delay: 1000,
+        callback: _this.resetPlayer,
+        callbackScope: _this,
+        loop: false
+      });
+    };
+
+    _this.resetPlayer = function () {
+      var x = _this.game.renderer.width / 2 - 8;
+      var y = _this.game.renderer.height - 128;
+
+      _this.player.enableBody(true, x, _this.game.renderer.height, true, true);
+
+      _this.player.alpha = 0.5;
+
+      var tween = _this.tweens.add({
+        targets: _this.player,
+        y: y,
+        duration: 1500,
+        repeat: 0,
+        onComplete: function onComplete() {
+          //@ts-ignore
+          this.player.alpha = 1;
+        },
+        callbackScope: _this
+      });
+    };
+
     _this.hitEarth = function (globe, enemy) {
       globe.setAlpha(globe.alpha - 0.1);
 
@@ -977,6 +1016,8 @@ function (_super) {
 
     this.physics.add.collider(this.enemies, this.globe, this.hitEarth, undefined, this);
     this.physics.add.collider(this.player, this.globe, this.returnToEarth, undefined, this);
+    this.physics.add.overlap(this.player, this.enemies, //@ts-ignore
+    this.hurtPlayer, null, this);
     this.physics.add.overlap(this.projectiles, this.enemies, //@ts-ignore
     this.hitVirus, null, this);
     this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -1073,7 +1114,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64259" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55442" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
