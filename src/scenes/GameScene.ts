@@ -38,10 +38,10 @@ export class GameScene extends Phaser.Scene {
     this.globe = this.physics.add
       .sprite(
         this.game.renderer.width / 2,
-        this.game.renderer.height + 400,
+        this.game.renderer.height + 410,
         CST.SPRITES.GLOBE
       )
-      .setDepth(1);
+      .setDepth(1).setImmovable(true);
 
     //@ts-ignore
     this.globe.play(CST.ANIMATIONS.EARTH_ANIM);
@@ -50,8 +50,7 @@ export class GameScene extends Phaser.Scene {
       this.game.renderer.width / 2 - 8,
       this.game.renderer.height - 130,
       CST.SPRITES.PLAYER
-    ).setScale(0.1, 0.1)
-      .setDepth(1);
+    ).setScale(0.2, 0.2).setDepth(1);
 
     this.player.play(CST.ANIMATIONS.PLAYER_ANIM);
     this.player.setCollideWorldBounds(true);
@@ -73,15 +72,26 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
+    this.physics.add.collider(
+      this.player,
+      this.globe,
+      this.returnToEarth,
+      undefined,
+      this
+    );
+
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
     if (CST.WINDOW.ISMOBILE) {
-      this.globe.y += 55;
+      this.globe.y += 60;
     }
   }
 
+  returnToEarth = (player: any, globe: any) => {
+  }
+
   hitEarth = (globe: any, enemy: any): void => {
-    globe.setAlpha(globe.alpha - 0.0001);
+    globe.setAlpha(globe.alpha - 0.1);
     if (globe.alpha == 0) {
       this.add.text(
         this.game.renderer.width / 2,
@@ -92,21 +102,12 @@ export class GameScene extends Phaser.Scene {
       this.enemies.destroy();
       return;
     }
-    this.resetVirusPos(enemy);
+
+    //@ts-ignore
+    enemy.hitEarth(CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
   };
 
-  moveVirus = (virus: Phaser.GameObjects.Sprite, speed: number): void => {
-    virus.y += speed;
-    if (virus.y > this.game.renderer.height) {
-      this.resetVirusPos(virus);
-    }
-  };
 
-  resetVirusPos = (virus: Phaser.GameObjects.Sprite) => {
-    virus.y = 0;
-    let randomX = Math.random() * this.game.renderer.width;
-    virus.x = randomX;
-  };
 
   adjustGlobeBarrier = () => {
     let widthToAjdust = this.game.renderer.width - this.globe.width;
@@ -138,7 +139,7 @@ export class GameScene extends Phaser.Scene {
         let key = virusKey.toUpperCase();
 
         //@ts-ignore
-        this.addVirusCollection(CST.ANIMATIONS[key + "COVID19_ANIM"], CST.SPRITES[key + "COVID19_ANIM"], virusDistribution[virusKey]);
+        this.addVirusCollection(CST.ANIMATIONS[key + "COVID19_ANIM"], CST.SPRITES[key + "COVID19"], virusDistribution[virusKey]);
 
       }
     }
@@ -153,8 +154,9 @@ export class GameScene extends Phaser.Scene {
     for (let k = 0; k < numberOfVirusToAdd; k++) {
       let virusToAdd = new Virus(
         this,
-        (Math.floor(Math.random() * this.game.renderer.width) + 1),
-        0,
+        (Math.floor(Math.random() * this.game.renderer.width) + 10),
+        //@ts-ignore
+        (Math.floor(Math.random() * 50) + 1),
         virusType,
         animationKey,
         1
@@ -196,9 +198,9 @@ export class GameScene extends Phaser.Scene {
   update() {
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
-    this.enemies.getChildren().forEach((element) => {
+    this.enemies.getChildren().forEach((enemy) => {
       //@ts-ignore
-      this.moveVirus(element, Math.floor(Math.random() * 4) + 1);
+      enemy.moveVirus(Math.floor(Math.random() * 4) + 1);
     });
     this.movePlayerManager();
   }

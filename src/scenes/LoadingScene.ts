@@ -15,6 +15,8 @@ import GREENCOVID19 from "../../sprites/greenvirussprite.png";
 import REDCOVID19 from "../../sprites/redvirussprite.png";
 //@ts-ignore
 import LEVELSJSON from "../scripts/gameconfig.json";
+//@ts-ignore
+import EXPLOSION from "../../sprites/explosion.png";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -124,9 +126,13 @@ export class LoadingScene extends Phaser.Scene {
       frameHeight: 266
     });
     this.load.spritesheet(CST.SPRITES.PLAYER, PLAYER, {
-      frameWidth: 715,
-      frameHeight: 858
-    })
+      frameWidth: 512,
+      frameHeight: 512
+    });
+    this.load.spritesheet(CST.SPRITES.COVID19_EXPLOSION,EXPLOSION,{
+      frameWidth: 128,
+      frameHeight:128
+    });
   }
 
   create() {
@@ -147,7 +153,7 @@ export class LoadingScene extends Phaser.Scene {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.BLUECOVID19, {
         start: 0,
-        end: 3
+        end: 2
       }),
       frameRate: 15,
       repeat: 0
@@ -157,7 +163,7 @@ export class LoadingScene extends Phaser.Scene {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.GREENCOVID19, {
         start: 0,
-        end: 4
+        end: 3
       }),
       frameRate: 15,
       repeat: 0
@@ -167,7 +173,7 @@ export class LoadingScene extends Phaser.Scene {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.REDCOVID19, {
         start: 0,
-        end: 5
+        end: 4
       }),
       frameRate: 15,
       repeat: 0
@@ -176,8 +182,16 @@ export class LoadingScene extends Phaser.Scene {
       key: CST.ANIMATIONS.PLAYER_ANIM,
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.PLAYER),
-      frameRate: 33,
+      frameRate: 25,
       repeat: -1
-    })
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.COVID19_EXPLOSION_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.COVID19_EXPLOSION),
+      frameRate: 128,
+      repeat: 0,
+      hideOnComplete: true
+    });
   }
 }

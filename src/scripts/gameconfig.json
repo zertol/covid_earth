@@ -1,6 +1,14 @@
 {
     "player":{
-        "speed": 450
+        "speed": 500
+    },
+    //If we ever needed it
+    "enemies":{
+        "positions":[
+            {"enemy": "blue", "position": {"x": 0, "y": 0}},
+            {"enemy": "green", "position": {"x": 0, "y": 15}},
+            {"enemy": "red", "position": {"x": 0, "y": 30}},
+        ]
     },
     "levels": [
         {
