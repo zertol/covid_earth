@@ -1,5 +1,7 @@
 import { CST } from "../CST";
 import Virus from "../sprites/Virus";
+import Beam from "../sprites/Beam";
+import Explosion from "../sprites/Explosion";
 
 export class GameScene extends Phaser.Scene {
   //@ts-ignore
@@ -14,6 +16,10 @@ export class GameScene extends Phaser.Scene {
   private exhaust: Phaser.GameObjects.Sprite;
   //@ts-ignore
   private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
+  //@ts-ignore
+  private projectiles: Phaser.Arcade.Group;
+  //@ts-ignore
+  private spacebar: Phaser.Input.Keyboard;
 
   constructor() {
     super({
@@ -21,7 +27,7 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  preload() { }
+  preload() {}
 
   create() {
     this.background = this.add
@@ -41,19 +47,28 @@ export class GameScene extends Phaser.Scene {
         this.game.renderer.height + 410,
         CST.SPRITES.GLOBE
       )
-      .setDepth(1).setImmovable(true);
+      .setDepth(1)
+      .setImmovable(true);
 
     //@ts-ignore
     this.globe.play(CST.ANIMATIONS.EARTH_ANIM);
+    this.projectiles = this.add.group();
 
-    this.player = this.physics.add.sprite(
-      this.game.renderer.width / 2 - 8,
-      this.game.renderer.height - 130,
-      CST.SPRITES.PLAYER
-    ).setScale(0.2, 0.2).setDepth(1);
+    this.player = this.physics.add
+      .sprite(
+        this.game.renderer.width / 2 - 8,
+        this.game.renderer.height - 130,
+        CST.SPRITES.PLAYER
+      )
+      .setScale(0.2, 0.2)
+      .setDepth(1);
 
     this.player.play(CST.ANIMATIONS.PLAYER_ANIM);
     this.player.setCollideWorldBounds(true);
+    this.cursorKeys = this.input.keyboard.createCursorKeys();
+    this.spacebar = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE
+    );
 
     this.enemies = this.physics.add.group();
 
@@ -80,6 +95,15 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
+    this.physics.add.overlap(
+      this.projectiles,
+      this.enemies,
+      //@ts-ignore
+      this.hitVirus,
+      null,
+      this
+    );
+
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
     if (CST.WINDOW.ISMOBILE) {
@@ -87,27 +111,26 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  returnToEarth = (player: any, globe: any) => {
-  }
+  returnToEarth = (player: any, globe: any) => {};
 
   hitEarth = (globe: any, enemy: any): void => {
     globe.setAlpha(globe.alpha - 0.1);
-    if (globe.alpha == 0) {
+    if (globe.alpha <= 0) {
       this.add.text(
-        this.game.renderer.width / 2,
+        this.game.renderer.width / 2 - this.player.body.width/2,
         this.game.renderer.height / 2,
-        "you just lost"
+        "You just lost :("
       );
       this.enemies.clear(true);
-      this.enemies.destroy();
       return;
     }
 
     //@ts-ignore
-    enemy.hitEarth(CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    enemy.hitEarth(
+      CST.SPRITES.COVID19_EXPLOSION,
+      CST.ANIMATIONS.COVID19_EXPLOSION_ANIM
+    );
   };
-
-
 
   adjustGlobeBarrier = () => {
     let widthToAjdust = this.game.renderer.width - this.globe.width;
@@ -135,15 +158,17 @@ export class GameScene extends Phaser.Scene {
       //@ts-ignore
       var virusDistribution = level.virusDistribution;
       for (let virusKey in level.virusDistribution) {
-
         let key = virusKey.toUpperCase();
 
-        //@ts-ignore
-        this.addVirusCollection(CST.ANIMATIONS[key + "COVID19_ANIM"], CST.SPRITES[key + "COVID19"], virusDistribution[virusKey]);
-
+        this.addVirusCollection(
+          //@ts-ignore
+          CST.ANIMATIONS[key + "COVID19_ANIM"],
+          //@ts-ignore
+          CST.SPRITES[key + "COVID19"],
+          virusDistribution[virusKey]
+        );
       }
     }
-
   };
 
   addVirusCollection = (
@@ -154,15 +179,40 @@ export class GameScene extends Phaser.Scene {
     for (let k = 0; k < numberOfVirusToAdd; k++) {
       let virusToAdd = new Virus(
         this,
-        (Math.floor(Math.random() * this.game.renderer.width) + 10),
+        Math.floor(Math.random() * this.game.renderer.width) + 10,
         //@ts-ignore
-        (Math.floor(Math.random() * 50) + 1),
+        Math.floor(Math.random() * 50) + 1,
         virusType,
         animationKey,
         1
       );
       this.enemies.add(virusToAdd);
     }
+  };
+
+  shootBeam = () => {
+    var beam = new Beam(
+      this,
+      this.player.x,
+      this.player.y,
+      CST.SPRITES.BEAM,
+      CST.ANIMATIONS.BEAM_ANIM,
+      6
+    );
+    this.projectiles.add(beam);
+  };
+
+  hitVirus = (projectile: Beam, virus: Virus): void => {
+    var explosion = new Explosion(
+      this,
+      virus.x,
+      virus.y,
+      CST.SPRITES.COVID19_EXPLOSION,
+      CST.ANIMATIONS.COVID19_EXPLOSION_ANIM
+    );
+    projectile.destroy();
+    virus.resetVirusPos();
+    //here later on code to add score
   };
 
   movePlayerManager = () => {
@@ -177,8 +227,7 @@ export class GameScene extends Phaser.Scene {
     //@ts-ignore
     else if (this.cursorKeys.left.isDown) {
       this.player.setVelocityX(-playerSpeed);
-    }
-    else {
+    } else {
       this.player.setVelocityX(0);
     }
 
@@ -189,19 +238,26 @@ export class GameScene extends Phaser.Scene {
     //@ts-ignore
     else if (this.cursorKeys.down.isDown) {
       this.player.setVelocityY(playerSpeed);
-    }
-    else {
+    } else {
       this.player.setVelocityY(0);
     }
-  }
+  };
 
   update() {
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
+
     this.enemies.getChildren().forEach((enemy) => {
       //@ts-ignore
       enemy.moveVirus(Math.floor(Math.random() * 4) + 1);
     });
     this.movePlayerManager();
+    if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
+      if (this.player.active) this.shootBeam();
+    }
+    for (let i = 0; i < this.projectiles.getChildren().length; i++) {
+      let beam = this.projectiles.getChildren()[i];
+      beam.update();
+    }
   }
 }

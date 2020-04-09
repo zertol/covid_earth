@@ -135,6 +135,7 @@ exports.CST = {
   },
   SPRITES: {
     GLOBE: "GLOBE",
+    BEAM: "BEAM",
     BLUECOVID19: "BLUECOVID19",
     GREENCOVID19: "GREENCOVID19",
     REDCOVID19: "REDCOVID19",
@@ -143,6 +144,7 @@ exports.CST = {
   },
   ANIMATIONS: {
     EARTH_ANIM: "EARTH_ANIM",
+    BEAM_ANIM: "BEAM_ANIM",
     BLUECOVID19_ANIM: "BLUECOVID19_ANIM",
     GREENCOVID19_ANIM: "GREENCOVID19_ANIM",
     REDCOVID19_ANIM: "REDCOVID19_ANIM",
@@ -234,6 +236,8 @@ module.exports = {
 };
 },{}],"sprites/explosion.png":[function(require,module,exports) {
 module.exports = "/explosion.b6bd83f2.png";
+},{}],"sprites/bullet.png":[function(require,module,exports) {
+module.exports = "/bullet.9bb2eab7.png";
 },{}],"src/scenes/LoadingScene.ts":[function(require,module,exports) {
 "use strict";
 
@@ -300,7 +304,10 @@ var redvirussprite_png_1 = __importDefault(require("../../sprites/redvirussprite
 var gameconfig_json_1 = __importDefault(require("../scripts/gameconfig.json")); //@ts-ignore
 
 
-var explosion_png_1 = __importDefault(require("../../sprites/explosion.png"));
+var explosion_png_1 = __importDefault(require("../../sprites/explosion.png")); //@ts-ignore
+
+
+var bullet_png_1 = __importDefault(require("../../sprites/bullet.png"));
 
 var LoadingScene =
 /** @class */
@@ -391,6 +398,10 @@ function (_super) {
     }
 
     this.load.image(CST_1.CST.IMAGES.BACKGROUND, background_jpg_1.default);
+    this.load.spritesheet(CST_1.CST.SPRITES.BEAM, bullet_png_1.default, {
+      frameWidth: 42,
+      frameHeight: 72
+    });
     this.load.spritesheet(CST_1.CST.SPRITES.GLOBE, BreusingGeometric2H_png_1.default, {
       frameWidth: 1000,
       frameHeight: 990
@@ -471,13 +482,20 @@ function (_super) {
       repeat: 0,
       hideOnComplete: true
     });
+    this.anims.create({
+      key: CST_1.CST.ANIMATIONS.BEAM_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST_1.CST.SPRITES.BEAM),
+      frameRate: 20,
+      repeat: -1
+    });
   };
 
   return LoadingScene;
 }(Phaser.Scene);
 
 exports.LoadingScene = LoadingScene;
-},{"../CST":"src/CST.ts","../../sprites/spaceship.png":"sprites/spaceship.png","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../sprites/BreusingGeometric2H.png":"sprites/BreusingGeometric2H.png","../../sprites/bluevirussprite.png":"sprites/bluevirussprite.png","../../sprites/greenvirussprite.png":"sprites/greenvirussprite.png","../../sprites/redvirussprite.png":"sprites/redvirussprite.png","../scripts/gameconfig.json":"src/scripts/gameconfig.json","../../sprites/explosion.png":"sprites/explosion.png"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../../sprites/spaceship.png":"sprites/spaceship.png","../../images/zenvalogo.png":"images/zenvalogo.png","../../images/background.jpg":"images/background.jpg","../../sprites/BreusingGeometric2H.png":"sprites/BreusingGeometric2H.png","../../sprites/bluevirussprite.png":"sprites/bluevirussprite.png","../../sprites/greenvirussprite.png":"sprites/greenvirussprite.png","../../sprites/redvirussprite.png":"sprites/redvirussprite.png","../scripts/gameconfig.json":"src/scripts/gameconfig.json","../../sprites/explosion.png":"sprites/explosion.png","../../sprites/bullet.png":"sprites/bullet.png"}],"src/scenes/MainScene.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -711,7 +729,70 @@ function (_super) {
 }(Phaser.GameObjects.Sprite);
 
 exports.default = Virus;
-},{"./Explosion":"src/sprites/Explosion.ts"}],"src/scenes/GameScene.ts":[function(require,module,exports) {
+},{"./Explosion":"src/sprites/Explosion.ts"}],"src/sprites/Beam.ts":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var Beam =
+/** @class */
+function (_super) {
+  __extends(Beam, _super);
+
+  function Beam(scene, x, y, name, animation, depth) {
+    var _this = _super.call(this, scene, x, y, name) || this;
+
+    _this.animation = animation;
+    _this.depth = depth;
+    scene.add.existing(_this);
+
+    _this.play(_this.animation);
+
+    scene.physics.world.enableBody(_this); //@ts-ignore
+
+    _this.body.velocity.y = -250;
+    return _this;
+  }
+
+  Beam.prototype.update = function () {
+    if (this.y < 8) {
+      this.destroy();
+    }
+  };
+
+  return Beam;
+}(Phaser.GameObjects.Sprite);
+
+exports.default = Beam;
+},{}],"src/scenes/GameScene.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -754,6 +835,10 @@ var CST_1 = require("../CST");
 
 var Virus_1 = __importDefault(require("../sprites/Virus"));
 
+var Beam_1 = __importDefault(require("../sprites/Beam"));
+
+var Explosion_1 = __importDefault(require("../sprites/Explosion"));
+
 var GameScene =
 /** @class */
 function (_super) {
@@ -769,12 +854,10 @@ function (_super) {
     _this.hitEarth = function (globe, enemy) {
       globe.setAlpha(globe.alpha - 0.1);
 
-      if (globe.alpha == 0) {
-        _this.add.text(_this.game.renderer.width / 2, _this.game.renderer.height / 2, "you just lost");
+      if (globe.alpha <= 0) {
+        _this.add.text(_this.game.renderer.width / 2 - _this.player.body.width / 2, _this.game.renderer.height / 2, "You just lost :(");
 
         _this.enemies.clear(true);
-
-        _this.enemies.destroy();
 
         return;
       } //@ts-ignore
@@ -814,9 +897,11 @@ function (_super) {
         var virusDistribution = level.virusDistribution;
 
         for (var virusKey in level.virusDistribution) {
-          var key = virusKey.toUpperCase(); //@ts-ignore
+          var key = virusKey.toUpperCase();
 
-          _this.addVirusCollection(CST_1.CST.ANIMATIONS[key + "COVID19_ANIM"], CST_1.CST.SPRITES[key + "COVID19"], virusDistribution[virusKey]);
+          _this.addVirusCollection( //@ts-ignore
+          CST_1.CST.ANIMATIONS[key + "COVID19_ANIM"], //@ts-ignore
+          CST_1.CST.SPRITES[key + "COVID19"], virusDistribution[virusKey]);
         }
       }
     };
@@ -828,6 +913,18 @@ function (_super) {
 
         _this.enemies.add(virusToAdd);
       }
+    };
+
+    _this.shootBeam = function () {
+      var beam = new Beam_1.default(_this, _this.player.x, _this.player.y, CST_1.CST.SPRITES.BEAM, CST_1.CST.ANIMATIONS.BEAM_ANIM, 6);
+
+      _this.projectiles.add(beam);
+    };
+
+    _this.hitVirus = function (projectile, virus) {
+      var explosion = new Explosion_1.default(_this, virus.x, virus.y, CST_1.CST.SPRITES.COVID19_EXPLOSION, CST_1.CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+      projectile.destroy();
+      virus.resetVirusPos(); //here later on code to add score
     };
 
     _this.movePlayerManager = function () {
@@ -865,9 +962,12 @@ function (_super) {
     this.globe = this.physics.add.sprite(this.game.renderer.width / 2, this.game.renderer.height + 410, CST_1.CST.SPRITES.GLOBE).setDepth(1).setImmovable(true); //@ts-ignore
 
     this.globe.play(CST_1.CST.ANIMATIONS.EARTH_ANIM);
+    this.projectiles = this.add.group();
     this.player = this.physics.add.sprite(this.game.renderer.width / 2 - 8, this.game.renderer.height - 130, CST_1.CST.SPRITES.PLAYER).setScale(0.2, 0.2).setDepth(1);
     this.player.play(CST_1.CST.ANIMATIONS.PLAYER_ANIM);
     this.player.setCollideWorldBounds(true);
+    this.cursorKeys = this.input.keyboard.createCursorKeys();
+    this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.enemies = this.physics.add.group(); //Load level 1 of the game ---- mode EASY ----
 
     this.loadEnemiesByLevel(1);
@@ -877,6 +977,8 @@ function (_super) {
 
     this.physics.add.collider(this.enemies, this.globe, this.hitEarth, undefined, this);
     this.physics.add.collider(this.player, this.globe, this.returnToEarth, undefined, this);
+    this.physics.add.overlap(this.projectiles, this.enemies, //@ts-ignore
+    this.hitVirus, null, this);
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
     if (CST_1.CST.WINDOW.ISMOBILE) {
@@ -892,13 +994,22 @@ function (_super) {
       enemy.moveVirus(Math.floor(Math.random() * 4) + 1);
     });
     this.movePlayerManager();
+
+    if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
+      if (this.player.active) this.shootBeam();
+    }
+
+    for (var i = 0; i < this.projectiles.getChildren().length; i++) {
+      var beam = this.projectiles.getChildren()[i];
+      beam.update();
+    }
   };
 
   return GameScene;
 }(Phaser.Scene);
 
 exports.GameScene = GameScene;
-},{"../CST":"src/CST.ts","../sprites/Virus":"src/sprites/Virus.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"../CST":"src/CST.ts","../sprites/Virus":"src/sprites/Virus.ts","../sprites/Beam":"src/sprites/Beam.ts","../sprites/Explosion":"src/sprites/Explosion.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -962,7 +1073,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60859" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64259" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
