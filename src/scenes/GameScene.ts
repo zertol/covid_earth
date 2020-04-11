@@ -379,6 +379,7 @@ export class GameScene extends Phaser.Scene {
     }
   };
 
+  //Get Time for rapid fire
   update(time: number) {
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
