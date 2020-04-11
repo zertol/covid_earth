@@ -171,10 +171,10 @@ module.exports = "/greenvirussprite.ec3e8ed8.png";
 module.exports = "/redvirussprite.ed04ed27.png";
 },{}],"src/scripts/gameconfig.json":[function(require,module,exports) {
 module.exports = {
+  "scoreLevelModulo": 5000,
   "player": {
-    "speed": 500
+    "speed": 750
   },
-  //If we ever needed it
   "enemies": {
     "positions": [{
       "enemy": "blue",
@@ -199,6 +199,18 @@ module.exports = {
   "levels": [{
     "levelNumber": 1,
     "virusDistribution": {
+      "blue": 1,
+      "green": 1,
+      "red": 2
+    },
+    "speedDistribution": {
+      "blue": 1.5,
+      "green": 2,
+      "red": 2.5
+    }
+  }, {
+    "levelNumber": 2,
+    "virusDistribution": {
       "blue": 2,
       "green": 2,
       "red": 3
@@ -209,7 +221,7 @@ module.exports = {
       "red": 2.5
     }
   }, {
-    "levelNumber": 2,
+    "levelNumber": 3,
     "virusDistribution": {
       "blue": 3,
       "green": 3,
@@ -219,18 +231,6 @@ module.exports = {
       "blue": 1.8,
       "green": 2.4,
       "red": 3
-    }
-  }, {
-    "levelNumber": 3,
-    "virusDistribution": {
-      "blue": 3,
-      "green": 3,
-      "red": 4
-    },
-    "speedDistribution": {
-      "blue": 2.4,
-      "green": 3.5,
-      "red": 4.8
     }
   }]
 };
@@ -681,12 +681,17 @@ var Virus =
 function (_super) {
   __extends(Virus, _super);
 
-  function Virus(scene, x, y, name, animation, depth) {
+  function Virus(scene, x, y, name, animation, depth, speed) {
     var _this = _super.call(this, scene, x, y, name) || this; //If we ever needed to differentiate between enemy textures
 
 
     _this.getName = function () {
       return _this.name;
+    }; //Set speed for viruses. Can be used to increase speed for each level
+
+
+    _this.setSpeed = function (speed) {
+      _this.speed = speed;
     };
 
     _this.hitEarth = function (explosionName, explosionAnimation) {
@@ -695,8 +700,8 @@ function (_super) {
       _this.resetVirusPos();
     };
 
-    _this.moveVirus = function (speed) {
-      _this.y += speed;
+    _this.moveVirus = function () {
+      _this.y += _this.speed;
       _this.rotation += 0.08;
 
       if (_this.y > _this.scene.game.renderer.height) {
@@ -713,6 +718,7 @@ function (_super) {
     _this.animation = animation;
     _this.depth = depth;
     _this.name = name;
+    _this.speed = speed;
     scene.add.existing(_this);
 
     _this.setInteractive();
@@ -848,6 +854,8 @@ function (_super) {
     var _this = _super.call(this, {
       key: CST_1.CST.SCENES.GAME
     }) || this;
+    /******************************************* End Creation Part *************************************************/
+
 
     _this.returnToEarth = function (player, globe) {};
 
@@ -869,22 +877,31 @@ function (_super) {
       });
     };
 
-    _this.resetPlayer = function () {
-      var x = _this.game.renderer.width / 2 - 8;
-      var y = _this.game.renderer.height - 128;
+    _this.zeroPad = function (number, size) {
+      var stringNumber = String(number);
 
-      _this.player.enableBody(true, x, _this.game.renderer.height, true, true);
+      while (stringNumber.length < (size || 2)) {
+        stringNumber = "0" + stringNumber;
+      }
+
+      return stringNumber;
+    };
+
+    _this.resetPlayer = function () {
+      //@ts-ignore
+      _this.player.enableBody(true, _this.player.initialX, _this.game.renderer.height, true, true);
 
       _this.player.alpha = 0.5;
 
       var tween = _this.tweens.add({
         targets: _this.player,
-        y: y,
+        //@ts-ignore
+        y: _this.player.initialY,
         duration: 1500,
         repeat: 0,
         onComplete: function onComplete() {
           //@ts-ignore
-          this.player.alpha = 1;
+          _this.player.alpha = 1;
         },
         callbackScope: _this
       });
@@ -913,63 +930,77 @@ function (_super) {
       _this.globe.body.width += widthToAjdust;
     };
 
-    _this.adjustEnemyCollisionBox = function () {
-      var viruses = _this.enemies.getChildren();
-
-      for (var i = 0; i < viruses.length; i++) {
-        var virus = viruses[i]; //@ts-ignore
-
-        virus.body.height -= virus.body.height / 3;
-      }
-    };
-
     _this.loadEnemiesByLevel = function (levelNumber) {
-      var data = _this.cache.json.get("levelsData"); //@ts-ignore
-
-
-      var level = data.levels.filter(function (x) {
+      //@ts-ignore
+      var levels = _this.levelsData.levels.filter(function (x) {
         return x.levelNumber == levelNumber;
-      })[0];
+      });
 
-      if (level) {
-        //@ts-ignore
+      if (levels.length > 0) {
+        var level = levels[0]; //@ts-ignore
+
         var virusDistribution = level.virusDistribution;
+        var speedDistribution = level.speedDistribution;
 
         for (var virusKey in level.virusDistribution) {
           var key = virusKey.toUpperCase();
 
           _this.addVirusCollection( //@ts-ignore
           CST_1.CST.ANIMATIONS[key + "COVID19_ANIM"], //@ts-ignore
-          CST_1.CST.SPRITES[key + "COVID19"], virusDistribution[virusKey]);
+          CST_1.CST.SPRITES[key + "COVID19"], virusDistribution[virusKey], speedDistribution[virusKey]);
         }
       }
     };
 
-    _this.addVirusCollection = function (animationKey, virusType, numberOfVirusToAdd) {
+    _this.addVirusCollection = function (animationKey, virusType, numberOfVirusToAdd, speed) {
       for (var k = 0; k < numberOfVirusToAdd; k++) {
         var virusToAdd = new Virus_1.default(_this, Math.floor(Math.random() * _this.game.renderer.width) + 10, //@ts-ignore
-        Math.floor(Math.random() * 50) + 1, virusType, animationKey, 1);
+        Math.floor(Math.random() * 50) + 1, virusType, animationKey, 1, speed); //@ts-ignore
+
+        virusToAdd.body.setSize(75, 75, true);
 
         _this.enemies.add(virusToAdd);
       }
     };
 
     _this.shootBeam = function () {
-      var beam = new Beam_1.default(_this, _this.player.x, _this.player.y, CST_1.CST.SPRITES.BEAM, CST_1.CST.ANIMATIONS.BEAM_ANIM, 6);
+      var beam1 = new Beam_1.default(_this, _this.player.x + 20, _this.player.y - 30, CST_1.CST.SPRITES.BEAM, CST_1.CST.ANIMATIONS.BEAM_ANIM, 1).setScale(0.5);
 
-      _this.projectiles.add(beam);
+      _this.projectiles.add(beam1);
+
+      var beam2 = new Beam_1.default(_this, _this.player.x - 20, _this.player.y - 30, CST_1.CST.SPRITES.BEAM, CST_1.CST.ANIMATIONS.BEAM_ANIM, 1).setScale(0.5);
+
+      _this.projectiles.add(beam2);
     };
 
     _this.hitVirus = function (projectile, virus) {
       var explosion = new Explosion_1.default(_this, virus.x, virus.y, CST_1.CST.SPRITES.COVID19_EXPLOSION, CST_1.CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
       projectile.destroy();
-      virus.resetVirusPos(); //here later on code to add score
+      virus.resetVirusPos(); //Update score
+
+      _this.score += 10;
+      _this.scoreLabel.text = "Score: " + _this.zeroPad(_this.score, 6); //@ts-ignore
+
+      if (_this.score % _this.levelsData.scoreLevelModulo == 0) {
+        _this.levelReach += 1; //@ts-ignore
+
+        var levels = _this.levelsData.levels.filter(function (x) {
+          return x.levelNumber == _this.levelReach;
+        });
+
+        if (levels.length > 0) {
+          _this.levelLabel.text = "Level: " + _this.levelReach;
+
+          _this.enemies.clear(true);
+
+          _this.loadEnemiesByLevel(_this.levelReach);
+        }
+      }
     };
 
     _this.movePlayerManager = function () {
-      var data = _this.cache.json.get("levelsData");
-
-      var playerSpeed = data.player.speed; //@ts-ignore
+      //@ts-ignore
+      var playerSpeed = _this.levelsData.player.speed; //@ts-ignore
 
       if (_this.cursorKeys.right.isDown) {
         _this.player.setVelocityX(playerSpeed);
@@ -994,15 +1025,22 @@ function (_super) {
     return _this;
   }
 
-  GameScene.prototype.preload = function () {};
+  GameScene.prototype.preload = function () {
+    this.levelsData = this.cache.json.get("levelsData");
+    this.lastFired = 0;
+  };
 
   GameScene.prototype.create = function () {
     this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST_1.CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
-    this.globe = this.physics.add.sprite(this.game.renderer.width / 2, this.game.renderer.height + 410, CST_1.CST.SPRITES.GLOBE).setDepth(1).setImmovable(true); //@ts-ignore
+    this.globe = this.physics.add.sprite(this.game.renderer.width / 2, this.game.renderer.height + 450, CST_1.CST.SPRITES.GLOBE).setDepth(1).setImmovable(true); //@ts-ignore
 
     this.globe.play(CST_1.CST.ANIMATIONS.EARTH_ANIM);
     this.projectiles = this.add.group();
-    this.player = this.physics.add.sprite(this.game.renderer.width / 2 - 8, this.game.renderer.height - 130, CST_1.CST.SPRITES.PLAYER).setScale(0.2, 0.2).setDepth(1);
+    this.player = this.physics.add.sprite(this.game.renderer.width / 2 - 8, this.game.renderer.height - 130, CST_1.CST.SPRITES.PLAYER).setScale(0.2, 0.2).setDepth(1); //@ts-ignore
+
+    this.player.initialX = this.player.x; //@ts-ignore
+
+    this.player.initialY = this.player.y;
     this.player.play(CST_1.CST.ANIMATIONS.PLAYER_ANIM);
     this.player.setCollideWorldBounds(true);
     this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -1010,8 +1048,7 @@ function (_super) {
     this.enemies = this.physics.add.group(); //Load level 1 of the game ---- mode EASY ----
 
     this.loadEnemiesByLevel(1);
-    this.adjustGlobeBarrier();
-    this.adjustEnemyCollisionBox(); //The single Sprite comes before a group so the order is single,group in the callback function
+    this.adjustGlobeBarrier(); //The single Sprite comes before a group so the order is single,group in the callback function
     //this.physics.add.overlap(this.enemies, this.globe, this.hitEarth, undefined, this);
 
     this.physics.add.collider(this.enemies, this.globe, this.hitEarth, undefined, this);
@@ -1025,23 +1062,65 @@ function (_super) {
     if (CST_1.CST.WINDOW.ISMOBILE) {
       this.globe.y += 60;
     }
+
+    this.score = 0;
+    this.scoreLabel = this.make.text({
+      x: 10,
+      y: 5,
+      origin: {
+        x: 0,
+        y: 0
+      },
+      text: "Score: " + this.zeroPad(this.score, 6),
+      padding: 0,
+      style: {
+        font: "16px monospace",
+        fill: "#ffffff"
+      }
+    });
+    this.levelReach = 1;
+    this.levelLabel = this.make.text({
+      x: 10,
+      y: this.scoreLabel.height + 5,
+      origin: {
+        x: 0,
+        y: 0
+      },
+      text: "Level: " + this.levelReach,
+      padding: 0,
+      style: {
+        font: "16px monospace",
+        fill: "#ffffff"
+      }
+    });
   };
 
-  GameScene.prototype.update = function () {
+  GameScene.prototype.update = function (time) {
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
-    this.enemies.getChildren().forEach(function (enemy) {
-      //@ts-ignore
-      enemy.moveVirus(Math.floor(Math.random() * 4) + 1);
-    });
-    this.movePlayerManager();
+    var children = this.enemies.getChildren();
 
-    if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-      if (this.player.active) this.shootBeam();
+    for (var index = 0; index < children.length; index++) {
+      var enemy = children[index]; //@ts-ignore
+
+      enemy.moveVirus(enemy.speed);
     }
 
-    for (var i = 0; i < this.projectiles.getChildren().length; i++) {
-      var beam = this.projectiles.getChildren()[i];
+    this.movePlayerManager(); //Continuous Spacebar Fire
+
+    if (this.spacebar.isDown && time > this.lastFired) {
+      if (this.player.active) {
+        this.shootBeam();
+        this.lastFired = time + 150;
+      }
+
+      ;
+    }
+
+    children = this.projectiles.getChildren();
+
+    for (var i = 0; i < children.length; i++) {
+      var beam = children[i];
       beam.update();
     }
   };
@@ -1069,7 +1148,7 @@ var CST_1 = require("./CST"); //Scaling manually the canvas for a better display
 var w = window.innerWidth;
 var h = window.innerHeight;
 
-if (CST_1.CST.WINDOW.ISMOBILE) {
+if (!CST_1.CST.WINDOW.ISMOBILE) {
   w = 768;
 } //Start the game object
 
@@ -1086,7 +1165,7 @@ var game = new Phaser.Game({
     }
   }
 });
-},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts","./CST":"src/CST.ts"}],"../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./scenes/LoadingScene":"src/scenes/LoadingScene.ts","./scenes/MainScene":"src/scenes/MainScene.ts","./scenes/GameScene":"src/scenes/GameScene.ts","./CST":"src/CST.ts"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1114,7 +1193,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55442" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "1110" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -1290,5 +1369,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
+},{}]},{},["node_modules/parcel-bundler/src/builtins/hmr-runtime.js","src/index.ts"], null)
 //# sourceMappingURL=/src.f10117fe.js.map
