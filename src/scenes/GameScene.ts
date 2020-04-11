@@ -13,8 +13,6 @@ export class GameScene extends Phaser.Scene {
   //@ts-ignore
   private player: Phaser.Physics.Arcade.Sprite;
   //@ts-ignore
-  private exhaust: Phaser.GameObjects.Sprite;
-  //@ts-ignore
   private cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   //@ts-ignore
   private projectiles: Phaser.Arcade.Group;
@@ -32,6 +30,8 @@ export class GameScene extends Phaser.Scene {
   private levelsData: object;
   //@ts-ignore
   private lastFired: number;
+  //@ts-ignore
+  private gameOver: boolean;
 
   constructor() {
     super({
@@ -224,13 +224,28 @@ export class GameScene extends Phaser.Scene {
   hitEarth = (globe: any, enemy: any): void => {
     globe.setAlpha(globe.alpha - 0.1);
     if (globe.alpha <= 0) {
-      this.add.text(
-        this.game.renderer.width / 2 - this.player.body.width / 2,
-        this.game.renderer.height / 2,
-        "You just lost :("
+      
+
+      this.make.text(
+        {
+          x: this.game.renderer.width/2,
+          y: this.game.renderer.height/2,
+          origin: { x: .5, y: .5 },
+          text: "GAME OVER",
+          padding: 0,
+          style: {
+            font: "40px monospace",
+            fill: "#ffffff"
+          }
+        }
       );
-      this.enemies.clear(true);
-      return;
+      this.physics.pause();
+      this.gameOver = true;
+      this.time.addEvent({
+        delay: 2000,
+        callback: () => {this.scene.start(CST.SCENES.MAIN)},
+        callbackScope: this
+      });
     }
 
     //@ts-ignore
@@ -381,10 +396,15 @@ export class GameScene extends Phaser.Scene {
 
   //Get Time for rapid fire
   update(time: number) {
+
+    if (this.gameOver) {
+      return;
+    }
+
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
 
-    let children =  this.enemies.getChildren();
+    let children = this.enemies.getChildren();
 
     for (let index = 0; index < children.length; index++) {
       const enemy = children[index];
