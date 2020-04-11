@@ -7,7 +7,7 @@ import {CST} from './CST';
 let w = window.innerWidth;
 let h = window.innerHeight;
 
-if (CST.WINDOW.ISMOBILE) {
+if (!CST.WINDOW.ISMOBILE) {
     w = 768;
 }
 

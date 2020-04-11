@@ -20,6 +20,18 @@ export class GameScene extends Phaser.Scene {
   private projectiles: Phaser.Arcade.Group;
   //@ts-ignore
   private spacebar: Phaser.Input.Keyboard;
+  //@ts-ignore
+  private scoreLabel: Phaser.GameObjects.Text;
+  //@ts-ignore
+  private score: number;
+  //@ts-ignore
+  private levelLabel: Phaser.GameObjects.Text;
+  //@ts-ignore
+  private levelReach: number;
+  //@ts-ignore
+  private levelsData: object;
+  //@ts-ignore
+  private lastFired: number;
 
   constructor() {
     super({
@@ -27,7 +39,10 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  preload() {}
+  preload() {
+    this.levelsData = this.cache.json.get("levelsData");
+    this.lastFired = 0;
+  }
 
   create() {
     this.background = this.add
@@ -44,7 +59,7 @@ export class GameScene extends Phaser.Scene {
     this.globe = this.physics.add
       .sprite(
         this.game.renderer.width / 2,
-        this.game.renderer.height + 410,
+        this.game.renderer.height + 450,
         CST.SPRITES.GLOBE
       )
       .setDepth(1)
@@ -63,6 +78,10 @@ export class GameScene extends Phaser.Scene {
       .setScale(0.2, 0.2)
       .setDepth(1);
 
+    //@ts-ignore
+    this.player.initialX = this.player.x;
+    //@ts-ignore
+    this.player.initialY = this.player.y;
     this.player.play(CST.ANIMATIONS.PLAYER_ANIM);
     this.player.setCollideWorldBounds(true);
     this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -75,7 +94,6 @@ export class GameScene extends Phaser.Scene {
     //Load level 1 of the game ---- mode EASY ----
     this.loadEnemiesByLevel(1);
     this.adjustGlobeBarrier();
-    this.adjustEnemyCollisionBox();
 
     //The single Sprite comes before a group so the order is single,group in the callback function
     //this.physics.add.overlap(this.enemies, this.globe, this.hitEarth, undefined, this);
@@ -116,47 +134,90 @@ export class GameScene extends Phaser.Scene {
     if (CST.WINDOW.ISMOBILE) {
       this.globe.y += 60;
     }
+
+    this.score = 0;
+    this.scoreLabel = this.make.text({
+      x: 10,
+      y: 5,
+      origin: { x: 0, y: 0 },
+      text: "Score: " + this.zeroPad(this.score, 6),
+      padding: 0,
+      style: {
+        font: "16px monospace",
+        fill: "#ffffff"
+      }
+    });
+
+    this.levelReach = 1;
+    this.levelLabel = this.make.text({
+      x: 10,
+      y: this.scoreLabel.height + 5,
+      origin: { x: 0, y: 0 },
+      text: "Level: " + this.levelReach,
+      padding: 0,
+      style: {
+        font: "16px monospace",
+        fill: "#ffffff"
+      }
+    });
+
   }
 
-  returnToEarth = (player: any, globe: any) => {};
+  /******************************************* End Creation Part *************************************************/
 
-  hurtPlayer = (player : Phaser.Physics.Arcade.Sprite, enemy : Virus) : void => {
+  returnToEarth = (player: any, globe: any) => { };
+
+  hurtPlayer = (player: Phaser.Physics.Arcade.Sprite, enemy: Virus): void => {
+
     enemy.resetVirusPos();
-    if (player.alpha < 1){
+
+    if (player.alpha < 1) {
       return;
     }
-    var explosion = new Explosion(
+
+    let explosion = new Explosion(
       this,
       player.x,
       player.y,
       CST.SPRITES.COVID19_EXPLOSION,
       CST.ANIMATIONS.COVID19_EXPLOSION_ANIM
     );
-    player.disableBody(true,true);
+
+    player.disableBody(true, true);
+
     this.time.addEvent({
-      delay : 1000,
-      callback : this.resetPlayer,
-      callbackScope : this,
-      loop : false
-    })
+      delay: 1000,
+      callback: this.resetPlayer,
+      callbackScope: this,
+      loop: false
+    });
   };
 
+  zeroPad = (number: number, size: number) => {
+    let stringNumber = String(number);
+    while (stringNumber.length < (size || 2)) {
+      stringNumber = "0" + stringNumber;
+    }
+    return stringNumber;
+  }
+
   resetPlayer = () => {
-    var x = this.game.renderer.width / 2 - 8;
-    var y = this.game.renderer.height - 128;
-    this.player.enableBody(true,x,this.game.renderer.height,true,true);
+
+    //@ts-ignore
+    this.player.enableBody(true, this.player.initialX, this.game.renderer.height, true, true);
     this.player.alpha = 0.5;
 
-    var tween = this.tweens.add({
-      targets : this.player,
-      y : y,
-      duration : 1500,
-      repeat : 0,
-      onComplete : function(){
+    let tween = this.tweens.add({
+      targets: this.player,
+      //@ts-ignore
+      y: this.player.initialY,
+      duration: 1500,
+      repeat: 0,
+      onComplete: () => {
         //@ts-ignore
         this.player.alpha = 1;
       },
-      callbackScope : this
+      callbackScope: this
     });
   };
 
@@ -164,7 +225,7 @@ export class GameScene extends Phaser.Scene {
     globe.setAlpha(globe.alpha - 0.1);
     if (globe.alpha <= 0) {
       this.add.text(
-        this.game.renderer.width / 2 - this.player.body.width/2,
+        this.game.renderer.width / 2 - this.player.body.width / 2,
         this.game.renderer.height / 2,
         "You just lost :("
       );
@@ -187,23 +248,16 @@ export class GameScene extends Phaser.Scene {
     this.globe.body.width += widthToAjdust;
   };
 
-  adjustEnemyCollisionBox = () => {
-    var viruses = this.enemies.getChildren();
-    for (let i = 0; i < viruses.length; i++) {
-      let virus = viruses[i];
-      //@ts-ignore
-      virus.body.height -= virus.body.height / 3;
-    }
-  };
-
   loadEnemiesByLevel = (levelNumber: number) => {
-    let data = this.cache.json.get("levelsData");
     //@ts-ignore
-    let level = data.levels.filter((x) => x.levelNumber == levelNumber)[0];
+    let levels = this.levelsData.levels.filter((x) => x.levelNumber == levelNumber);
 
-    if (level) {
+    if (levels.length > 0) {
+      let level = levels[0];
       //@ts-ignore
-      var virusDistribution = level.virusDistribution;
+      let virusDistribution = level.virusDistribution;
+      let speedDistribution = level.speedDistribution;
+
       for (let virusKey in level.virusDistribution) {
         let key = virusKey.toUpperCase();
 
@@ -212,7 +266,8 @@ export class GameScene extends Phaser.Scene {
           CST.ANIMATIONS[key + "COVID19_ANIM"],
           //@ts-ignore
           CST.SPRITES[key + "COVID19"],
-          virusDistribution[virusKey]
+          virusDistribution[virusKey],
+          speedDistribution[virusKey]
         );
       }
     }
@@ -221,7 +276,8 @@ export class GameScene extends Phaser.Scene {
   addVirusCollection = (
     animationKey: string,
     virusType: string,
-    numberOfVirusToAdd: integer
+    numberOfVirusToAdd: integer,
+    speed: number
   ) => {
     for (let k = 0; k < numberOfVirusToAdd; k++) {
       let virusToAdd = new Virus(
@@ -231,26 +287,41 @@ export class GameScene extends Phaser.Scene {
         Math.floor(Math.random() * 50) + 1,
         virusType,
         animationKey,
-        1
+        1,
+        speed
       );
+      //@ts-ignore
+      virusToAdd.body.setSize(75, 75, true);
       this.enemies.add(virusToAdd);
     }
   };
 
-  shootBeam = () : void => {
-    var beam = new Beam(
+  shootBeam = (): void => {
+
+    let beam1 = new Beam(
       this,
-      this.player.x,
-      this.player.y,
+      this.player.x + 20,
+      this.player.y - 30,
       CST.SPRITES.BEAM,
       CST.ANIMATIONS.BEAM_ANIM,
-      6
-    );
-    this.projectiles.add(beam);
+      1
+    ).setScale(0.5);
+    this.projectiles.add(beam1);
+
+    let beam2 = new Beam(
+      this,
+      this.player.x - 20,
+      this.player.y - 30,
+      CST.SPRITES.BEAM,
+      CST.ANIMATIONS.BEAM_ANIM,
+      1
+    ).setScale(0.5);
+    this.projectiles.add(beam2);
+
   };
 
-  hitVirus = (projectile: Beam, virus: Virus) : void => {
-    var explosion = new Explosion(
+  hitVirus = (projectile: Beam, virus: Virus): void => {
+    let explosion = new Explosion(
       this,
       virus.x,
       virus.y,
@@ -259,13 +330,31 @@ export class GameScene extends Phaser.Scene {
     );
     projectile.destroy();
     virus.resetVirusPos();
-    //here later on code to add score
+
+    //Update score
+    this.score += 10;
+    this.scoreLabel.text = "Score: " + this.zeroPad(this.score, 6);
+
+    //@ts-ignore
+    if (this.score % this.levelsData.scoreLevelModulo == 0) {
+      this.levelReach += 1;
+
+      //@ts-ignore
+      let levels = this.levelsData.levels.filter((x) => x.levelNumber == this.levelReach);
+      if (levels.length > 0) {
+
+        this.levelLabel.text = "Level: " + this.levelReach;
+        this.enemies.clear(true);
+        this.loadEnemiesByLevel(this.levelReach);
+      }
+    }
+
   };
 
   movePlayerManager = () => {
-    let data = this.cache.json.get("levelsData");
 
-    let playerSpeed = data.player.speed;
+    //@ts-ignore
+    let playerSpeed = this.levelsData.player.speed;
 
     //@ts-ignore
     if (this.cursorKeys.right.isDown) {
@@ -290,20 +379,33 @@ export class GameScene extends Phaser.Scene {
     }
   };
 
-  update() {
+  //Get Time for rapid fire
+  update(time: number) {
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
 
-    this.enemies.getChildren().forEach((enemy) => {
+    let children =  this.enemies.getChildren();
+
+    for (let index = 0; index < children.length; index++) {
+      const enemy = children[index];
       //@ts-ignore
-      enemy.moveVirus(Math.floor(Math.random() * 4) + 1);
-    });
-    this.movePlayerManager();
-    if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-      if (this.player.active) this.shootBeam();
+      enemy.moveVirus(enemy.speed);
     }
-    for (let i = 0; i < this.projectiles.getChildren().length; i++) {
-      let beam = this.projectiles.getChildren()[i];
+
+    this.movePlayerManager();
+
+    //Continuous Spacebar Fire
+    if (this.spacebar.isDown && time > this.lastFired) {
+      if (this.player.active) {
+
+        this.shootBeam();
+        this.lastFired = time + 150;
+      };
+    }
+    children = this.projectiles.getChildren();
+
+    for (let i = 0; i < children.length; i++) {
+      let beam = children[i];
       beam.update();
     }
   }
