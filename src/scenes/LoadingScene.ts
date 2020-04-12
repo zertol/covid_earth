@@ -19,6 +19,8 @@ import LEVELSJSON from "../scripts/gameconfig.json";
 import EXPLOSION from "../../sprites/explosion.png";
 //@ts-ignore
 import BEAM from "../../sprites/bullet.png";
+//@ts-ignore
+import POWERUPS from "../../sprites/powerupssprite.png";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -139,6 +141,10 @@ export class LoadingScene extends Phaser.Scene {
       frameWidth: 128,
       frameHeight:128
     });
+    this.load.spritesheet(CST.SPRITES.POWERUPS,POWERUPS,{
+      frameWidth: 73,
+      frameHeight:73
+    });
   }
 
   create() {
@@ -204,6 +210,16 @@ export class LoadingScene extends Phaser.Scene {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.BEAM),
       frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.LIFEPOWERUP_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
+        start: 0,
+        end: 0
+      }),
+      frameRate: 15,
       repeat: -1
     });
   }
