@@ -19,16 +19,22 @@
                 "red": 2
             },
             "powerUpDistribution": {
-                "life" : 2
+                "life" : 2,
+                "beam1": 2,
+                "beam2": 2
             },
             "powerUpDelay": {
-                "life" : [10,30]
+                "life" : [20,30],
+                "beam1": [10,20],
+                "beam2": [15,30]
             },
             "speedDistribution": {
                 "blue": 1.5,
                 "green": 2,
                 "red": 2.5,
-                "life": 2
+                "life": 2,
+                "beam1": 2,
+                "beam2": 2
             }
         },
         {
