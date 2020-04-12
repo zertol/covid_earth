@@ -2,6 +2,8 @@ import { CST } from "../CST";
 import Virus from "../sprites/Virus";
 import Beam from "../sprites/Beam";
 import Explosion from "../sprites/Explosion";
+import PowerUp from "../sprites/PowerUp";
+import { Physics } from "phaser";
 
 export class GameScene extends Phaser.Scene {
   //@ts-ignore
@@ -32,6 +34,10 @@ export class GameScene extends Phaser.Scene {
   private lastFired: number;
   //@ts-ignore
   private gameOver: boolean;
+  //@ts-ignore
+  private powerUps: Phaser.GameObjects.Group;
+  //@ts-ignore
+  private respawnMeter: integer;
 
   constructor() {
     super({
@@ -45,6 +51,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.gameOver = false;
     this.background = this.add
       .tileSprite(
         0,
@@ -67,7 +74,9 @@ export class GameScene extends Phaser.Scene {
 
     //@ts-ignore
     this.globe.play(CST.ANIMATIONS.EARTH_ANIM);
+    this.physics.world.setBoundsCollision();
     this.projectiles = this.add.group();
+    this.powerUps = this.add.group();
 
     this.player = this.physics.add
       .sprite(
@@ -88,7 +97,6 @@ export class GameScene extends Phaser.Scene {
     this.spacebar = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
-
     this.enemies = this.physics.add.group();
 
     //Load level 1 of the game ---- mode EASY ----
@@ -104,7 +112,13 @@ export class GameScene extends Phaser.Scene {
       undefined,
       this
     );
-
+    this.physics.add.collider(
+      this.powerUps,
+      this.globe,function(powerUp,globe){
+        //@ts-ignore
+        powerUp.disableBody(true, true);
+      }
+    );
     this.physics.add.collider(
       this.player,
       this.globe,
@@ -117,6 +131,20 @@ export class GameScene extends Phaser.Scene {
       this.enemies,
       //@ts-ignore
       this.hurtPlayer,
+      null,
+      this
+    );
+    this.physics.add.collider(this.projectiles, this.powerUps, function(
+      projectile,
+      powerUp
+    ) {
+      projectile.destroy();
+    });
+    this.physics.add.overlap(
+      this.player,
+      this.powerUps,
+      //@ts-ignore
+      this.pickPowerUp,
       null,
       this
     );
@@ -160,10 +188,16 @@ export class GameScene extends Phaser.Scene {
         fill: "#ffffff"
       }
     });
-
   }
 
   /******************************************* End Creation Part *************************************************/
+
+
+
+  pickPowerUp(player : Phaser.Physics.Arcade.Sprite, powerUp: Phaser.Physics.Arcade.Sprite) {
+    if (player.alpha < 1) return;
+      powerUp.disableBody(true, true);
+  }
 
   returnToEarth = (player: any, globe: any) => { };
 
@@ -222,7 +256,7 @@ export class GameScene extends Phaser.Scene {
   };
 
   hitEarth = (globe: any, enemy: any): void => {
-    globe.setAlpha(globe.alpha - 0.1);
+    globe.setAlpha(globe.alpha - 0.001);
     if (globe.alpha <= 0) {
       
 
@@ -242,7 +276,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.pause();
       this.gameOver = true;
       this.time.addEvent({
-        delay: 2000,
+        delay: 3000,
         callback: () => {this.scene.start(CST.SCENES.MAIN)},
         callbackScope: this
       });
@@ -272,6 +306,8 @@ export class GameScene extends Phaser.Scene {
       //@ts-ignore
       let virusDistribution = level.virusDistribution;
       let speedDistribution = level.speedDistribution;
+      let powerUpDistribution = level.powerUpDistribution;
+      let powerUpDelay = level.powerUpDelay;
 
       for (let virusKey in level.virusDistribution) {
         let key = virusKey.toUpperCase();
@@ -283,6 +319,17 @@ export class GameScene extends Phaser.Scene {
           CST.SPRITES[key + "COVID19"],
           virusDistribution[virusKey],
           speedDistribution[virusKey]
+        );
+      }
+      for (let powerUpKey in level.powerUpDistribution) {
+        let key = powerUpKey.toUpperCase();
+
+        this.addPowerUpCollection(
+          //@ts-ignore
+          CST.ANIMATIONS[key + "POWERUP_ANIM"],
+          powerUpDistribution[powerUpKey],
+          powerUpDelay[powerUpKey],
+          speedDistribution[powerUpKey]
         );
       }
     }
@@ -311,8 +358,32 @@ export class GameScene extends Phaser.Scene {
     }
   };
 
-  shootBeam = (): void => {
+  addPowerUpCollection = (
+    animationKey: string,
+    numberOfPowerUpToAdd: integer,
+    delayToDisplay : Float32Array,
+    speed: number
+  ) => {
+    for (let k = 0; k < numberOfPowerUpToAdd; k++) {
+      let localScope = this;
+      setTimeout(function(){
+        let powerUpToAdd = new PowerUp(localScope,        
+          Math.floor(Math.random() * localScope.game.renderer.width) + 1,
+          0,
+        CST.SPRITES.POWERUPS,
+        animationKey,
+        1,
+        speed)
+        .setImmovable(true);
+        powerUpToAdd.body.setSize(73, 73, true);
+        localScope.powerUps.add(powerUpToAdd);
+      },
+      //@ts-ignore
+      parseFloat(delayToDisplay[k])*1000);
+    }
+  };
 
+  shootBeam = (): void => {
     let beam1 = new Beam(
       this,
       this.player.x + 20,
@@ -396,7 +467,6 @@ export class GameScene extends Phaser.Scene {
 
   //Get Time for rapid fire
   update(time: number) {
-
     if (this.gameOver) {
       return;
     }
@@ -410,6 +480,14 @@ export class GameScene extends Phaser.Scene {
       const enemy = children[index];
       //@ts-ignore
       enemy.moveVirus(enemy.speed);
+    }
+
+    let powerUps = this.powerUps.getChildren();
+
+    for (let index = 0; index < powerUps.length; index++) {
+      const powerUp = powerUps[index];
+      //@ts-ignore
+      powerUp.movePowerUp();
     }
 
     this.movePlayerManager();
