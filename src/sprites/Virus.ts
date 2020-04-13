@@ -4,13 +4,17 @@ export default class Virus extends Phaser.GameObjects.Sprite {
 
     private animation: string;
     private speed: number;
+    private id: integer;
+    private lifespan: integer;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, name: string, animation: string, depth: number, speed: number) {
+    constructor(scene: Phaser.Scene, x: number, y: number, name: string, animation: string, depth: number, speed: number, id: integer,lifespan: integer) {
         super(scene, x, y, name);
         this.animation = animation;
         this.depth = depth;
         this.name = name;
         this.speed = speed;
+        this.id = id;
+        this.lifespan = lifespan;
         scene.add.existing(this);
         this.setInteractive();
         this.play(this.animation);
@@ -20,6 +24,16 @@ export default class Virus extends Phaser.GameObjects.Sprite {
     //If we ever needed to differentiate between enemy textures
     getName = (): string => {
         return this.name;
+    }
+
+    //Get Virus Id
+    getId = (): integer => {
+        return this.id;
+    }
+
+    //Get Lifespan
+    getLifeSpan = () => {
+        return this.lifespan;
     }
 
     //Set speed for viruses. Can be used to increase speed for each level
@@ -42,7 +56,8 @@ export default class Virus extends Phaser.GameObjects.Sprite {
 
     resetVirusPos = () => {
         this.y = 0;
-        let randomX = (Math.floor(Math.random() * this.scene.game.renderer.width) + 10);
+        //@ts-ignore
+        let randomX = Math.floor(Math.random() * (this.scene.game.renderer.width - this.body.width - 21)) + this.body.width;
         this.x = randomX;
     };
 

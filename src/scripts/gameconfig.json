@@ -1,81 +1,149 @@
 {
-    "scoreLevelModulo": 5000,
-    "player":{
-        "speed": 750
-    },
-     "enemies":{
-        "positions":[
-            {"enemy": "blue", "position": {"x": 0, "y": 0}},
-            {"enemy": "green", "position": {"x": 0, "y": 15}},
-            {"enemy": "red", "position": {"x": 0, "y": 30}}
-        ]
-    },
-    "levels": [
-        {
-            "levelNumber": 1,
-            "virusDistribution": {
-                "blue": 1,
-                "green": 1,
-                "red": 2
-            },
-            "powerUpDistribution": {
-                "life" : 2,
-                "beam1": 2,
-                "beam2": 2
-            },
-            "powerUpDelay": {
-                "life" : [20,30],
-                "beam1": [10,20],
-                "beam2": [15,30]
-            },
-            "speedDistribution": {
-                "blue": 1.5,
-                "green": 2,
-                "red": 2.5,
-                "life": 2,
-                "beam1": 2,
-                "beam2": 2
-            }
-        },
-        {
-            "levelNumber": 2,
-            "virusDistribution": {
-                "blue": 2,
-                "green": 2,
-                "red": 3
-            },
-            "powerUpDistribution": {
-                "life" : 2
-            },
-            "powerUpDelay": {
-                "life" : [10,30]
-            },
-            "speedDistribution": {
-                "blue": 1.5,
-                "green": 2,
-                "red": 2.5,
-                "life": 2
-            }
-        },
-        {
-            "levelNumber": 3,
-            "virusDistribution": {
-                "blue": 3,
-                "green": 3,
-                "red": 4
-            },
-            "powerUpDistribution": {
-                "life" : 2
-            },
-            "powerUpDelay": {
-                "life" : [10,30]
-            },
-            "speedDistribution": {
-                "blue": 1.8,
-                "green": 2.4,
-                "red": 3,
-                "life": 2
-            }
-        }
+  "scoreLevelModulo": 5000,
+  "player": {
+    "speed": 750
+  },
+  "enemies": {
+    "positions": [
+      { "enemy": "blue", "position": { "x": 0, "y": 0 } },
+      { "enemy": "green", "position": { "x": 0, "y": 15 } },
+      { "enemy": "red", "position": { "x": 0, "y": 30 } }
     ]
+  },
+  "beamLevelOffsets": {
+    "level1": {
+      "sets": [0],
+      "rotations": [0],
+      "angles": [90],
+      "firingTime": 300
+    },
+    "level2": {
+      "sets": [-25, 25],
+      "rotations": [0, 0],
+      "angles": [90, 90],
+      "firingTime": 250
+    },
+    "level3": {
+      "sets": [-25, 25, 45],
+      "rotations": [0, 0, 0.5],
+      "angles": [90, 90, 115],
+      "firingTime": 200
+    },
+    "level4": {
+      "sets": [-45, -25, 25, 45],
+      "rotations": [-0.5, 0, 0, 0.5],
+      "angles": [65, 90, 90, 115],
+      "firingTime": 175
+    }
+  },
+  "levels": [
+    {
+      "levelNumber": 1,
+      "virusDistribution": {
+        "blue": 1,
+        "green": 1,
+        "red": 2
+      },
+      "powerUpDistribution": {
+        "beam1": 0
+      },
+      "powerUpDelay": {
+        "beam1": [10]
+      },
+      "speedDistribution": {
+        "blue": 1.2,
+        "green": 1.4,
+        "red": 1.7
+      },
+      "lifeSpanDistribution": {
+        "blue": 100,
+        "green": 200,
+        "red": 350
+      }
+    },
+    {
+      "levelNumber": 2,
+      "virusDistribution": {
+        "blue": 1.4,
+        "green": 1.8,
+        "red": 2.2
+      },
+      "powerUpDistribution": {
+        "life": 1,
+        "beam1": 1
+      },
+      "powerUpDelay": {
+        "life": [10],
+        "beam1": [5]
+      },
+      "speedDistribution": {
+        "blue": 1.5,
+        "green": 2,
+        "red": 2.5,
+        "life": 1.7,
+        "beam1": 1.5
+      },
+      "lifeSpanDistribution": {
+        "blue": 250,
+        "green": 350,
+        "red": 450
+      }
+    },
+    {
+      "levelNumber": 3,
+      "virusDistribution": {
+        "blue": 3,
+        "green": 3,
+        "red": 4
+      },
+      "powerUpDistribution": {
+        "life": 2,
+        "beam1": 1
+      },
+      "powerUpDelay": {
+        "life": [10, 40],
+        "beam1": [10]
+      },
+      "speedDistribution": {
+        "blue": 1.8,
+        "green": 2.2,
+        "red": 2.8,
+        "life": 2,
+        "beam1": 1.6
+      },
+      "lifeSpanDistribution": {
+        "blue": 300,
+        "green": 425,
+        "red": 725
+      }
+    },
+    {
+      "levelNumber": 4,
+      "virusDistribution": {
+        "blue": 3,
+        "green": 3,
+        "red": 4
+      },
+      "powerUpDistribution": {
+        "life": 1,
+        "beam1": 1
+      },
+      "powerUpDelay": {
+        "life": [10],
+        "beam1": [15]
+      },
+      "speedDistribution": {
+        "blue": 2.3,
+        "green": 3,
+        "red": 3.4,
+        "life": 2,
+        "beam1": 1.7
+      },
+      "lifeSpanDistribution": {
+        "blue": 600,
+        "green": 725,
+        "red": 1000
+      }
+    }
+  ]
 }
