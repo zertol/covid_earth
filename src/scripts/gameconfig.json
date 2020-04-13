@@ -10,6 +10,10 @@
       { "enemy": "red", "position": { "x": 0, "y": 30 } }
     ]
   },
+  "shieldDamageHit": {
+    "level1": 0.4,
+    "level2": 0.3
+  },
   "beamLevelOffsets": {
     "level1": {
       "sets": [0],
@@ -45,15 +49,18 @@
         "red": 2
       },
       "powerUpDistribution": {
-        "beam1": 0
+        "beam": 0,
+        "shield": 1
       },
       "powerUpDelay": {
-        "beam1": [10]
+        "beam": [10],
+        "shield" : [5]
       },
       "speedDistribution": {
         "blue": 1.2,
         "green": 1.4,
-        "red": 1.7
+        "red": 1.7,
+        "shield" : 1.8
       },
       "lifeSpanDistribution": {
         "blue": 100,
@@ -70,18 +77,18 @@
       },
       "powerUpDistribution": {
         "life": 1,
-        "beam1": 1
+        "beam": 1
       },
       "powerUpDelay": {
         "life": [10],
-        "beam1": [5]
+        "beam": [5]
       },
       "speedDistribution": {
         "blue": 1.5,
         "green": 2,
         "red": 2.5,
         "life": 1.7,
-        "beam1": 1.5
+        "beam": 1.5
       },
       "lifeSpanDistribution": {
         "blue": 250,
@@ -98,18 +105,18 @@
       },
       "powerUpDistribution": {
         "life": 2,
-        "beam1": 1
+        "beam": 1
       },
       "powerUpDelay": {
         "life": [10, 40],
-        "beam1": [10]
+        "beam": [10]
       },
       "speedDistribution": {
         "blue": 1.8,
         "green": 2.2,
         "red": 2.8,
         "life": 2,
-        "beam1": 1.6
+        "beam": 1.6
       },
       "lifeSpanDistribution": {
         "blue": 300,

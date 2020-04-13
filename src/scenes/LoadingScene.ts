@@ -23,6 +23,8 @@ import BEAM from "../../sprites/bulletsprite.png";
 import POWERUPS from "../../sprites/powerupssprite.png";
 //@ts-ignore
 import HEARTMETER from "../../images/heart pixel art 64x64.png";
+//@ts-ignore
+import SHIELDS from "../../sprites/shieldsprite.png";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -148,6 +150,10 @@ export class LoadingScene extends Phaser.Scene {
       frameWidth: 73,
       frameHeight:73
     });
+    this.load.spritesheet(CST.SPRITES.SHIELDS,SHIELDS,{
+      frameWidth: 123,
+      frameHeight:152
+    });
   }
 
   create() {
@@ -239,7 +245,7 @@ export class LoadingScene extends Phaser.Scene {
       repeat: -1
     });
     this.anims.create({
-      key: CST.ANIMATIONS.BEAM1POWERUP_ANIM,
+      key: CST.ANIMATIONS.BEAMPOWERUP_ANIM,
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
         start: 1,
@@ -249,9 +255,19 @@ export class LoadingScene extends Phaser.Scene {
       repeat: -1
     });
     this.anims.create({
-      key: CST.ANIMATIONS.BEAM2POWERUP_ANIM,
+      key: CST.ANIMATIONS.SHIELDPOWERUP_ANIM,
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
+        start: 2,
+        end: 2
+      }),
+      frameRate: 15,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.SHIELD_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.SHIELDS, {
         start: 2,
         end: 2
       }),
