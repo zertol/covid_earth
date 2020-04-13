@@ -18,7 +18,11 @@ import LEVELSJSON from "../scripts/gameconfig.json";
 //@ts-ignore
 import EXPLOSION from "../../sprites/explosion.png";
 //@ts-ignore
-import BEAM from "../../sprites/bullet.png";
+import BEAM from "../../sprites/bulletsprite.png";
+//@ts-ignore
+import POWERUPS from "../../sprites/powerupssprite.png";
+//@ts-ignore
+import HEARTMETER from "../../images/heart pixel art 64x64.png";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -111,6 +115,7 @@ export class LoadingScene extends Phaser.Scene {
     }
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
+    this.load.image(CST.IMAGES.HEARTMETER, HEARTMETER);
     this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
       frameWidth: 42,
       frameHeight: 72
@@ -138,6 +143,10 @@ export class LoadingScene extends Phaser.Scene {
     this.load.spritesheet(CST.SPRITES.COVID19_EXPLOSION,EXPLOSION,{
       frameWidth: 128,
       frameHeight:128
+    });
+    this.load.spritesheet(CST.SPRITES.POWERUPS,POWERUPS,{
+      frameWidth: 73,
+      frameHeight:73
     });
   }
 
@@ -202,8 +211,51 @@ export class LoadingScene extends Phaser.Scene {
     this.anims.create({
       key: CST.ANIMATIONS.BEAM_ANIM,
       //@ts-ignore
-      frames: this.anims.generateFrameNumbers(CST.SPRITES.BEAM),
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BEAM, {
+        start: 0,
+        end: 1
+      }),
       frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.BEAMRED_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BEAM, {
+        start: 2,
+        end: 3
+      }),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.LIFEPOWERUP_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
+        start: 0,
+        end: 0
+      }),
+      frameRate: 15,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.BEAM1POWERUP_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
+        start: 1,
+        end: 1
+      }),
+      frameRate: 15,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.BEAM2POWERUP_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
+        start: 2,
+        end: 2
+      }),
+      frameRate: 15,
       repeat: -1
     });
   }
