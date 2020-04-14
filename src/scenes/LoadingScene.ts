@@ -99,7 +99,7 @@ export class LoadingScene extends Phaser.Scene {
       percentText.destroy();
       assetText.destroy();
 
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 10; i++) {
         //@ts-ignore
         files[i].destroy();
       }
@@ -110,7 +110,7 @@ export class LoadingScene extends Phaser.Scene {
     });
 
     this.load.image(CST.IMAGES.LOGO, LOGO);
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       this.load.image(CST.IMAGES.LOGO + i, LOGO);
     }
 

@@ -4,6 +4,8 @@ import Beam from '../sprites/Beam';
 import Explosion from '../sprites/Explosion';
 import PowerUp from '../sprites/PowerUp';
 import { Physics, GameObjects } from 'phaser';
+//@ts-ignore
+import Drag from 'phaser3-rex-plugins/plugins/drag.js'
 
 export class GameScene extends Phaser.Scene {
   //@ts-ignore
@@ -199,7 +201,7 @@ export class GameScene extends Phaser.Scene {
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
     if (CST.WINDOW.ISMOBILE) {
-      this.globe.y += 60;
+      this.globe.y += 15;
     }
 
     //Score indicator
@@ -249,6 +251,16 @@ export class GameScene extends Phaser.Scene {
         fill: '#ffffff',
       },
     }).setDepth(2);
+
+    let drag = new Drag(this.player, {
+      enable: true,
+      axis: 0,      //0|'both'|'h&v'|1|'horizontal'|'h'|2|'vertical'|'v'
+      rotation: Phaser.Math.DegToRad(45)  // axis rotation in rad
+    });
+    this.player.on('drag', (pointer, dragX, dragY) => {
+      console.log(dragX);
+      console.log(dragY);
+    });
   }
 
   /******************************************* End Creation Part *************************************************/

@@ -32,4 +32,5 @@ let game = new Phaser.Game({
             start: true
         }]
     },
+    type: Phaser.CANVAS
 });
