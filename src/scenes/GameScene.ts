@@ -134,7 +134,7 @@ export class GameScene extends Phaser.Scene {
 
     //Enemy collision with Player
     this.physics.add.overlap(
-      this.player,
+      this.playerContainer,
       this.enemies,
       //@ts-ignore
       this.hurtPlayer,
@@ -248,16 +248,17 @@ export class GameScene extends Phaser.Scene {
           // here to only augment till level 2 shield no need to add more
           this.shieldLevel += 1;
         this.shield = new Shield(this,this.player.x,this.player.y,CST.SPRITES.SHIELDS,CST.ANIMATIONS.SHIELD_ANIM,this.playerContainer).setDepth(1);
+        this.shield.setCollideWorldBounds(true);
         break;
     }
   };
 
   returnToEarth = (player: any, globe: any) => {};
 
-  hurtPlayer = (player: Phaser.Physics.Arcade.Sprite, enemy: Virus): void => {
+  hurtPlayer = (hitObject: Phaser.Physics.Arcade.Sprite, enemy: Virus): void => {
     enemy.resetVirusPos();
 
-    if (player.alpha < 1) {
+    if (this.player.alpha < 1) {
       return;
     }
     if (this.respawnMeter <= 0) {
@@ -267,14 +268,14 @@ export class GameScene extends Phaser.Scene {
     if (this.playerContainer.getChildren().length > 1){
       //@ts-ignore
       let shieldHit = this.levelsData.shieldDamageHit["level" + String(this.shieldLevel)];
-      return (this.shield as Shield).DecreaseShieldAlpha(shieldHit);
+      return (hitObject as Shield).DecreaseShieldAlpha(shieldHit);
     }
     this.respawnMeter -= 1;
     this.livesLabel.setText(String(this.respawnMeter));
 
-    let explosion = new Explosion(this, player.x, player.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    let explosion = new Explosion(this, this.player.x, this.player.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
 
-    player.disableBody(true, true);
+    this.player.disableBody(true, true);
 
     this.time.addEvent({
       delay: 1000,
