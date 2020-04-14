@@ -118,6 +118,7 @@ export class GameScene extends Phaser.Scene {
 
     this.player.play(CST.ANIMATIONS.PLAYER_ANIM);
     this.player.setCollideWorldBounds(true);
+    this.player.setInteractive();
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
     this.spacebar = this.input.keyboard.addKey(
@@ -252,15 +253,17 @@ export class GameScene extends Phaser.Scene {
       },
     }).setDepth(2);
 
-    let drag = new Drag(this.player, {
-      enable: true,
-      axis: 0,      //0|'both'|'h&v'|1|'horizontal'|'h'|2|'vertical'|'v'
-      rotation: Phaser.Math.DegToRad(45)  // axis rotation in rad
+    // let drag = new Drag(this.player, {
+    //   enable: true,
+    //   axis: 0,      //0|'both'|'h&v'|1|'horizontal'|'h'|2|'vertical'|'v'
+    //   rotation: Phaser.Math.DegToRad(45)  // axis rotation in rad
+    // });
+    this.input.setDraggable(this.player);
+    this.input.on('drop', (pointer: any, gameObject: any, dropZone: any) => {
+      // this.player.x = dropZone.x;
+      // this.player.y = dropZone.y;
     });
-    this.player.on('drag', (pointer, dragX, dragY) => {
-      console.log(dragX);
-      console.log(dragY);
-    });
+
   }
 
   /******************************************* End Creation Part *************************************************/
@@ -651,9 +654,47 @@ export class GameScene extends Phaser.Scene {
     //Continuous Spacebar Fire
     if (this.spacebar.isDown && time > this.lastFired) {
       if (this.player.active) {
-        this.lastFired = time + this.shootBeam();
+        if (time > this.lastFired) {
+          this.lastFired = time + this.shootBeam();
+        }
       }
     }
+    
+    if (this.player.active) {
+      // this.player.on('drag', (pointer: any, dragX: any, dragY: any) => {
+      //   if (time > this.lastFired) {
+      //     this.lastFired = time + this.shootBeam();
+      //   }
+      // });
+
+      // this.player.on("pointerdown", (pointer: any, localX: any, localY: any, event: any) => {
+      //   if (time > this.lastFired) {
+      //     this.lastFired = time + this.shootBeam();
+      //   }
+      // });
+      // this.input.dragDistanceThreshold = 16;
+      // this.input.dragTimeThreshold = 500;
+      this.input.on('drag', (pointer: any, gameObject: any, dragX: number, dragY: number) => {
+        if (time > this.lastFired) {
+          this.lastFired = time + this.shootBeam();
+        }
+        this.player.setVelocity(pointer.velocity.x - 20, pointer.velocity.y - 20);
+        this.player.x = pointer.x;
+        this.player.y = pointer.y;
+        // console.log(dragY);
+        // this.player.x =  this.player.x + (dragX);
+        // this.player.y = this.player.y + (dragY);
+
+      });
+
+      let pointer = this.input.activePointer;
+      if (pointer && pointer.isDown) {
+        if (time > this.lastFired) {
+          this.lastFired = time + this.shootBeam();
+        }
+      }
+    }
+
     children = this.projectiles.getChildren();
 
     for (let i = 0; i < children.length; i++) {
