@@ -99,9 +99,9 @@ export class GameScene extends Phaser.Scene {
       .sprite(this.game.renderer.width / 2 - 8, this.game.renderer.height - 130, CST.SPRITES.PLAYER)
       .setScale(0.2, 0.2)
       .setDepth(1);
-      
+
     this.playerContainer = this.physics.add.group();
-    this.playerContainer.setOrigin(this.player.x,this.player.y);
+    this.playerContainer.setOrigin(this.player.x, this.player.y);
     this.playerContainer.add(this.player);
     //@ts-ignore
     this.player.initialX = this.player.x;
@@ -111,12 +111,21 @@ export class GameScene extends Phaser.Scene {
     this.player.play(CST.ANIMATIONS.PLAYER_ANIM);
     this.player.setCollideWorldBounds(true);
     this.player.setInteractive();
-    
+
+    //Add dragging to allow touch events and mobile finger movements
     this.input.setDraggable(this.player);
     this.input.dragTimeThreshold = 50;
+    this.input.on('dragend', () => {
+      //@ts-ignore
+      this.input.removeAllListeners('drag');
+    });
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.input.on('pointerout',() => {
+      //@ts-ignore
+      this.input.removeAllListeners('pointerdown');
+    });
 
     this.enemies = this.physics.add.group();
 
@@ -194,7 +203,6 @@ export class GameScene extends Phaser.Scene {
     });
 
     //Level indicator
-
     this.levelLabel = this.make.text({
       x: 10,
       y: this.scoreLabel.height + 5,
@@ -234,6 +242,7 @@ export class GameScene extends Phaser.Scene {
     if (player.alpha < 1) return;
     this.addPowerUpEffect(powerUp as PowerUp);
     powerUp.disableBody(true, true);
+    powerUp.destroy();
   };
 
   addPowerUpEffect = (powerUp: PowerUp): void => {
@@ -251,13 +260,13 @@ export class GameScene extends Phaser.Scene {
         if (this.shieldLevel <= 1)
           // here to only augment till level 2 shield no need to add more
           this.shieldLevel += 1;
-        this.shield = new Shield(this,this.player.x,this.player.y,CST.SPRITES.SHIELDS,CST.ANIMATIONS.SHIELD_ANIM,this.playerContainer).setDepth(1);
+        this.shield = new Shield(this, this.player.x, this.player.y, CST.SPRITES.SHIELDS, CST.ANIMATIONS.SHIELD_ANIM, this.playerContainer).setDepth(1);
         this.shield.setCollideWorldBounds(true);
         break;
     }
   };
 
-  returnToEarth = (player: any, globe: any) => {};
+  returnToEarth = (player: any, globe: any) => { };
 
   hurtPlayer = (hitObject: Phaser.Physics.Arcade.Sprite, enemy: Virus): void => {
     enemy.resetVirusPos();
@@ -269,10 +278,10 @@ export class GameScene extends Phaser.Scene {
       return this.gameOverScene();
     }
 
-    if (this.playerContainer.getChildren().length > 1){
+    if (this.playerContainer.getChildren().length > 1) {
       //@ts-ignore
       let shieldHit = this.levelsData.shieldDamageHit["level" + String(this.shieldLevel)];
-      return (hitObject as Shield).DecreaseShieldAlpha(shieldHit);
+      return (this.shield as Shield).decreaseShieldAlpha(shieldHit);
     }
     this.respawnMeter -= 1;
     this.livesLabel.setText(String(this.respawnMeter));
@@ -486,7 +495,7 @@ export class GameScene extends Phaser.Scene {
         virus.resetVirusPos();
 
         //Update score
-        this.score += 10;
+        this.score += 15;
         this.scoreLabel.text = "Score: " + this.zeroPad(this.score, 6);
 
         //@ts-ignore
@@ -509,7 +518,8 @@ export class GameScene extends Phaser.Scene {
     }
     //@ts-ignore
 
-    projectile.destroy();
+    projectile.destroy(true);
+    this.projectiles.remove(projectile, true);
   };
 
   movePlayerManager = () => {
@@ -541,6 +551,8 @@ export class GameScene extends Phaser.Scene {
 
   //Get Time for rapid fire
   update(time: number) {
+    //@ts-ignore
+    console.log(this.game.renderer.drawCount);
     if (this.gameOver) {
       return;
     }
@@ -574,11 +586,14 @@ export class GameScene extends Phaser.Scene {
         }
       }
     }
-    
+
+    //Dragging with Pointer to allow shooting while moving
     if (this.player.active) {
       this.input.on('drag', (pointer: any, gameObject: any, dragX: number, dragY: number) => {
-        this.player.x = dragX;
-        this.player.y = dragY;
+        this.playerContainer.getChildren().forEach((child: GameObjects.GameObject) => {
+          (child as GameObjects.Sprite).x = dragX;
+          (child as GameObjects.Sprite).y = dragY
+        })
 
       });
 
@@ -591,10 +606,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     children = this.projectiles.getChildren();
+    children.map((child: GameObjects.GameObject) => {
+      let beam = (child as Beam);
 
-    for (let i = 0; i < children.length; i++) {
-      let beam = children[i];
       beam.update();
-    }
+    });
   }
 }

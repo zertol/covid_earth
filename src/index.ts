@@ -22,7 +22,7 @@ let game = new Phaser.Game({
     physics: {
         default: "arcade",
         arcade: {
-            debug: true
+            debug: false
         },
     },
     plugins: {
@@ -32,5 +32,7 @@ let game = new Phaser.Game({
             start: true
         }]
     },
+    //@ts-ignore
+    clearBeforeRender : true,
     type: Phaser.CANVAS
 });

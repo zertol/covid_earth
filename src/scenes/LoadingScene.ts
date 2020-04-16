@@ -222,17 +222,7 @@ export class LoadingScene extends Phaser.Scene {
         end: 1
       }),
       frameRate: 20,
-      repeat: -1
-    });
-    this.anims.create({
-      key: CST.ANIMATIONS.BEAMRED_ANIM,
-      //@ts-ignore
-      frames: this.anims.generateFrameNumbers(CST.SPRITES.BEAM, {
-        start: 2,
-        end: 3
-      }),
-      frameRate: 20,
-      repeat: -1
+      repeat: 0
     });
     this.anims.create({
       key: CST.ANIMATIONS.LIFEPOWERUP_ANIM,

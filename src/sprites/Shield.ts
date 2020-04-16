@@ -14,7 +14,7 @@ export default class Shield extends Phaser.Physics.Arcade.Sprite {
 
     getShieldPercentage = (): number  => this.alpha;
 
-    DecreaseShieldAlpha = (newValue : number): void =>{
+    decreaseShieldAlpha = (newValue : number): void =>{
         this.alpha -= newValue;
         if (this.alpha <= 0) this.destroy();
     }

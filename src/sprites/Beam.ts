@@ -6,6 +6,7 @@ export default class Beam extends Phaser.GameObjects.Sprite {
         super(scene, x, y, name);
         this.animation = animation;
         this.depth = depth;
+        this.name=name;
         scene.add.existing(this);
         this.play(this.animation);
         scene.physics.world.enableBody(this);
@@ -13,11 +14,13 @@ export default class Beam extends Phaser.GameObjects.Sprite {
         this.body.velocity.y = - 250;
          //@ts-ignore
         scene.physics.velocityFromRotation(angle, -250, this.body.velocity as Phaser.Math.Vector2);
+        
     }
 
     update(){
-        if(this.y < 8) {
-            this.destroy();
+        if(this.y <8) {
+            this.anims.parent.destroy();
+            this.destroy(true);
         }
     }
 }

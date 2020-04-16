@@ -1,5 +1,5 @@
 {
-  "scoreLevelModulo": 5000,
+  "scoreLevelModulo": 3000,
   "player": {
     "speed": 750
   },
@@ -57,9 +57,9 @@
         "shield" : [5]
       },
       "speedDistribution": {
-        "blue": 1.2,
-        "green": 1.4,
-        "red": 1.7,
+        "blue": 1.5,
+        "green": 1.8,
+        "red": 2,
         "shield" : 1.8
       },
       "lifeSpanDistribution": {
@@ -71,9 +71,9 @@
     {
       "levelNumber": 2,
       "virusDistribution": {
-        "blue": 1.4,
-        "green": 1.8,
-        "red": 2.2
+        "blue": 2,
+        "green": 2,
+        "red": 3
       },
       "powerUpDistribution": {
         "life": 1,
@@ -84,9 +84,9 @@
         "beam": [5]
       },
       "speedDistribution": {
-        "blue": 1.5,
-        "green": 2,
-        "red": 2.5,
+        "blue": 2.2,
+        "green": 2.4,
+        "red": 2.7,
         "life": 1.7,
         "beam": 1.5
       },
@@ -99,9 +99,9 @@
     {
       "levelNumber": 3,
       "virusDistribution": {
-        "blue": 3,
+        "blue": 2,
         "green": 3,
-        "red": 4
+        "red": 3
       },
       "powerUpDistribution": {
         "life": 2,
@@ -112,9 +112,9 @@
         "beam": [10]
       },
       "speedDistribution": {
-        "blue": 1.8,
-        "green": 2.2,
-        "red": 2.8,
+        "blue": 2.4,
+        "green": 2.8,
+        "red": 3,
         "life": 2,
         "beam": 1.6
       },
@@ -140,9 +140,9 @@
         "beam1": [15]
       },
       "speedDistribution": {
-        "blue": 2.3,
-        "green": 3,
-        "red": 3.4,
+        "blue": 2.6,
+        "green": 3.2,
+        "red": 3.8,
         "life": 2,
         "beam1": 1.7
       },
