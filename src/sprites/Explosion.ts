@@ -8,6 +8,10 @@ export default class Explosion extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         this.play(this.animation);
         scene.physics.world.enableBody(this);
+        let localScope = this;
+        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            localScope.destroy();
+        })
     }
 
     update(){

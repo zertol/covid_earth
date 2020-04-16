@@ -228,10 +228,10 @@ export class GameScene extends Phaser.Scene {
     //   rotation: Phaser.Math.DegToRad(45)  // axis rotation in rad
     // });
     this.input.setDraggable(this.player);
-    this.input.on('drop', (pointer: any, gameObject: any, dropZone: any) => {
-      // this.player.x = dropZone.x;
-      // this.player.y = dropZone.y;
-    });
+    // this.input.on('drop', (pointer: any, gameObject: any, dropZone: any) => {
+    //   // this.player.x = dropZone.x;
+    //   // this.player.y = dropZone.y;
+    // });
 
   }
 
@@ -241,6 +241,7 @@ export class GameScene extends Phaser.Scene {
     if (player.alpha < 1) return;
     this.addPowerUpEffect(powerUp as PowerUp);
     powerUp.disableBody(true, true);
+    powerUp.destroy();
   };
 
   addPowerUpEffect = (powerUp: PowerUp): void => {
@@ -279,7 +280,7 @@ export class GameScene extends Phaser.Scene {
     if (this.playerContainer.getChildren().length > 1){
       //@ts-ignore
       let shieldHit = this.levelsData.shieldDamageHit["level" + String(this.shieldLevel)];
-      return (hitObject as Shield).DecreaseShieldAlpha(shieldHit);
+      return (this.shield as Shield).DecreaseShieldAlpha(shieldHit);
     }
     this.respawnMeter -= 1;
     this.livesLabel.setText(String(this.respawnMeter));
@@ -489,7 +490,6 @@ export class GameScene extends Phaser.Scene {
         delete this.shakePositions["virus" + String(virus.getId())];
 
         let explosion = new Explosion(this, virus.x, virus.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
-
         virus.resetVirusPos();
 
         //Update score
@@ -516,7 +516,8 @@ export class GameScene extends Phaser.Scene {
     }
     //@ts-ignore
 
-    projectile.destroy();
+    projectile.destroy(true);
+    this.projectiles.remove(projectile,true);
   };
 
   movePlayerManager = () => {
@@ -548,6 +549,8 @@ export class GameScene extends Phaser.Scene {
 
   //Get Time for rapid fire
   update(time: number) {
+     //@ts-ignore
+    console.log(this.game.renderer.drawCount);
     if (this.gameOver) {
       return;
     }
@@ -606,7 +609,11 @@ export class GameScene extends Phaser.Scene {
         // console.log(dragY);
         // this.player.x =  this.player.x + (dragX);
         // this.player.y = this.player.y + (dragY);
+      });
 
+      this.input.on('dragend',() => {
+        //@ts-ignore
+        this.input.removeAllListeners('drag');
       });
 
       let pointer = this.input.activePointer;
@@ -618,10 +625,12 @@ export class GameScene extends Phaser.Scene {
     }
 
     children = this.projectiles.getChildren();
-
-    for (let i = 0; i < children.length; i++) {
-      let beam = children[i];
+    children.map((child : GameObjects.GameObject) =>{
+      let beam = (child as Beam);
+      if (beam.getLocalTransformMatrix().ty < 8){
+        this.projectiles.remove(beam,true);
+      }
       beam.update();
-    }
+    });
   }
 }
