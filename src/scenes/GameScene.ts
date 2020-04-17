@@ -560,7 +560,6 @@ export class GameScene extends Phaser.Scene {
   //Get Time for rapid fire
   update(time: number) {
     //@ts-ignore
-    console.log(this.game.renderer.drawCount);
     if (this.gameOver) {
       return;
     }
