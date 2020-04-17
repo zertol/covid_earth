@@ -122,7 +122,7 @@ export class GameScene extends Phaser.Scene {
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this.input.on('pointerout',() => {
+    this.input.on('pointerout', () => {
       //@ts-ignore
       this.input.removeAllListeners('pointerdown');
     });
@@ -419,7 +419,9 @@ export class GameScene extends Phaser.Scene {
       virusToAdd.x = Math.floor(Math.random() * (this.game.renderer.width - virusToAdd.body.width - 21)) + virusToAdd.body.width;
       //@ts-ignore
       virusToAdd.body.setSize(75, 75, true);
-
+      if (CST.WINDOW.ISMOBILE) {
+        virusToAdd.setScale(.7);
+      }
       this.enemies.add(virusToAdd);
     }
   };
@@ -457,15 +459,22 @@ export class GameScene extends Phaser.Scene {
       let beam = new Beam(
         this,
         //@ts-ignore
-        this.player.getWorldTransformMatrix().tx + beamsOffsets.sets[index],
-        this.player.getWorldTransformMatrix().ty - 30,
+        this.player.x + beamsOffsets.sets[index],
+        this.player.y - 30,
         CST.SPRITES.BEAM,
         CST.ANIMATIONS.BEAM_ANIM,
         1,
         (beamsOffsets.angles[index] * Math.PI) / 180
-      ).setScale(0.5);
-      beam.rotation = beam.rotation + beamsOffsets.rotations[index];
-
+      );
+      if (this.beamLevel > 2) {
+        beam.rotation = beam.rotation + beamsOffsets.rotations[index];
+      }
+      if (CST.WINDOW.ISMOBILE) {
+        beam.setScale(.4);
+      }
+      else{
+        beam.setScale(0.5);
+      }
       this.projectiles.add(beam);
     }
     return beamsOffsets.firingTime;
@@ -517,8 +526,7 @@ export class GameScene extends Phaser.Scene {
       });
     }
     //@ts-ignore
-
-    projectile.destroy(true);
+    projectile.destroy();
     this.projectiles.remove(projectile, true);
   };
 
@@ -560,10 +568,11 @@ export class GameScene extends Phaser.Scene {
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
 
-    let children = this.enemies.getChildren();
+    let childrenEnemies = this.enemies.getChildren();
 
-    for (let index = 0; index < children.length; index++) {
-      const enemy = children[index];
+
+    for (let index = 0; index < childrenEnemies.length; index++) {
+      const enemy = childrenEnemies[index];
       //@ts-ignore
       enemy.moveVirus(enemy.speed);
     }
@@ -589,12 +598,13 @@ export class GameScene extends Phaser.Scene {
 
     //Dragging with Pointer to allow shooting while moving
     if (this.player.active) {
+      let playerContainerChildren = this.playerContainer.getChildren();
       this.input.on('drag', (pointer: any, gameObject: any, dragX: number, dragY: number) => {
-        this.playerContainer.getChildren().forEach((child: GameObjects.GameObject) => {
+        for (let index = 0; index < playerContainerChildren.length; index++) {
+          const child = playerContainerChildren[index];
           (child as GameObjects.Sprite).x = dragX;
           (child as GameObjects.Sprite).y = dragY
-        })
-
+        }
       });
 
       let pointer = this.input.activePointer;
@@ -605,10 +615,9 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    children = this.projectiles.getChildren();
-    children.map((child: GameObjects.GameObject) => {
+    let childrenBeams = this.projectiles.getChildren();
+    childrenBeams.map((child: GameObjects.GameObject) => {
       let beam = (child as Beam);
-
       beam.update();
     });
   }
