@@ -18,13 +18,15 @@ import LEVELSJSON from "../scripts/gameconfig.json";
 //@ts-ignore
 import EXPLOSION from "../../sprites/explosion.png";
 //@ts-ignore
-import BEAM from "../../sprites/bulletsprite.png";
+import BEAM from "../../images/needle.png";
 //@ts-ignore
 import POWERUPS from "../../sprites/powerupssprite.png";
 //@ts-ignore
 import HEARTMETER from "../../images/heart pixel art 64x64.png";
 //@ts-ignore
 import SHIELDS from "../../sprites/shieldsprite.png";
+//@ts-ignore
+import BACTERIA_BOMB from "../../sprites/bacteria_bomb.png";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -118,9 +120,13 @@ export class LoadingScene extends Phaser.Scene {
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
     this.load.image(CST.IMAGES.HEARTMETER, HEARTMETER);
+    // this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
+    //   frameWidth: 42,
+    //   frameHeight: 72
+    // });
     this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
-      frameWidth: 42,
-      frameHeight: 72
+      frameWidth: 26,
+      frameHeight: 82
     });
     this.load.spritesheet(CST.SPRITES.GLOBE, GLOBE, {
       frameWidth: 1000,
@@ -142,17 +148,21 @@ export class LoadingScene extends Phaser.Scene {
       frameWidth: 512,
       frameHeight: 512
     });
-    this.load.spritesheet(CST.SPRITES.COVID19_EXPLOSION,EXPLOSION,{
+    this.load.spritesheet(CST.SPRITES.COVID19_EXPLOSION, EXPLOSION, {
       frameWidth: 128,
-      frameHeight:128
+      frameHeight: 128
     });
-    this.load.spritesheet(CST.SPRITES.POWERUPS,POWERUPS,{
+    this.load.spritesheet(CST.SPRITES.POWERUPS, POWERUPS, {
       frameWidth: 73,
-      frameHeight:73
+      frameHeight: 73
     });
-    this.load.spritesheet(CST.SPRITES.SHIELDS,SHIELDS,{
+    this.load.spritesheet(CST.SPRITES.SHIELDS, SHIELDS, {
       frameWidth: 123,
-      frameHeight:152
+      frameHeight: 152
+    });
+    this.load.spritesheet(CST.SPRITES.BACERIA_BOMB, BACTERIA_BOMB, {
+      frameWidth: 64,
+      frameHeight: 54
     });
   }
 
@@ -219,7 +229,7 @@ export class LoadingScene extends Phaser.Scene {
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.BEAM, {
         start: 0,
-        end: 1
+        end: 0
       }),
       frameRate: 20,
       repeat: 0
@@ -262,6 +272,16 @@ export class LoadingScene extends Phaser.Scene {
         end: 2
       }),
       frameRate: 15,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.BACTERIA_BOMB_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BACERIA_BOMB, {
+        start: 0,
+        end: 59
+      }),
+      frameRate: 20,
       repeat: -1
     });
   }

@@ -22,8 +22,8 @@ export class MainScene extends Phaser.Scene {
             padding: 10,
             style: {
                 font: "40px monospace",
-                fill: "#ffffff",
-                backgroundColor: "rgba(255,255,255,0.2)"
+                fill: "#fff",
+                backgroundColor: "rgba(0,0,0,0.8)"
             }
         }).setDepth(1);
 

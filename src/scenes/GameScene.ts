@@ -4,6 +4,7 @@ import Beam from "../sprites/Beam";
 import Explosion from "../sprites/Explosion";
 import PowerUp from "../sprites/PowerUp";
 import Shield from "../sprites/Shield";
+import Bomb from "../sprites/Bomb";
 import { Physics, GameObjects } from "phaser";
 
 export class GameScene extends Phaser.Scene {
@@ -24,6 +25,8 @@ export class GameScene extends Phaser.Scene {
   //@ts-ignore
   private projectiles: Phaser.Arcade.Group;
   //@ts-ignore
+  private bombs: Phaser.Physics.Arcade.Group;
+  //@ts-ignore
   private spacebar: Phaser.Input.Keyboard;
   //@ts-ignore
   private scoreLabel: Phaser.GameObjects.Text;
@@ -39,6 +42,8 @@ export class GameScene extends Phaser.Scene {
   private levels: Array;
   //@ts-ignore
   private lastFired: number;
+  //@ts-ignore
+  private lastBombFired: number;
   //@ts-ignore
   private gameOver: boolean;
   //@ts-ignore
@@ -65,6 +70,7 @@ export class GameScene extends Phaser.Scene {
   preload() {
     this.levelReach = 1;
     this.lastFired = 0;
+    this.lastBombFired = 0;
     this.respawnMeter = 3;
     this.beamLevel = 1;
     this.shieldLevel = 0;
@@ -93,6 +99,7 @@ export class GameScene extends Phaser.Scene {
 
     this.projectiles = this.add.group();
     this.powerUps = this.add.group();
+    this.bombs = this.physics.add.group();
 
     //Player ship
     this.player = this.physics.add
@@ -182,6 +189,24 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
+    //Beam collision with the enemy
+    this.physics.add.overlap(
+      this.projectiles,
+      this.bombs,
+      //@ts-ignore
+      this.hitBomb,
+      null,
+      this
+    );
+
+    //Add collider earth with bombs
+    //@ts-ignore
+    this.physics.add.overlap(this.bombs, this.globe, this.bombHitEarth, null, this);
+
+    //Add collider player with bombs
+    //@ts-ignore
+    this.physics.add.overlap(this.playerContainer, this.bombs, this.bombHitPlayer, null, this);
+
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
     if (CST.WINDOW.ISMOBILE) {
@@ -250,6 +275,7 @@ export class GameScene extends Phaser.Scene {
       case CST.ANIMATIONS.LIFEPOWERUP_ANIM:
         this.respawnMeter += 1;
         this.livesLabel.setText(String(this.respawnMeter));
+        this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter - 1), "Lives left: " + String(this.respawnMeter));
         break;
       case CST.ANIMATIONS.BEAMPOWERUP_ANIM:
         if (this.beamLevel <= 3)
@@ -274,7 +300,42 @@ export class GameScene extends Phaser.Scene {
     if (this.player.alpha < 1) {
       return;
     }
-    if (this.respawnMeter <= 0) {
+
+    //This is adjusted from <=0 to add the logic that when reaching zero it should be gameover because this function is called afte rthe respawnmeter update
+    if (this.respawnMeter <= 1) {
+      return this.gameOverScene();
+    }
+
+    if (this.playerContainer.getChildren().length > 1) {
+      //@ts-ignore
+      let shieldHit = this.levelsData.shieldDamageHit["level" + String(this.shieldLevel)];
+      return (this.shield as Shield).decreaseShieldAlpha(shieldHit);
+    }
+    this.respawnMeter -= 1;
+    this.livesLabel.setText(String(this.respawnMeter));
+
+    let explosion = new Explosion(this, this.player.x, this.player.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+
+    this.player.disableBody(true, true);
+
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.resetPlayer,
+      callbackScope: this,
+      loop: false,
+    });
+  };
+
+  bombHitPlayer = (hitObject: Phaser.Physics.Arcade.Sprite, bomb: Bomb): void => {
+    this.bombs.remove(bomb, true);
+    bomb.destroy();
+
+    if (this.player.alpha < 1) {
+      return;
+    }
+
+    //This is adjusted from <=0 to add the logic that when reaching zero it should be gameover because this function is called afte rthe respawnmeter update
+    if (this.respawnMeter <= 1) {
       return this.gameOverScene();
     }
 
@@ -317,6 +378,9 @@ export class GameScene extends Phaser.Scene {
       true
     );
     this.player.alpha = 0.5;
+
+    this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter + 1), "Lives left: " + String(this.respawnMeter));
+
     let tween = this.tweens.add({
       targets: this.player,
       //@ts-ignore
@@ -329,7 +393,50 @@ export class GameScene extends Phaser.Scene {
       },
       callbackScope: this,
     });
+
+
+
   };
+
+
+  //Animate Life Value
+  animatePlayerLossGain = (textFrom: string, textTo: string) => {
+    let lossGainText = this.make
+      .text({
+        x: this.game.renderer.width / 2,
+        y: this.game.renderer.height / 2,
+        origin: { x: 0.5, y: 0.5 },
+        text: "",
+        padding: 0,
+        style: {
+          font: "25px monospace",
+          fill: "#ffffff",
+        },
+      })
+      .setDepth(10).setScale(0.2);
+
+    let tween = this.tweens.add({
+      targets: lossGainText,
+      scale: 1,
+      //@ts-ignore
+      duration: 700,
+      repeat: 0,
+      ease: 'Expo.easeOut',
+      yoyo: true,
+      hold: 700,
+      onComplete: () => {
+        lossGainText.destroy();
+      },
+      onYoyo: () => {
+        lossGainText.setText(textTo);
+      },
+      onStart: () => {
+
+        lossGainText.setText(textFrom);
+      },
+      callbackScope: this,
+    });
+  }
 
   hitEarth = (globe: any, enemy: any): void => {
     globe.setAlpha(globe.alpha - 0.08);
@@ -339,6 +446,17 @@ export class GameScene extends Phaser.Scene {
 
     //@ts-ignore
     enemy.hitEarth(CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+  };
+
+  bombHitEarth = (globe: any, bomb: any): void => {
+    globe.setAlpha(globe.alpha - 0.08);
+    if (globe.alpha <= 0) {
+      this.gameOverScene();
+    }
+
+    let explosion = new Explosion(this, bomb.x, bomb.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    this.bombs.remove(bomb, true);
+    bomb.destroy();
   };
 
   gameOverScene = (): void => {
@@ -379,6 +497,7 @@ export class GameScene extends Phaser.Scene {
       let level = this.levels[0];
       //@ts-ignore
       let virusDistribution = level.virusDistribution;
+      let bombIntervals = level.bombIntervals;
       let speedDistribution = level.speedDistribution;
       let powerUpDistribution = level.powerUpDistribution;
       let powerUpDelay = level.powerUpDelay;
@@ -394,7 +513,8 @@ export class GameScene extends Phaser.Scene {
           CST.SPRITES[key + "COVID19"],
           virusDistribution[virusKey],
           speedDistribution[virusKey],
-          lifeSpanDistribution[virusKey]
+          lifeSpanDistribution[virusKey],
+          bombIntervals[virusKey]
         );
       }
 
@@ -412,9 +532,9 @@ export class GameScene extends Phaser.Scene {
     }
   };
 
-  addVirusCollection = (animationKey: string, virusType: string, numberOfVirusToAdd: integer, speed: number, lifespan: integer) => {
+  addVirusCollection = (animationKey: string, virusType: string, numberOfVirusToAdd: integer, speed: number, lifespan: integer, bombInterval: number) => {
     for (let k = 0; k < numberOfVirusToAdd; k++) {
-      let virusToAdd = new Virus(this, 0, Math.floor(Math.random() * 20) + 1, virusType, animationKey, 1, speed, this.virusId++, lifespan);
+      let virusToAdd = new Virus(this, 0, Math.floor(Math.random() * 20) + 1, virusType, animationKey, 1, speed, this.virusId++, lifespan, bombInterval * 1000);
       //@ts-ignore
       virusToAdd.x = Math.floor(Math.random() * (this.game.renderer.width - virusToAdd.body.width - 21)) + virusToAdd.body.width;
       //@ts-ignore
@@ -470,19 +590,21 @@ export class GameScene extends Phaser.Scene {
         beam.rotation = beam.rotation + beamsOffsets.rotations[index];
       }
       if (CST.WINDOW.ISMOBILE) {
-        beam.setScale(.4);
+        beam.setScale(.5);
       }
-      else{
-        beam.setScale(0.5);
+      else {
+        beam.setScale(0.6);
       }
       this.projectiles.add(beam);
     }
     return beamsOffsets.firingTime;
   };
 
-  hitVirus = (projectile: Beam, virus: Virus): void => {
-    //@ts-ignore
+  //@ts-ignore
 
+  hitVirus = (projectile: Beam, virus: Virus): void => {
+
+    //@ts-ignore
     if (!this.shakePositions["virus" + String(virus.getId())]) {
       //@ts-ignore
       let shake = this.plugins.get("rexShakePosition").add(virus, {
@@ -504,17 +626,29 @@ export class GameScene extends Phaser.Scene {
         virus.resetVirusPos();
 
         //Update score
-        this.score += 15;
+        this.score += 25;
         this.scoreLabel.text = "Score: " + this.zeroPad(this.score, 6);
 
-        //@ts-ignore
-        if (this.score % this.levelsData.scoreLevelModulo == 0) {
+        if (
+           //@ts-ignore
+          this.score >= this.levelsData.scoreLevelModulo
+          &&
+          (
+            //@ts-ignore
+            CST.MOD((this.score - this.levelsData.scoreLevelModulo),this.levelsData.scoreLevelModulo) < 25
+            ||
+            //@ts-ignore
+            CST.MOD((this.score - this.levelsData.scoreLevelModulo),this.levelsData.scoreLevelModulo) == 0
+          )
+        ) 
+        {
           this.levelReach += 1;
           //@ts-ignore
           if (this.levelReach <= this.levelsData.levels.length) {
             //@ts-ignore
             this.levels = this.levelsData.levels.filter((x: any) => x.levelNumber == this.levelReach);
             this.levelLabel.text = "Level: " + this.levelReach;
+            this.animatePlayerLossGain("Level: " + String(this.levelReach - 1), "Level: " + String(this.levelReach));
             this.enemies.clear(true);
             this.loadEnemiesByLevel();
           } else {
@@ -529,6 +663,22 @@ export class GameScene extends Phaser.Scene {
     projectile.destroy();
     this.projectiles.remove(projectile, true);
   };
+
+
+  //@ts-ignore
+  hitBomb = (projectile: Beam, bomb: Bomb): void => {
+
+    let explosion = new Explosion(this, bomb.x, bomb.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+
+    //@ts-ignore
+    bomb.destroy();
+    this.bombs.remove(bomb, true);
+
+    //@ts-ignore
+    projectile.destroy();
+    this.projectiles.remove(projectile, true);
+  };
+
 
   movePlayerManager = () => {
     //@ts-ignore
@@ -564,6 +714,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
+    this.background.tilePositionX -= 0.1;
     this.background.tilePositionY -= 1;
     this.globe.rotation += 0.009;
 
@@ -574,6 +725,14 @@ export class GameScene extends Phaser.Scene {
       const enemy = childrenEnemies[index];
       //@ts-ignore
       enemy.moveVirus(enemy.speed);
+
+      //@ts-ignore
+      if (enemy.getBombInterval() > 0) {
+        if (time > this.lastBombFired) {
+          //@ts-ignore
+          this.lastBombFired = time + enemy.shootBomb(CST.SPRITES.BACERIA_BOMB, CST.ANIMATIONS.BACTERIA_BOMB_ANIM, CST.WINDOW.ISMOBILE, this.lastBombFired);
+        }
+      }
     }
 
     let powerUps = this.powerUps.getChildren();
@@ -598,6 +757,7 @@ export class GameScene extends Phaser.Scene {
     //Dragging with Pointer to allow shooting while moving
     if (this.player.active) {
       let playerContainerChildren = this.playerContainer.getChildren();
+
       this.input.on('drag', (pointer: any, gameObject: any, dragX: number, dragY: number) => {
         for (let index = 0; index < playerContainerChildren.length; index++) {
           const child = playerContainerChildren[index];
@@ -618,6 +778,12 @@ export class GameScene extends Phaser.Scene {
     childrenBeams.map((child: GameObjects.GameObject) => {
       let beam = (child as Beam);
       beam.update();
+    });
+
+    let childrenBombs = this.bombs.getChildren();
+    childrenBombs.map((child: GameObjects.GameObject) => {
+      let bomb = (child as Bomb);
+      bomb.update();
     });
   }
 }
