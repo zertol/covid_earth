@@ -60,6 +60,8 @@ export class GameScene extends Phaser.Scene {
   private virusId: integer;
   //@ts-ignore
   private shieldLevel: integer;
+  //@ts-ignore
+  private scoreMultiplication : integer;
 
   constructor() {
     super({
@@ -73,6 +75,7 @@ export class GameScene extends Phaser.Scene {
     this.lastBombFired = 0;
     this.respawnMeter = 3;
     this.beamLevel = 1;
+    this.scoreMultiplication = 1;
     this.shieldLevel = 0;
     this.gameOver = false;
     this.levelsData = this.cache.json.get("levelsData");
@@ -282,6 +285,41 @@ export class GameScene extends Phaser.Scene {
           // here to only augment till level 4 beam no need to add more
           this.beamLevel += 1;
         break;
+      case CST.ANIMATIONS.SCOREPOWERUP_ANIM:
+        if (this.scoreMultiplication <= 3){
+          this.scoreMultiplication += 1;
+          this.animatePlayerLossGain("Score Multiplied By: " + String(this.scoreMultiplication - 1) + "X", "Score Multiplied By: " + String(this.scoreMultiplication) + "X");
+        }
+        break;
+      case CST.ANIMATIONS.FINISHLVLPOWERUP_ANIM:
+          let promises : any[] = [];
+          this.enemies.getChildren().forEach(enemy  => {
+            let virus = enemy as Virus;
+            let explosion = new Explosion(this, virus.x, virus.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+            promises.push(new Promise(function(resolve, reject){
+            virus.resetVirusPos();
+            resolve('destorying virus..');
+            }));
+            //Update score
+
+          });
+          Promise.all(promises).then(response => console.log(response)); 
+          this.levelReach += 1;
+          //@ts-ignore
+          this.score = (this.levelsData.scoreLevelModulo * (this.levelReach-1));
+          this.scoreLabel.text = "Score: " + this.zeroPad(this.score, 6);
+          //@ts-ignore
+          if (this.levelReach <= this.levelsData.levels.length) {
+            //@ts-ignore
+            this.levels = this.levelsData.levels.filter((x: any) => x.levelNumber == this.levelReach);
+            this.levelLabel.text = "Level: " + this.levelReach;
+            this.animatePlayerLossGain("Level: " + String(this.levelReach - 1), "Level: " + String(this.levelReach));
+            this.enemies.clear(true);
+            this.loadEnemiesByLevel();
+          } else {
+            //game Ended
+          }
+          break;
       case CST.ANIMATIONS.SHIELDPOWERUP_ANIM:
         if (this.shieldLevel <= 1)
           // here to only augment till level 2 shield no need to add more
@@ -315,7 +353,6 @@ export class GameScene extends Phaser.Scene {
     this.livesLabel.setText(String(this.respawnMeter));
 
     let explosion = new Explosion(this, this.player.x, this.player.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
-
     this.player.disableBody(true, true);
 
     this.time.addEvent({
@@ -394,7 +431,11 @@ export class GameScene extends Phaser.Scene {
       callbackScope: this,
     });
 
-
+    if (this.scoreMultiplication > 1){
+      setTimeout(() => {
+        this.animatePlayerLossGain("Score Multiplied By: " + String(this.scoreMultiplication) + "X", "Score Multiplied By: 1X");
+        },2000);
+    }
 
   };
 
@@ -626,7 +667,7 @@ export class GameScene extends Phaser.Scene {
         virus.resetVirusPos();
 
         //Update score
-        this.score += 25;
+        this.score += (25 * this.scoreMultiplication);
         this.scoreLabel.text = "Score: " + this.zeroPad(this.score, 6);
 
         if (
@@ -651,7 +692,8 @@ export class GameScene extends Phaser.Scene {
             this.animatePlayerLossGain("Level: " + String(this.levelReach - 1), "Level: " + String(this.levelReach));
             this.enemies.clear(true);
             this.loadEnemiesByLevel();
-          } else {
+          } else { 
+            // here it must be game ended !
             this.levelReach -= 1;
             //@ts-ignore
             this.levels = this.levelsData.levels.filter((x: any) => x.levelNumber == this.levelReach);

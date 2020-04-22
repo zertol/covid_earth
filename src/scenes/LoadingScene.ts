@@ -265,6 +265,26 @@ export class LoadingScene extends Phaser.Scene {
       repeat: -1
     });
     this.anims.create({
+      key: CST.ANIMATIONS.SCOREPOWERUP_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
+        start: 3,
+        end: 3
+      }),
+      frameRate: 15,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.FINISHLVLPOWERUP_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
+        start: 4,
+        end: 4
+      }),
+      frameRate: 15,
+      repeat: -1
+    });
+    this.anims.create({
       key: CST.ANIMATIONS.SHIELD_ANIM,
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.SHIELDS, {
