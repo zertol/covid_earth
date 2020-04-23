@@ -20,6 +20,5 @@ export default class Shield extends Phaser.Physics.Arcade.Sprite {
     }
 
     update(){
-        
     }
 }

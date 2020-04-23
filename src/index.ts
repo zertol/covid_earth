@@ -18,6 +18,9 @@ let game = new Phaser.Game({
     parent: 'game-container',
     height: h,
     width: w,
+    audio: {
+        disableWebAudio: true
+    },
     scene: [LoadingScene, MainScene, GameScene],
     physics: {
         default: "arcade",
@@ -33,6 +36,7 @@ let game = new Phaser.Game({
         }]
     },
     //@ts-ignore
-    clearBeforeRender : true,
-    type: Phaser.WEBGL
+    clearBeforeRender : false,
+    type: Phaser.WEBGL,
+    multiTexture: true
 });
