@@ -71,7 +71,7 @@ export class GameScene extends Phaser.Scene {
   //@ts-ignore
   private fxExplosion: Phaser.Sound.BaseSound;
   //@ts-ignore
-  private fxBomb: Phaser.Sound.BaseSound;
+  private fxBombs: any[];
 
   constructor() {
     super({
@@ -95,33 +95,14 @@ export class GameScene extends Phaser.Scene {
     this.shakePositions = {};
     this.beamTotals = {};
     this.lastPowerUpDeployed = {};
+    this.fxBombs = [];
   }
 
   create() {
+    this.sound.pauseOnBlur = true;
     //Beam Sound
     this.fxBeam = this.sound.add(CST.SOUNDS.FX_BEAM);
     this.fxExplosion = this.sound.add(CST.SOUNDS.FX_EXPLOSION);
-    this.fxBomb = this.sound.add(CST.SOUNDS.FX_BOMB_FALLING);
-
-    // //Explosion Sound
-    // this.fxSound.addMarker({
-    //   name: CST.SOUNDS.MARKERS.FX_EXPLOSION,
-    //   start: 9,
-    //   duration: 4,
-    //   config: {
-    //     volume: .4
-    //   }
-    // });
-
-    // //Bomb Sound
-    // this.fxSound.addMarker({
-    //   name: CST.SOUNDS.MARKERS.FX_BOMB_FALLING,
-    //   start: 1,
-    //   duration: 5,
-    //   config: {
-    //     volume: .3
-    //   }
-    // });
 
     //Background Image
     this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
@@ -338,6 +319,7 @@ export class GameScene extends Phaser.Scene {
         for (let index = 0; index < enemies.length; index++) {
           const virus = (enemies[index] as Virus);
           let explosion = new Explosion(this, virus.x, virus.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+          this.playExplosionSound(explosion);
           promises.push(new Promise((resolve, reject) => {
             try {
               virus.resetVirusPos();
@@ -394,6 +376,7 @@ export class GameScene extends Phaser.Scene {
     this.livesLabel.setText(String(this.respawnMeter));
 
     let explosion = new Explosion(this, this.player.x, this.player.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    this.playExplosionSound(explosion);
     this.player.disableBody(true, true);
 
     this.time.addEvent({
@@ -426,6 +409,7 @@ export class GameScene extends Phaser.Scene {
     this.livesLabel.setText(String(this.respawnMeter));
 
     let explosion = new Explosion(this, this.player.x, this.player.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    this.playExplosionSound(explosion);
 
     this.player.disableBody(true, true);
 
@@ -535,6 +519,7 @@ export class GameScene extends Phaser.Scene {
       this.gameOverScene();
     }
     let explosion = new Explosion(this, enemy.x, enemy.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    this.playExplosionSound(explosion);
     //@ts-ignore
     enemy.hitEarth();
   };
@@ -546,11 +531,13 @@ export class GameScene extends Phaser.Scene {
     }
 
     let explosion = new Explosion(this, bomb.x, bomb.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    this.playExplosionSound(explosion);
     this.bombs.remove(bomb, true);
     bomb.destroy();
   };
 
   gameOverScene = (): void => {
+    this.sound.stopAll();
     //To not add simultaneous tweens
     this.tweens.killAll();
     //@ts-ignore
@@ -719,9 +706,10 @@ export class GameScene extends Phaser.Scene {
         bomb.setScale(.4);
       }
       this.bombs.add(bomb);
+      this.playBombSound(this.bombs);
     }
 
-    this.playBombSound(this.bombs);
+
   };
 
   processLevel = () => {
@@ -817,6 +805,7 @@ export class GameScene extends Phaser.Scene {
   hitBomb = (projectile: Beam, bomb: Bomb): void => {
 
     let explosion = new Explosion(this, bomb.x, bomb.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    this.playExplosionSound(explosion);
 
     //@ts-ignore
     bomb.destroy();
@@ -858,6 +847,9 @@ export class GameScene extends Phaser.Scene {
   //Play Explosion Sound based on random marker to generate multiple ones at the same time during the game.
   playExplosionSound = (explosion: Explosion) => {
     let guid = Phaser.Math.RND.between(1, 500);
+    while (this.fxExplosion.markers[CST.SOUNDS.MARKERS.FX_EXPLOSION + String(guid)]) {
+      guid = Phaser.Math.RND.between(1, 500);
+    }
     this.fxExplosion.addMarker({
       name: CST.SOUNDS.MARKERS.FX_EXPLOSION + String(guid),
       start: 0,
@@ -875,6 +867,9 @@ export class GameScene extends Phaser.Scene {
   //Play Beam Sound based on random marker to generate multiple ones at the same time during the game.
   playBeamSound = (beamGroup: Phaser.GameObjects.Group) => {
     let guid = Phaser.Math.RND.between(1, 500);
+    while (this.fxBeam.markers[CST.SOUNDS.MARKERS.FX_BEAM + String(guid)]) {
+      guid = Phaser.Math.RND.between(1, 500);
+    }
     this.fxBeam.addMarker({
       name: CST.SOUNDS.MARKERS.FX_BEAM + String(guid),
       start: 0,
@@ -893,22 +888,36 @@ export class GameScene extends Phaser.Scene {
   };
 
   //Play Bomb Sound based on random marker to generate multiple ones at the same time during the game.
+  //This is different from the first two because it's long and we need to cut it once the object (bomb) has been destroyed
+  //and since we need to keep track of the sounds that are in place in order to avoid parallel sounds collision
+  //we add them to an array and delete them if they ever show up in the destroy event
+  //If 2 bombs were to be active at the same time, this allows us to handle each sound alone.
   playBombSound = (bombGroup: Phaser.GameObjects.Group) => {
     let guid = Phaser.Math.RND.between(1, 500);
-    this.fxBomb.addMarker({
+    let fxBombb: Phaser.Sound.BaseSound = this.sound.add(CST.SOUNDS.FX_BOMB_FALLING);
+
+    fxBombb.addMarker({
       name: CST.SOUNDS.MARKERS.FX_BOMB_FALLING + String(guid),
       start: 0,
       config: {
         volume: .3
       }
     });
-    this.fxBomb.play(CST.SOUNDS.MARKERS.FX_BOMB_FALLING + String(guid));
+
+    fxBombb.play(CST.SOUNDS.MARKERS.FX_BOMB_FALLING + String(guid));
+
+    this.fxBombs.push({
+      id: String(guid),
+      bombSound: fxBombb
+    });
 
     let bombs = bombGroup.getChildren();
     bombs.forEach((bomb) => {
       bomb.once('destroy', () => {
-        this.fxBomb.removeMarker(CST.SOUNDS.MARKERS.FX_BOMB_FALLING + String(guid));
-      })
+        (this.fxBombs.filter(x => x.id === String(guid))[0].bombSound as Phaser.Sound.BaseSound).stop();
+        fxBombb.removeMarker(CST.SOUNDS.MARKERS.FX_BOMB_FALLING + String(guid));
+        this.fxBombs = this.fxBombs.filter(x => x.id !== String(guid));
+      });
     })
   };
 

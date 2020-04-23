@@ -27,7 +27,7 @@ export class MainScene extends Phaser.Scene {
             }
         }).setDepth(1);
 
-        
+
         if (CST.WINDOW.ISMOBILE) {
             playButton.setFontSize(30);
         }
@@ -40,6 +40,14 @@ export class MainScene extends Phaser.Scene {
             this.scene.start(CST.SCENES.GAME);
         });
 
-        
+        // let spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        // if (spacebar.isDown) {
+        //     this.scene.start(CST.SCENES.GAME);
+        // }
+
+        this.input.keyboard.on('keydown-SPACE', () => this.scene.start(CST.SCENES.GAME));
+
+
     }
 }

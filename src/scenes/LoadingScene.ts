@@ -52,7 +52,6 @@ export class LoadingScene extends Phaser.Scene {
     progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
 
     this.load.json('levelsData', LEVELSJSON);
-    // this.load.audio(CST.SOUNDS.FX_SOUNDS, [FX_SOUNDS]);
     this.load.audio(CST.SOUNDS.FX_BEAM,[FX_BEAM]);
     this.load.audio(CST.SOUNDS.FX_EXPLOSION,[FX_EXPLOSION]);
     this.load.audio(CST.SOUNDS.FX_BOMB_FALLING,[FX_BOMB_FALLING]);
@@ -130,10 +129,7 @@ export class LoadingScene extends Phaser.Scene {
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
     this.load.image(CST.IMAGES.HEARTMETER, HEARTMETER);
-    // this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
-    //   frameWidth: 42,
-    //   frameHeight: 72
-    // });
+    
     this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
       frameWidth: 26,
       frameHeight: 82
