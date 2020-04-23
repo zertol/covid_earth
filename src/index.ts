@@ -34,5 +34,5 @@ let game = new Phaser.Game({
     },
     //@ts-ignore
     clearBeforeRender : true,
-    type: Phaser.CANVAS
+    type: Phaser.WEBGL
 });
