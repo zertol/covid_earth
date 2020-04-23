@@ -18,6 +18,9 @@ let game = new Phaser.Game({
     parent: 'game-container',
     height: h,
     width: w,
+    audio: {
+        disableWebAudio: true
+    },
     scene: [LoadingScene, MainScene, GameScene],
     physics: {
         default: "arcade",

@@ -27,6 +27,12 @@ import HEARTMETER from "../../images/heart pixel art 64x64.png";
 import SHIELDS from "../../sprites/shieldsprite.png";
 //@ts-ignore
 import BACTERIA_BOMB from "../../sprites/bacteria_bomb.png";
+//@ts-ignore
+import FX_BEAM from "../../sounds/fx_beam.mp3";
+//@ts-ignore
+import FX_EXPLOSION from "../../sounds/fx_explosion.mp3";
+//@ts-ignore
+import FX_BOMB_FALLING from "../../sounds/fx_bomb_falling.mp3";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -46,6 +52,10 @@ export class LoadingScene extends Phaser.Scene {
     progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
 
     this.load.json('levelsData', LEVELSJSON);
+    // this.load.audio(CST.SOUNDS.FX_SOUNDS, [FX_SOUNDS]);
+    this.load.audio(CST.SOUNDS.FX_BEAM,[FX_BEAM]);
+    this.load.audio(CST.SOUNDS.FX_EXPLOSION,[FX_EXPLOSION]);
+    this.load.audio(CST.SOUNDS.FX_BOMB_FALLING,[FX_BOMB_FALLING]);
 
     let loadingText = this.make.text({
       x: width / 2,

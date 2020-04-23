@@ -31,7 +31,7 @@ module.exports = {
                 exclude: '/node_modules/'
             },
             {
-                test: /\.(png|jpe?g|gif)$/i,
+                test: /\.(png|jpe?g|gif|mp3)$/i,
                 loader: "file-loader",
                 // the loader which should be applied, it'll be resolved relative to the context
                 exclude: '/node_modules/',

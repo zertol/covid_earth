@@ -1,4 +1,3 @@
-import Explosion from "./Explosion";
 import Bomb from "./Bomb";
 
 export default class Virus extends Phaser.GameObjects.Sprite {
@@ -9,7 +8,8 @@ export default class Virus extends Phaser.GameObjects.Sprite {
     private lifespan: integer;
     private bombInterval: integer;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, name: string, animation: string, depth: number, speed: number, id: integer, lifespan: integer, bombInterval: number) {
+    constructor(scene: Phaser.Scene, x: number, y: number, name: string, animation: string, depth: number, speed: number, id: integer,
+        lifespan: integer, bombInterval: number) {
         super(scene, x, y, name);
         this.animation = animation;
         this.depth = depth;
@@ -45,27 +45,8 @@ export default class Virus extends Phaser.GameObjects.Sprite {
         this.speed = speed;
     }
 
-    hitEarth = (explosionName: string, explosionAnimation: string): void => {
-        let explosion = new Explosion(this.scene, this.x, this.y, explosionName, explosionAnimation);
+    hitEarth = (): void => {
         this.resetVirusPos();
-    }
-
-    shootBomb = (bombName: string, bombAnimation: string, isMobile: boolean, lastBombFired: number) => {
-
-        //To Not fire on first load
-        if (lastBombFired >= this.bombInterval && (this.y <= this.scene.game.renderer.height / 2)) {
-            let bomb = new Bomb(this.scene, this.x, this.y + 25, bombName, bombAnimation, 1);
-
-            if (isMobile) {
-                bomb.setScale(.3);
-            }
-            else {
-                bomb.setScale(.4);
-            }
-            //@ts-ignore
-            this.scene.bombs.add(bomb);
-        }
-        return this.bombInterval;
     }
 
     moveVirus = (): void => {
@@ -88,6 +69,5 @@ export default class Virus extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-
     }
 }
