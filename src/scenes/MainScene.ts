@@ -1,4 +1,8 @@
 import { CST } from '../CST';
+//@ts-ignore
+import START_GAME from '../../images/start_game.png';
+//@ts-ignore
+import controls_GAME from '../../images/controls_game.png';
 
 export class MainScene extends Phaser.Scene {
 
@@ -9,27 +13,36 @@ export class MainScene extends Phaser.Scene {
     }
     preload() {
 
+        this.load.image('play-button',START_GAME);
+        this.load.image('options-button',controls_GAME);
+
     }
     create() {
 
         this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
 
-        let playButton = this.make.text({
-            x: this.game.renderer.width / 2,
-            y: this.game.renderer.height / 2 - 25,
-            origin: { x: 0.5, y: 0.5 },
-            text: "Start Game",
-            padding: 10,
-            style: {
-                font: "40px monospace",
-                fill: "#fff",
-                backgroundColor: "rgba(0,0,0,0.8)"
-            }
-        }).setDepth(1);
+        // let playButton = this.make.text({
+        //     x: this.game.renderer.width / 2,
+        //     y: this.game.renderer.height / 2 - 25,
+        //     origin: { x: 0.5, y: 0.5 },
+        //     text: "Start Game",
+        //     padding: 10,
+        //     style: {
+        //         font: "40px monospace",
+        //         fill: "#fff",
+        //         backgroundColor: "rgba(0,0,0,0.8)"
+        //     }
+        // }).setDepth(1);
 
+        let playButton = this.add.image(0, 0, 'play-button');
+        let controlsButton = this.add.image(0, playButton.height, 'options-button');
+        let container = this.add.container(this.game.renderer.width / 2, this.game.renderer.height / 2 - 25);
+        container.add(playButton);
+        container.add(controlsButton);
+        container.y = this.game.renderer.height / 2 - container.height;
 
         if (CST.WINDOW.ISMOBILE) {
-            playButton.setFontSize(30);
+           container.setScale(.7);
         }
 
         playButton.setInteractive({

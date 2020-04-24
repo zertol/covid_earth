@@ -72,6 +72,8 @@ export class GameScene extends Phaser.Scene {
   private fxExplosion: Phaser.Sound.BaseSound;
   //@ts-ignore
   private fxBombs: any[];
+  //@ts-ignore
+  private bolt: Phaser.Physics.Arcade.Sprite;
 
   constructor() {
     super({
@@ -102,7 +104,20 @@ export class GameScene extends Phaser.Scene {
     this.sound.pauseOnBlur = true;
     //Beam Sound
     this.fxBeam = this.sound.add(CST.SOUNDS.FX_BEAM);
+    //Explosion Sound
     this.fxExplosion = this.sound.add(CST.SOUNDS.FX_EXPLOSION);
+
+    //Game Sound
+    let gameSound: Phaser.Sound.BaseSound = this.sound.add(CST.SOUNDS.GAME_SOUND)
+    gameSound.addMarker({
+      name: CST.SOUNDS.MARKERS.GAME_SOUND,
+      start: 25,
+      config: {
+        volume: .3,
+        loop: true
+      }
+    });
+    gameSound.play(CST.SOUNDS.MARKERS.GAME_SOUND);
 
     //Background Image
     this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
@@ -279,9 +294,6 @@ export class GameScene extends Phaser.Scene {
         fill: '#ffffff',
       },
     }).setDepth(2);
-
-
-
   }
 
   /******************************************* End Creation Part *************************************************/
@@ -349,6 +361,9 @@ export class GameScene extends Phaser.Scene {
           this.shieldLevel += 1;
         this.shield = new Shield(this, this.player.x, this.player.y, CST.SPRITES.SHIELDS, CST.ANIMATIONS.SHIELD_ANIM, this.playerContainer).setDepth(1);
         this.shield.setCollideWorldBounds(true);
+        break;
+      case CST.ANIMATIONS.GALACTICLASERPOWERUP_ANIM:
+        this.shootBolt();
         break;
     }
   };
@@ -501,6 +516,7 @@ export class GameScene extends Phaser.Scene {
       yoyo: true,
       hold: 500,
       onComplete: () => {
+        lossGainText.setText("");
         lossGainText.destroy();
       },
       onYoyo: () => {
@@ -580,8 +596,9 @@ export class GameScene extends Phaser.Scene {
   };
 
   loadEnemiesByLevel = () => {
+    this.powerUps.clear(true);
+    this.lastPowerUpDeployed = {};
     if (this.levels.length > 0) {
-      this.lastPowerUpDeployed = {};
       let level = this.levels[0];
       //@ts-ignore
       let virusDistribution = level.virusDistribution;
@@ -621,7 +638,7 @@ export class GameScene extends Phaser.Scene {
 
   addVirusCollection = (animationKey: string, virusType: string, numberOfVirusToAdd: integer, speed: number, lifespan: integer, bombInterval: number) => {
     for (let k = 0; k < numberOfVirusToAdd; k++) {
-      let virusToAdd = new Virus(this, 0, Math.floor(Math.random() * 20) + 1, virusType, animationKey, 1, speed, this.virusId++, lifespan, bombInterval * 1000);
+      let virusToAdd = new Virus(this, 0, Math.floor(Math.random() * 10) + 1, virusType, animationKey, 1, speed, this.virusId++, lifespan, bombInterval * 1000);
       //@ts-ignore
       virusToAdd.x = Math.floor(Math.random() * (this.game.renderer.width - virusToAdd.body.width - 21)) + virusToAdd.body.width;
       //@ts-ignore
@@ -720,6 +737,7 @@ export class GameScene extends Phaser.Scene {
       this.levelLabel.text = "Level: " + this.levelReach;
       this.animatePlayerLossGain("Level: " + String(this.levelReach - 1), "Level: " + String(this.levelReach));
       this.enemies.clear(true);
+      this.enemies.getChildren().forEach(enemy => enemy.destroy());
       this.loadEnemiesByLevel();
     } else {
       // here it must be game ended !
@@ -914,11 +932,62 @@ export class GameScene extends Phaser.Scene {
     let bombs = bombGroup.getChildren();
     bombs.forEach((bomb) => {
       bomb.once('destroy', () => {
-        (this.fxBombs.filter(x => x.id === String(guid))[0].bombSound as Phaser.Sound.BaseSound).stop();
-        fxBombb.removeMarker(CST.SOUNDS.MARKERS.FX_BOMB_FALLING + String(guid));
+        let arr = this.fxBombs.filter(x => x.id === String(guid));
+        if (arr.length > 0) {
+          let b = arr[0];
+          (b.bombSound as Phaser.Sound.BaseSound).stop();
+          fxBombb.removeMarker(CST.SOUNDS.MARKERS.FX_BOMB_FALLING + String(guid));
+          (b.bombSound as Phaser.Sound.BaseSound).destroy();
+        }
+
         this.fxBombs = this.fxBombs.filter(x => x.id !== String(guid));
       });
     })
+  };
+
+  //Shoot horizontal bolt to kill all enemies and destroy the bombs
+  shootBolt = () => {
+    this.bolt = this.physics.add.sprite(0, this.game.renderer.height, CST.SPRITES.BOLT).setDepth(1);
+    this.bolt.setDisplaySize(this.game.renderer.width, this.bolt.height);
+    this.bolt.body.setSize(this.game.renderer.width, 50);
+    this.bolt.setOrigin(0, 0);
+    this.bolt.setVelocityY(-250);
+    this.bolt.play(CST.ANIMATIONS.BOLT_ANIM);
+
+    //Enemy collision with Bolt
+    this.physics.add.overlap(
+      this.bolt,
+      this.enemies,
+      //@ts-ignore
+      this.killAllEnemies,
+      //@ts-ignore
+      null,
+      this
+    );
+
+    //Enemy collision with Bolt
+    this.physics.add.overlap(
+      this.bolt,
+      this.bombs,
+      //@ts-ignore
+      this.killAllBombs,
+      //@ts-ignore
+      null,
+      this
+    );
+  };
+
+  killAllEnemies = (bolt: any, virus: Virus) => {
+    let explosion = new Explosion(this, virus.x, virus.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    this.playExplosionSound(explosion);
+
+    virus.resetVirusPos();
+  };
+
+  killAllBombs = (bolt: any, bomb: Bomb) => {
+    let explosion = new Explosion(this, bomb.x, bomb.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
+    this.playExplosionSound(explosion);
+    bomb.destroy();
   };
 
   //Get Time for rapid fire
@@ -956,7 +1025,6 @@ export class GameScene extends Phaser.Scene {
      * later on to process multiple powerups at the same time.
      */
     let powerUps = this.powerUps.getChildren();
-
     if (powerUps.length > 0) {
       const index = 0;
       const powerUp = (powerUps[index] as PowerUp);
@@ -1035,5 +1103,14 @@ export class GameScene extends Phaser.Scene {
       let bomb = (child as Bomb);
       bomb.update();
     });
+
+
+    if (this.bolt && this.bolt.y < 25) {
+      this.bolt.setVelocityY(-50);
+      this.bolt.setAlpha(.2);
+      this.bolt.destroy();
+      //@ts-ignore
+      this.bolt = null;
+    }
   }
 }

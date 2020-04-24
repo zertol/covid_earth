@@ -49,12 +49,10 @@
         "red": 2
       },
       "powerUpDistribution": {
-        "beam": 0,
         "shield": 1,
         "score": 1
       },
       "powerUpDelay": {
-        "beam": [10],
         "shield" : [20],
         "score" : [40]
       },
@@ -84,13 +82,13 @@
         "red": 3
       },
       "powerUpDistribution": {
-        "life": 1,
         "beam": 1,
+        "life": 1,
         "score": 1
       },
       "powerUpDelay": {
-        "life": [10],
         "beam": [1],
+        "life": [10],
         "score" : [35]
       },
       "speedDistribution": {
@@ -104,7 +102,7 @@
       "lifeSpanDistribution": {
         "blue": 1,
         "green": 2,
-        "red": 3
+        "red": 2
       },
       "bombIntervals":{
           "blue":12,
@@ -116,17 +114,17 @@
       "levelNumber": 3,
       "virusDistribution": {
         "blue": 2,
-        "green": 3,
+        "green": 2,
         "red": 3
       },
       "powerUpDistribution": {
-        "life": 2,
         "beam": 1,
+        "life": 2,
         "finishLvl": 1 
       },
       "powerUpDelay": {
+        "beam": [5],
         "life": [10, 40],
-        "beam": [2],
         "finishLvl": [22]
       },
       "speedDistribution": {
@@ -139,8 +137,8 @@
       },
       "lifeSpanDistribution": {
         "blue": 2,
-        "green": 3,
-        "red": 3
+        "green": 2,
+        "red": 2
       },
       "bombIntervals":{
           "blue":10,
@@ -151,37 +149,40 @@
     {
       "levelNumber": 4,
       "virusDistribution": {
-        "blue": 3,
-        "green": 3,
-        "red": 4
+        "blue": 2,
+        "green": 2,
+        "red": 3
       },
       "powerUpDistribution": {
-        "life": 1,
         "beam": 1,
-        "score": 1
+        "life": 1,
+        "score": 0,
+        "galacticlaser": 1
       },
       "powerUpDelay": {
-        "life": [10],
-        "beam": [3],
-        "score" : [35]
+        "beam": [8],
+        "life": [15],
+        "score" : [20],
+        "galacticlaser" : [30]
       },
       "speedDistribution": {
-        "blue": 2.6,
-        "green": 3.2,
-        "red": 3.8,
+        "blue": 3,
+        "green": 3.7,
+        "red": 4,
         "life": 2,
-        "beam": 1.7,
-        "score": 3
+        "beam": 1.6,
+        "score": 3,
+        "galacticlaser": 3
       },
       "lifeSpanDistribution": {
         "blue": 3,
         "green": 3,
-        "red": 4
+        "red": 3
       },
       "bombIntervals":{
-          "blue":8,
-          "green":8,
-          "red": 5
+          "blue":6,
+          "green":6,
+          "red": 3
       }
     }
   ]

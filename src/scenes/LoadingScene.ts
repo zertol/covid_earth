@@ -2,7 +2,7 @@ import { CST } from "../CST";
 //@ts-ignore
 import PLAYER from "../../sprites/spaceship.png";
 //@ts-ignore
-import LOGO from "../../images/zenvalogo.png";
+import LOGO from "../../images/elslogo.png";
 //@ts-ignore
 import BACKGROUND from "../../images/background.jpg";
 //@ts-ignore
@@ -28,11 +28,15 @@ import SHIELDS from "../../sprites/shieldsprite.png";
 //@ts-ignore
 import BACTERIA_BOMB from "../../sprites/bacteria_bomb.png";
 //@ts-ignore
+import BOLT from "../../sprites/bolt.png";
+//@ts-ignore
 import FX_BEAM from "../../sounds/fx_beam.mp3";
 //@ts-ignore
 import FX_EXPLOSION from "../../sounds/fx_explosion.mp3";
 //@ts-ignore
 import FX_BOMB_FALLING from "../../sounds/fx_bomb_falling.mp3";
+//@ts-ignore
+import GAME_SOUND from "../../sounds/game_sound.mp3";
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -55,6 +59,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.audio(CST.SOUNDS.FX_BEAM,[FX_BEAM]);
     this.load.audio(CST.SOUNDS.FX_EXPLOSION,[FX_EXPLOSION]);
     this.load.audio(CST.SOUNDS.FX_BOMB_FALLING,[FX_BOMB_FALLING]);
+    this.load.audio(CST.SOUNDS.GAME_SOUND,[GAME_SOUND]);
 
     let loadingText = this.make.text({
       x: width / 2,
@@ -170,6 +175,10 @@ export class LoadingScene extends Phaser.Scene {
       frameWidth: 64,
       frameHeight: 54
     });
+    this.load.spritesheet(CST.SPRITES.BOLT, BOLT, {
+      frameWidth: 400,
+      frameHeight: 128
+    });
   }
 
   create() {
@@ -178,6 +187,9 @@ export class LoadingScene extends Phaser.Scene {
       this.game.renderer.height / 2,
       CST.IMAGES.LOGO
     );
+    if(CST.WINDOW.ISMOBILE){
+      logo.setScale(.7);
+    }
     this.anims.create({
       key: CST.ANIMATIONS.EARTH_ANIM,
       //@ts-ignore
@@ -291,6 +303,16 @@ export class LoadingScene extends Phaser.Scene {
       repeat: -1
     });
     this.anims.create({
+      key: CST.ANIMATIONS.GALACTICLASERPOWERUP_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.POWERUPS, {
+        start: 9,
+        end: 9
+      }),
+      frameRate: 15,
+      repeat: -1
+    });
+    this.anims.create({
       key: CST.ANIMATIONS.SHIELD_ANIM,
       //@ts-ignore
       frames: this.anims.generateFrameNumbers(CST.SPRITES.SHIELDS, {
@@ -308,6 +330,13 @@ export class LoadingScene extends Phaser.Scene {
         end: 59
       }),
       frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.BOLT_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BOLT),
+      frameRate: 50,
       repeat: -1
     });
   }
