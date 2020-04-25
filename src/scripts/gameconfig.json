@@ -49,23 +49,26 @@
         "red": 2
       },
       "powerUpDistribution": {
+        "beam": 2,
         "shield": 1,
         "score": 1
       },
       "powerUpDelay": {
-        "shield" : [20],
-        "score" : [40]
+        "beam": [1,12],
+        "shield" : [10],
+        "score" : [20]
       },
       "speedDistribution": {
         "blue": 1.2,
         "green": 1.5,
-        "red": 1.7,
+        "red": 1.4,
         "shield" : 1.8,
-        "score": 1.9
+        "score": 1.9,
+        "beam": 2
       },
       "lifeSpanDistribution": {
         "blue": 1,
-        "green": 2,
+        "green": 1,
         "red": 2
       },
       "bombIntervals":{
@@ -79,22 +82,22 @@
       "virusDistribution": {
         "blue": 1,
         "green": 2,
-        "red": 3
+        "red": 2
       },
       "powerUpDistribution": {
-        "beam": 1,
+        "beam": 2,
         "life": 1,
-        "score": 1
+        "score": 2
       },
       "powerUpDelay": {
-        "beam": [1],
+        "beam": [1 ,12],
         "life": [10],
         "score" : [35]
       },
       "speedDistribution": {
-        "blue": 2.2,
-        "green": 2.4,
-        "red": 2.7,
+        "blue": 1.6,
+        "green": 1.7,
+        "red": 1.8,
         "life": 1.7,
         "beam": 1.5,
         "score": 2.5
@@ -128,9 +131,9 @@
         "finishLvl": [22]
       },
       "speedDistribution": {
-        "blue": 2.4,
-        "green": 2.8,
-        "red": 3,
+        "blue": 2.2,
+        "green": 2.4,
+        "red": 2.6,
         "life": 2,
         "beam": 1.6,
         "finishLvl": 1.7
@@ -166,23 +169,23 @@
         "galacticlaser" : [30]
       },
       "speedDistribution": {
-        "blue": 3,
-        "green": 3.7,
-        "red": 4,
+        "blue": 2.4,
+        "green": 2.6,
+        "red": 2.8,
         "life": 2,
         "beam": 1.6,
         "score": 3,
         "galacticlaser": 3
       },
       "lifeSpanDistribution": {
-        "blue": 3,
-        "green": 3,
+        "blue": 2,
+        "green": 2,
         "red": 3
       },
       "bombIntervals":{
-          "blue":6,
-          "green":6,
-          "red": 3
+          "blue":4,
+          "green":4,
+          "red": 2
       }
     }
   ]

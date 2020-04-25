@@ -8,19 +8,21 @@ export default class Explosion extends Phaser.GameObjects.Sprite {
     constructor(scene: Phaser.Scene, x: number, y: number, name: string, animation: string) {
         super(scene, x, y, name);
 
-        // let guid = Phaser.Math.RND.between(1, 500);
-        // this.fxExplosion = scene.sound.add(CST.SOUNDS.FX_BEAM + String(guid));
-
-        // this.once(Phaser.Animations.Events.SPRITE_ANIMATION_START, () => {
-        //     this.fxExplosion.play();
-        // });
-
-        // this.once('destroy', () => {
-        //     this.fxExplosion.stop();
-        // });
-
         this.animation = animation;
         scene.add.existing(this);
+        //@ts-ignore
+        scene.explosions.add(this);
+        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            this.destroy();
+            //@ts-ignore
+            scene.explosions.remove(this);
+        });
+
+        this.once(Phaser.Animations.Events.SPRITE_ANIMATION_START, () => {
+            //@ts-ignore
+            scene.playExplosionSound(scene.explosions);
+        });
+
         this.play(this.animation);
         scene.physics.world.enableBody(this);
     }
