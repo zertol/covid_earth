@@ -183,8 +183,7 @@ export class ControlsScene extends Phaser.Scene {
         //set the left to the right of the game
         var left = this.game.config.width;
         var right = 0;
-        //
-        //
+        
         //loop through the children
         //@ts-ignore
         con.iterate(function (child) {

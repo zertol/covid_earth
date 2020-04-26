@@ -185,7 +185,7 @@ export class GameScene extends Phaser.Scene {
     //Destroy powerups when they hit earth
     this.physics.add.collider(this.powerUps, this.globe, (powerUp, globe) => {
       //@ts-ignore
-      powerUp.destroy();
+      (powerUp as PowerUp).destroy();
     });
 
     //Deny player to reach earth limits
@@ -538,7 +538,8 @@ export class GameScene extends Phaser.Scene {
   };
 
   gameOverScene = (): void => {
-    this.sound.stopAll();
+
+
     //To not add simultaneous tweens
     this.tweens.shutdown();
 
@@ -560,6 +561,9 @@ export class GameScene extends Phaser.Scene {
     this.time.addEvent({
       delay: 3000,
       callback: () => {
+        if (null != this.sound) {
+          this.sound.stopAll();
+        }
         this.scene.start(CST.SCENES.MAIN);
       },
       callbackScope: this,
@@ -652,8 +656,24 @@ export class GameScene extends Phaser.Scene {
       powerUpToAdd.body.setSize(73, 73, true);
       powerUpToAdd.disableBody(true, true);
       this.powerUps.add(powerUpToAdd);
+
+      //Set a timer at the beginning of each level for each powerup we have
+      //the default start time helps us begin from 0 in each level
+      //That way we can move the powerup based on time interval from the start of the level and not based on time 
+      this.time.addEvent({
+        //@ts-ignore
+        delay: delayToDisplay[k] * 2000,                // ms
+        callback: () => {
+          //@ts-ignore
+          powerUpToAdd.enableBody(true, powerUpToAdd.initialX, powerUpToAdd.initialY, powerUpToAdd.y, true, true);
+          powerUpToAdd.movePowerUp();
+        },
+        args: [],
+        callbackScope: this
+      })
     }
   };
+
 
   shootBeam = (): number => {
     //@ts-ignore
@@ -1040,51 +1060,16 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    /**
-     * We need to be able to show the powerup sequentially, thus we care about the timeline of each one
-     * and we should take into account that on each update we can have only one because the way the powerup gets removed upon picking it.
-     * So on the next render cycle the powerup gets removed so we added a condition to check how many powerups we have to not enter 
-     * unnecessary processing.
-     * We are functioning with an object so that we can save and reset whenever the level changes. This way it's more optimized if we want
-     * later on to process multiple powerups at the same time.
-     */
+    //Move Powerups
     let powerUps = this.powerUps.getChildren();
     if (powerUps.length > 0) {
-      const index = 0;
-      const powerUp = (powerUps[index] as PowerUp);
-
-      let delayTime = powerUp.getDelayTime();
-
-      //@ts-ignore
-      if (!this.lastPowerUpDeployed["powerUp0"]) {
-        //@ts-ignore
-        this.lastPowerUpDeployed["powerUp0"] = -1;
-        //@ts-ignore
-        this.lastPowerUpDeployed["delayTime0"] = delayTime;
+      for (let index = 0; index < powerUps.length; index++) {
+        const powerUp = (powerUps[index] as PowerUp);
+        powerUp.movePowerUp();
       }
-
-      //@ts-ignore
-      if (this.lastPowerUpDeployed["powerUp0"] >= this.lastPowerUpDeployed["delayTime0"]) {
-        if (!powerUp.active) {
-          //@ts-ignore
-          powerUp.enableBody(true, powerUp.initialX, powerUp.initialY, true, true);
-        }
-        //@ts-ignore
-        delete this.lastPowerUpDeployed["powerUp0"];
-        //@ts-ignore
-        delete this.lastPowerUpDeployed["delayTime0"];
-      }
-      else {
-        //@ts-ignore
-        if (this.lastPowerUpDeployed["powerUp0"]) {
-          //@ts-ignore
-          this.lastPowerUpDeployed["powerUp0"] += 25; //Time is continuous, if the level changes we need to start from the beginning after the object's reset.
-        }
-      }
-      powerUp.movePowerUp();
     }
 
-
+    //Manage player movement
     this.movePlayerManager();
 
     //Continuous Spacebar Fire
