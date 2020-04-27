@@ -5,6 +5,7 @@ import Explosion from "../sprites/Explosion";
 import PowerUp from "../sprites/PowerUp";
 import Shield from "../sprites/Shield";
 import Bomb from "../sprites/Bomb";
+import ConfirmationBox from "../utils/ConfirmationBox";
 import { Physics, GameObjects } from "phaser";
 
 export class GameScene extends Phaser.Scene {
@@ -264,7 +265,9 @@ export class GameScene extends Phaser.Scene {
         font: "16px monospace",
         fill: "#ffffff",
       },
-    });
+    }).setDepth(2);
+    this.scoreLabel.setStroke('#fff', .5);
+    this.scoreLabel.setShadow(0, 1, '#202020', 1, true, true);
 
     //Level indicator
     this.levelLabel = this.make.text({
@@ -277,17 +280,38 @@ export class GameScene extends Phaser.Scene {
         font: "16px monospace",
         fill: "#ffffff",
       },
+    }).setDepth(2);;
+    this.levelLabel.setStroke('#fff', .5);
+    this.levelLabel.setShadow(0, 1, '#202020', 1, true, true);
+
+    //Exit Button
+    let exitBtn = this.add.image(10, this.levelLabel.height + 30, CST.IMAGES.EXIT_BUTTON).setScale(.7).setOrigin(0, 0).setDepth(2);;
+    exitBtn.setInteractive({
+      useHandCursor: true
+    });
+
+    exitBtn.on("pointerdown", () => {
+      // this.scene.start(CST.SCENES.MAIN);
+      this.physics.pause();
+      this.gameOver = true;
+      let cfx = new ConfirmationBox(this, this.game.renderer.width / 2, this.game.renderer.height / 2, "Notice", "Are you sure you want to exit the game?", () => {
+        this.scene.start(CST.SCENES.MAIN);
+      }, () => {
+        this.physics.resume();
+        this.gameOver = false;
+        cfx.destroy();
+      });
     });
 
     //Heart Icon - Lives Indicator
     let heartIcon = this.add
-      .sprite(this.game.renderer.width - 20, 25, CST.IMAGES.HEARTMETER)
+      .sprite(this.game.renderer.width - 25, 25, CST.IMAGES.HEARTMETER)
       .setDepth(2)
       .setScale(0.6);
 
     //Lives number indicator
     this.livesLabel = this.make.text({
-      x: this.game.renderer.width - 25,
+      x: this.game.renderer.width - 30,
       y: 16,
       origin: { x: 0, y: 0 },
       text: this.respawnMeter,
@@ -297,6 +321,8 @@ export class GameScene extends Phaser.Scene {
         fill: '#ffffff',
       },
     }).setDepth(2);
+    this.livesLabel.setStroke('#fff', .3);
+    this.livesLabel.setShadow(0, 1, '#202020', 1, true, true);
   }
 
   /******************************************* End Creation Part *************************************************/
@@ -438,6 +464,9 @@ export class GameScene extends Phaser.Scene {
   };
 
   resetPlayer = () => {
+    //Reset Beams 
+    this.beamLevel = 1;
+
     //@ts-ignore
     this.player.enableBody(
       true,
@@ -490,6 +519,9 @@ export class GameScene extends Phaser.Scene {
         },
       })
       .setDepth(10).setScale(0.2);
+
+    lossGainText.setStroke('#fff', .5);
+    lossGainText.setShadow(0, 1, '#202020', 1, true, true);
 
     this.playerGainLossTween = this.tweens.add({
       targets: lossGainText,

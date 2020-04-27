@@ -1,5 +1,3 @@
-import { CST } from '../CST';
-
 export default class Beam extends Phaser.GameObjects.Sprite {
 
     private animation: string;

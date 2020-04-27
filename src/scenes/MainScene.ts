@@ -17,8 +17,12 @@ import SPACEBAR from '../../images/spacebar.png';
 import TOUCH_FINGER from '../../images/touch_finger.png';
 //@ts-ignore
 import SWIPE_FINGER from '../../images/swipe_finger.png';
+//@ts-ignore
+import BACK_BUTTON from '../../images/back_button.png';
 
 export class MainScene extends Phaser.Scene {
+    //@ts-ignore
+    private background: Phaser.GameObjects.TileSprite;
 
     constructor() {
         super({
@@ -28,6 +32,8 @@ export class MainScene extends Phaser.Scene {
     preload() {
         this.load.image('play-button', START_GAME);
         this.load.image('options-button', CONTROLS_GAME);
+        this.load.image(CST.IMAGES.BACK_BUTTON, BACK_BUTTON);
+
         if (!CST.WINDOW.ISMOBILE) {
             this.load.image(CST.IMAGES.UP_ARROW, UP_ARROW);
             this.load.image(CST.IMAGES.DOWN_ARROW, DOWN_ARROW);
@@ -43,7 +49,7 @@ export class MainScene extends Phaser.Scene {
     }
     create() {
 
-        this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
+        this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
 
         // let playButton = this.make.text({
         //     x: this.game.renderer.width / 2,
@@ -82,13 +88,18 @@ export class MainScene extends Phaser.Scene {
             useHandCursor: true
         });
 
-        controlsButton.on("pointerup", () => {
+        controlsButton.on("pointerdown", () => {
             this.scene.start(CST.SCENES.CONTROLS);
         });
 
         this.input.keyboard.on('keydown-SPACE', () => this.scene.start(CST.SCENES.GAME));
 
 
+    }
+
+    update() {
+        this.background.tilePositionX -= 0.1;
+        this.background.tilePositionY -= 1;
     }
 
     updateSize = (con: Phaser.GameObjects.Container) => {

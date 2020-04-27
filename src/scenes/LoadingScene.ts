@@ -37,6 +37,13 @@ import FX_EXPLOSION from "../../sounds/fx_explosion.mp3";
 import FX_BOMB_FALLING from "../../sounds/fx_bomb_falling.mp3";
 //@ts-ignore
 import GAME_SOUND from "../../sounds/game_sound.mp3";
+//@ts-ignore
+import EXIT_BUTTON from "../../images/exit_button.png";
+//@ts-ignore
+import OK_BUTTON from "../../images/ok_button.png";
+//@ts-ignore
+import CANCEL_BUTTON from "../../images/cancel_button.png";
+
 
 export class LoadingScene extends Phaser.Scene {
   constructor() {
@@ -134,6 +141,9 @@ export class LoadingScene extends Phaser.Scene {
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
     this.load.image(CST.IMAGES.HEARTMETER, HEARTMETER);
+    this.load.image(CST.IMAGES.EXIT_BUTTON, EXIT_BUTTON);
+    this.load.image(CST.IMAGES.OK_BUTTON, OK_BUTTON);
+    this.load.image(CST.IMAGES.CANCEL_BUTTON, CANCEL_BUTTON);
     
     this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
       frameWidth: 26,

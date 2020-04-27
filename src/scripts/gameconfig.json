@@ -1,5 +1,5 @@
 {
-  "scoreLevelModulo": 3000,
+  "scoreLevelModulo": 3500,
   "player": {
     "speed": 750
   },
@@ -49,12 +49,12 @@
         "red": 2
       },
       "powerUpDistribution": {
-        "beam": 2,
+        "beam": 1,
         "shield": 1,
         "score": 1
       },
       "powerUpDelay": {
-        "beam": [5,18],
+        "beam": [12],
         "shield" : [10],
         "score" : [20]
       },
@@ -85,12 +85,12 @@
         "red": 2
       },
       "powerUpDistribution": {
-        "beam": 2,
+        "beam": 3,
         "life": 1,
         "score": 2
       },
       "powerUpDelay": {
-        "beam": [3 ,15],
+        "beam": [3 ,22, 40],
         "life": [10],
         "score" : [35]
       },
@@ -121,13 +121,13 @@
         "red": 3
       },
       "powerUpDistribution": {
-        "beam": 1,
+        "beam": 3,
         "life": 2,
         "finishLvl": 1 
       },
       "powerUpDelay": {
-        "beam": [5],
-        "life": [10, 40],
+        "beam": [5, 15, 30],
+        "life": [10, 25],
         "finishLvl": [22]
       },
       "speedDistribution": {
@@ -157,16 +157,14 @@
         "red": 3
       },
       "powerUpDistribution": {
-        "beam": 1,
+        "beam": 4,
         "life": 1,
-        "score": 0,
         "galacticlaser": 1
       },
       "powerUpDelay": {
-        "beam": [8],
+        "beam": [8,15,25,33],
         "life": [15],
-        "score" : [20],
-        "galacticlaser" : [30]
+        "galacticlaser" : [18]
       },
       "speedDistribution": {
         "blue": 2.4,
@@ -174,7 +172,6 @@
         "red": 2.8,
         "life": 2,
         "beam": 1.6,
-        "score": 3,
         "galacticlaser": 3
       },
       "lifeSpanDistribution": {
@@ -185,6 +182,81 @@
       "bombIntervals":{
           "blue":4,
           "green":4,
+          "red": 2
+      }
+    },
+    {
+      "levelNumber": 5,
+      "virusDistribution": {
+        "blue": 2,
+        "green": 2,
+        "red": 3
+      },
+      "powerUpDistribution": {
+        "beam": 3,
+        "life": 2,
+        "galacticlaser": 2
+      },
+      "powerUpDelay": {
+        "beam": [15,25,33],
+        "life": [15,33],
+        "galacticlaser" : [30]
+      },
+      "speedDistribution": {
+        "blue": 2.8,
+        "green": 2.9,
+        "red": 3.2,
+        "life": 2,
+        "beam": 2,
+        "galacticlaser": 3
+      },
+      "lifeSpanDistribution": {
+        "blue": 2,
+        "green": 2,
+        "red": 3
+      },
+      "bombIntervals":{
+          "blue":3,
+          "green":3,
+          "red": 2
+      }
+    },
+    {
+      "levelNumber": 6,
+      "virusDistribution": {
+        "blue": 2,
+        "green": 3,
+        "red": 3
+      },
+      "powerUpDistribution": {
+        "beam": 4,
+        "life": 2,
+        "score": 1,
+        "galacticlaser": 2
+      },
+      "powerUpDelay": {
+        "beam": [8,15,25,33],
+        "life": [15,33],
+        "score" : [20],
+        "galacticlaser" : [30]
+      },
+      "speedDistribution": {
+        "blue": 3,
+        "green": 3,
+        "red": 3.3,
+        "life": 2,
+        "beam": 2,
+        "score": 3,
+        "galacticlaser": 3
+      },
+      "lifeSpanDistribution": {
+        "blue": 2,
+        "green": 3,
+        "red": 3
+      },
+      "bombIntervals":{
+          "blue":3,
+          "green":2,
           "red": 2
       }
     }

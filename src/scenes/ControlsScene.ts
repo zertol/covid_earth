@@ -34,6 +34,7 @@ export class ControlsScene extends Phaser.Scene {
                     fill: "#ffffff",
                 },
             });
+            
             upText.y = upArrow.y + upArrow.displayHeight / 2 - upText.height / 2;
             container.add(upText);
             // Up Arrow
@@ -119,6 +120,18 @@ export class ControlsScene extends Phaser.Scene {
             leftText.x = leftArrow.x + spacebarKey.displayWidth + 15;
             rightText.x = rightArrow.x + spacebarKey.displayWidth + 15;
 
+            upText.setStroke('#fff',.2);
+            upText.setShadow(0, 1, '#202020', 1, true, true);
+
+            downText.setStroke('#fff',.2);
+            downText.setShadow(0, 1, '#202020', 1, true, true);
+
+            leftText.setStroke('#fff',.2);
+            leftText.setShadow(0, 1, '#202020', 1, true, true);
+
+            rightText.setStroke('#fff',.2);
+            rightText.setShadow(0, 1, '#202020', 1, true, true);
+
         }/************************** End Desktop Controls *************************/
 
         else { /************************** Mobile Controls *************************/
@@ -160,8 +173,15 @@ export class ControlsScene extends Phaser.Scene {
             // Swipe Touch
 
             fingerTouchText.x = swipeTouch.x + swipeTouch.displayWidth + 15;
-        }
 
+            swipeTouchText.setStroke('#fff',.2);
+            swipeTouchText.setShadow(0, 1, '#202020', 1, true, true);
+
+            fingerTouchText.setStroke('#fff',.2);
+            fingerTouchText.setShadow(0, 1, '#202020', 1, true, true);
+
+
+        }/************************** End Mobile Controls *************************/
 
 
         //Updating container size
@@ -174,6 +194,16 @@ export class ControlsScene extends Phaser.Scene {
         rectG.fillStyle(0x00000000000, .5);
         rectG.fillRect(container.x - 25, container.y - 25, container.width + 50, container.height + 50);
 
+        //Add Back Button
+        let backButton = this.add.image(this.game.renderer.width / 2, container.y - 75, CST.IMAGES.BACK_BUTTON).setScale(.5);
+        backButton.setInteractive({
+            useHandCursor: true
+        });
+
+        backButton.on("pointerdown", () => {
+            this.scene.start(CST.SCENES.MAIN);
+        });
+
     }
 
     updateSize = (con: Phaser.GameObjects.Container) => {
@@ -183,7 +213,7 @@ export class ControlsScene extends Phaser.Scene {
         //set the left to the right of the game
         var left = this.game.config.width;
         var right = 0;
-        
+
         //loop through the children
         //@ts-ignore
         con.iterate(function (child) {
