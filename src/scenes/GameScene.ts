@@ -477,7 +477,7 @@ export class GameScene extends Phaser.Scene {
       true
     );
     this.player.alpha = 0.5;
-
+    this.beamLevel=1;
     this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter + 1), "Lives left: " + String(this.respawnMeter));
 
     let tween = this.tweens.add({

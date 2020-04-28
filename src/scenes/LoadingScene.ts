@@ -16,6 +16,8 @@ import REDCOVID19 from "../../sprites/redvirussprite.png";
 //@ts-ignore
 import LEVELSJSON from "../scripts/gameconfig.json";
 //@ts-ignore
+import GAMEPLAY from "../scripts/gameplay.json";
+//@ts-ignore
 import EXPLOSION from "../../sprites/explosion.png";
 //@ts-ignore
 import BEAM from "../../images/needle.png";
@@ -63,6 +65,7 @@ export class LoadingScene extends Phaser.Scene {
     progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
 
     this.load.json('levelsData', LEVELSJSON);
+    this.load.json('gamePlayData', GAMEPLAY);
     this.load.audio(CST.SOUNDS.FX_BEAM,[FX_BEAM]);
     this.load.audio(CST.SOUNDS.FX_EXPLOSION,[FX_EXPLOSION]);
     this.load.audio(CST.SOUNDS.FX_BOMB_FALLING,[FX_BOMB_FALLING]);

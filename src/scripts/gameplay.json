@@ -1,0 +1,20 @@
+{
+    "BEAM": {"imageX": 40,"imageY": 80,"textX": 180,"name" : "BEAM","description": "Needle to cure covid-19 if shot can kill germs up to 99.99%"},
+    "BLUECOVID19": {"imageX": 40,"imageY": 130,"textX": 180,"name" :"BLUECOVID19","description":"First generation copy of the covid virus"},
+    "GREENCOVID19": {"imageX": 40,"imageY": 180,"textX": 180,"name" :"GREENCOVID19","description":"Second generation copy of the virus it is deadlier"},
+    "REDCOVID19": {"imageX": 40,"imageY": 230,"textX":180,"name" :"REDCOVID19","description":"Third generation copy of the virus the deadliest can shoot bombs at the player"},
+    "PLAYER": {"imageX": 40,"imageY": 300,"textX": 180,"scaleX":0.2,"scaleY":0.2,"name" :"PLAYER","description":"Ship that will save earth from Covid-19,it can pick powerups also needles upgrades can be added"},
+    "POWERUPS": {
+        "LIFEPOWERUP": {"imageX": 40,"imageY": 400,"textX": 180,"name" :"LIFEPOWERUP","description":"When picked it will add one more life to the health meter"},
+        "BEAMPOWERUP": {"imageX": 40,"imageY": 450,"textX": 180,"name" :"BEAMPOWERUP","description":"When picked it will upgrade needles quantity shot and even sometimes angle"},
+        "DESTROYALLCURRENTPOWERUP": "",
+        "FINISHLVLPOWERUP": {"imageX": 40,"imageY": 500,"textX": 180,"name" :"FINISHLVLPOWERUP","description":"When picked you will automatically finish level"},
+        "SHIELDPOWERUP": {"imageX": 40,"imageY": 550,"textX": 180,"name" :"SHIELDPOWERUP","description":"When picked it will add shield to the player preventing him from instant death"},
+        "SCOREPOWERUP": {"imageX": 40,"imageY": 600,"textX": 180,"name" :"SCOREPOWERUP","description":"When picked it will increase score count per each hit"},
+        "REPLICAPOWERUP": "",
+        "GALACTICLASERPOWERUP": {"imageX": 40,"imageY": 650,"textX": 180,"name" :"GALACTICLASERPOWERUP","description":"When picked a galactic laser will destroy all the current enemies"}
+    },
+    "SHIELDS": {"imageX": 40,"imageY": 700,"textX": 180,"name" :"SHIELD","description":"Shield protecting the player displayed only when shield powerup is picked"},
+    "BACERIA_BOMB": {"imageX": 40,"imageY": 750,"textX": 180,"name" :"BACTERIA_BOMB","description":"bomb shot by the covid virus enemy"},
+    "BOLT": {"imageX": 40,"imageY": 800,"textX": 180,"name" :"BOLT","description":"galactic laser destroying enemies displayed when galactic laser powerup is picked"}
+}

@@ -2,9 +2,12 @@ import { LoadingScene } from './scenes/LoadingScene';
 import { MainScene } from './scenes/MainScene';
 import { GameScene } from './scenes/GameScene';
 import { ControlsScene } from './scenes/ControlsScene';
+import { GamePlayScene } from './scenes/GamePlayScene';
 import { CST } from './CST';
 //@ts-ignore
 import ShakePositionPlugin from 'phaser3-rex-plugins/plugins/shakeposition-plugin.js';
+//@ts-ignore
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 //Scaling manually the canvas for a better display on different devices.
 let w = window.innerWidth;
@@ -22,7 +25,7 @@ let game = new Phaser.Game({
     audio: {
         disableWebAudio: true
     },
-    scene: [LoadingScene, MainScene, GameScene,ControlsScene],
+    scene: [LoadingScene, MainScene, GameScene, ControlsScene, GamePlayScene],
     physics: {
         default: "arcade",
         arcade: {
@@ -37,7 +40,7 @@ let game = new Phaser.Game({
         }]
     },
     //@ts-ignore
-    clearBeforeRender : false,
+    clearBeforeRender: false,
     type: Phaser.WEBGL,
     multiTexture: true
 });

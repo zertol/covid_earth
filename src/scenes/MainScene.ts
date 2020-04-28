@@ -19,6 +19,8 @@ import TOUCH_FINGER from '../../images/touch_finger.png';
 import SWIPE_FINGER from '../../images/swipe_finger.png';
 //@ts-ignore
 import BACK_BUTTON from '../../images/back_button.png';
+//@ts-ignore
+import PLAYCREDITS_GAME from '../../images/gameplay_button.png';
 
 export class MainScene extends Phaser.Scene {
     //@ts-ignore
@@ -32,8 +34,9 @@ export class MainScene extends Phaser.Scene {
     preload() {
         this.load.image('play-button', START_GAME);
         this.load.image('options-button', CONTROLS_GAME);
+        this.load.image('playcredits-button',PLAYCREDITS_GAME);
         this.load.image(CST.IMAGES.BACK_BUTTON, BACK_BUTTON);
-
+        
         if (!CST.WINDOW.ISMOBILE) {
             this.load.image(CST.IMAGES.UP_ARROW, UP_ARROW);
             this.load.image(CST.IMAGES.DOWN_ARROW, DOWN_ARROW);
@@ -45,7 +48,6 @@ export class MainScene extends Phaser.Scene {
             this.load.image(CST.IMAGES.TOUCH_FINGER, TOUCH_FINGER);
             this.load.image(CST.IMAGES.SWIPE_FINGER, SWIPE_FINGER);
         }
-
     }
     create() {
 
@@ -66,9 +68,11 @@ export class MainScene extends Phaser.Scene {
 
         let playButton = this.add.image(0, 0, 'play-button');
         let controlsButton = this.add.image(0, playButton.height, 'options-button');
+        let playCreditsButton = this.add.image(0, controlsButton.height * 2, 'playcredits-button');
         let container = this.add.container(this.game.renderer.width / 2, this.game.renderer.height / 2 - 25);
         container.add(playButton);
         container.add(controlsButton);
+        container.add(playCreditsButton);
         this.updateSize(container);
         container.y = this.game.renderer.height / 2 - container.height / 2;
 
@@ -78,6 +82,12 @@ export class MainScene extends Phaser.Scene {
 
         playButton.setInteractive({
             useHandCursor: true
+        });
+
+        playCreditsButton.setInteractive({
+            useHandCursor: true
+        }).on("pointerup", () => {
+            this.scene.start(CST.SCENES.GAMEPLAY);
         });
 
         playButton.on("pointerup", () => {
