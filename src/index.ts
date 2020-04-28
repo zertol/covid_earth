@@ -2,6 +2,7 @@ import { LoadingScene } from './scenes/LoadingScene';
 import { MainScene } from './scenes/MainScene';
 import { GameScene } from './scenes/GameScene';
 import { ControlsScene } from './scenes/ControlsScene';
+import { GamePlayScene } from './scenes/GamePlayScene';
 import { CST } from './CST';
 //@ts-ignore
 import ShakePositionPlugin from 'phaser3-rex-plugins/plugins/shakeposition-plugin.js';
@@ -22,7 +23,7 @@ let game = new Phaser.Game({
     audio: {
         disableWebAudio: true
     },
-    scene: [LoadingScene, MainScene, GameScene,ControlsScene],
+    scene: [LoadingScene, MainScene, GameScene,ControlsScene,GamePlayScene],
     physics: {
         default: "arcade",
         arcade: {
