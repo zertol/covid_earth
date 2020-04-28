@@ -3,6 +3,8 @@ import { CST } from '../CST';
 import START_GAME from '../../images/start_game.png';
 //@ts-ignore
 import controls_GAME from '../../images/controls_game.png';
+//@ts-ignore
+import PLAYCREDITS_GAME from '../../images/gameplay_button.png';
 
 export class MainScene extends Phaser.Scene {
 
@@ -12,10 +14,9 @@ export class MainScene extends Phaser.Scene {
         });
     }
     preload() {
-
         this.load.image('play-button',START_GAME);
         this.load.image('options-button',controls_GAME);
-
+        this.load.image('playcredits-button',PLAYCREDITS_GAME);
     }
     create() {
 
@@ -36,9 +37,11 @@ export class MainScene extends Phaser.Scene {
 
         let playButton = this.add.image(0, 0, 'play-button');
         let controlsButton = this.add.image(0, playButton.height, 'options-button');
+        let playCreditsButton = this.add.image(0, playButton.height * 2, 'playcredits-button');
         let container = this.add.container(this.game.renderer.width / 2, this.game.renderer.height / 2 - 25);
         container.add(playButton);
         container.add(controlsButton);
+        container.add(playCreditsButton);
         container.y = this.game.renderer.height / 2 - container.height;
 
         if (CST.WINDOW.ISMOBILE) {
@@ -47,6 +50,12 @@ export class MainScene extends Phaser.Scene {
 
         playButton.setInteractive({
             useHandCursor: true
+        });
+
+        playCreditsButton.setInteractive({
+            useHandCursor: true
+        }).on("pointerup", () => {
+            this.scene.start(CST.SCENES.GAMEPLAY);
         });
 
         playButton.on("pointerup", () => {

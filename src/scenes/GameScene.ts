@@ -455,7 +455,7 @@ export class GameScene extends Phaser.Scene {
       true
     );
     this.player.alpha = 0.5;
-
+    this.beamLevel=1;
     this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter + 1), "Lives left: " + String(this.respawnMeter));
 
     let tween = this.tweens.add({
@@ -474,6 +474,7 @@ export class GameScene extends Phaser.Scene {
     if (this.scoreMultiplication > 1) {
       setTimeout(() => {
         this.animatePlayerLossGain("Score Multiplied By: " + String(this.scoreMultiplication) + "X", "Score Multiplied By: 1X");
+      this.scoreMultiplication = 1;
       }, 2000);
     }
 
