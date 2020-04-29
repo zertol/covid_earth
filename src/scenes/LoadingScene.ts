@@ -192,6 +192,18 @@ export class LoadingScene extends Phaser.Scene {
       frameWidth: 400,
       frameHeight: 128
     });
+    this.load.spritesheet(CST.SPRITES.BLUECOVID19_GAMEPLAY, BLUECOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
+    this.load.spritesheet(CST.SPRITES.GREENCOVID19_GAMEPLAY, GREENCOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
+    this.load.spritesheet(CST.SPRITES.REDCOVID19_GAMEPLAY, REDCOVID19, {
+      frameWidth: 266,
+      frameHeight: 266
+    });
   }
 
   create() {
@@ -351,6 +363,36 @@ export class LoadingScene extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers(CST.SPRITES.BOLT),
       frameRate: 50,
       repeat: -1
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.BLUECOVID19_GAMEPLAY_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.BLUECOVID19_GAMEPLAY, {
+        start: 0,
+        end: 2
+      }),
+      frameRate: 15,
+      repeat: 0
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.GREENCOVID19_GAMEPLAY_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.GREENCOVID19_GAMEPLAY, {
+        start: 0,
+        end: 3
+      }),
+      frameRate: 15,
+      repeat: 0
+    });
+    this.anims.create({
+      key: CST.ANIMATIONS.REDCOVID19_GAMEPLAY_ANIM,
+      //@ts-ignore
+      frames: this.anims.generateFrameNumbers(CST.SPRITES.REDCOVID19_GAMEPLAY, {
+        start: 0,
+        end: 4
+      }),
+      frameRate: 15,
+      repeat: 0
     });
   }
 }

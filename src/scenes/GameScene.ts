@@ -295,6 +295,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.pause();
       this.gameOver = true;
       let cfx = new ConfirmationBox(this, this.game.renderer.width / 2, this.game.renderer.height / 2, "Notice", "Are you sure you want to exit the game?", () => {
+        this.sound.stopAll();
         this.scene.start(CST.SCENES.MAIN);
       }, () => {
         this.physics.resume();
@@ -477,7 +478,7 @@ export class GameScene extends Phaser.Scene {
       true
     );
     this.player.alpha = 0.5;
-    this.beamLevel=1;
+    this.beamLevel = 1;
     this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter + 1), "Lives left: " + String(this.respawnMeter));
 
     let tween = this.tweens.add({
@@ -687,6 +688,10 @@ export class GameScene extends Phaser.Scene {
 
       powerUpToAdd.body.setSize(73, 73, true);
       powerUpToAdd.disableBody(true, true);
+
+      if (CST.WINDOW.ISMOBILE) {
+        powerUpToAdd.setScale(.7);
+      }
       this.powerUps.add(powerUpToAdd);
 
       //Set a timer at the beginning of each level for each powerup we have

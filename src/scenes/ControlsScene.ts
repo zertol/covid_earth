@@ -200,7 +200,7 @@ export class ControlsScene extends Phaser.Scene {
             useHandCursor: true
         });
 
-        backButton.on("pointerdown", () => {
+        backButton.on("pointerup", () => {
             this.scene.start(CST.SCENES.MAIN);
         });
 

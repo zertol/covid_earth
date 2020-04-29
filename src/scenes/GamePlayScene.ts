@@ -1,8 +1,8 @@
 import { CST } from "../CST";
 
-const COLOR_PRIMARY = 0x4e342e;
-const COLOR_LIGHT = 0x7b5e57;
-const COLOR_DARK = 0x260e04;
+const COLOR_PRIMARY = 0X000000;
+const COLOR_LIGHT = 0X00ffff;
+const COLOR_DARK = 0X0F0F0F;
 
 export class GamePlayScene extends Phaser.Scene {
   //@ts-ignore
@@ -17,12 +17,16 @@ export class GamePlayScene extends Phaser.Scene {
   //@ts-ignore
   private sizer: any;
 
+  //@ts-ignore
+  private background: Phaser.GameObjects.TileSprite;
+
   constructor() {
     super({
       key: CST.SCENES.GAMEPLAY,
     });
   }
   preload() {
+
     this.gamePlayData = this.cache.json.get("gamePlayData");
 
     this.load.scenePlugin({
@@ -33,6 +37,7 @@ export class GamePlayScene extends Phaser.Scene {
   }
   create() {
 
+    this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
 
     //@ts-ignore
     this.scrollablePanel = this.rexUI.add.scrollablePanel({
@@ -44,7 +49,7 @@ export class GamePlayScene extends Phaser.Scene {
       scrollMode: 0,
 
       //@ts-ignore
-      background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, COLOR_PRIMARY),
+      background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 0, COLOR_PRIMARY, .4),
 
       panel: {
         //@ts-ignore
@@ -54,8 +59,8 @@ export class GamePlayScene extends Phaser.Scene {
             right: 1,
             top: 1,
             bottom: 1,
-            line: 1,
-            item: 25
+            line: 25,
+            item: 30
           }
         }),
 
@@ -66,9 +71,9 @@ export class GamePlayScene extends Phaser.Scene {
 
       slider: {
         //@ts-ignore
-        track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_DARK),
+        track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_DARK, .7),
         //@ts-ignore
-        thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, COLOR_LIGHT),
+        thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, COLOR_LIGHT, .7),
       },
 
       // scroller: true,
@@ -76,7 +81,7 @@ export class GamePlayScene extends Phaser.Scene {
       space: {
         left: 10,
         right: 10,
-        top: 10,
+        top: 50,
         bottom: 10,
 
         panel: 10,
@@ -106,7 +111,7 @@ export class GamePlayScene extends Phaser.Scene {
       .setDepth(1);
 
 
-    text.x = this.game.renderer.width - text.width - 25;
+    text.x = this.game.renderer.width - text.width - 40;
 
     let initialAlpha = 0;
 
@@ -165,11 +170,25 @@ export class GamePlayScene extends Phaser.Scene {
     //@ts-ignore
     let item = arr[keyElement];
     if (item != null && typeof item == "object") {
-      let scaleX = item.scaleX == undefined ? 0.5 : item.scaleX;
+      let ScaleX = item.scaleX == undefined ? 0.5 : item.scaleX;
       let ScaleY = item.scaleY == undefined ? 0.5 : item.scaleY;
-      let image = this.add.sprite(0, 0, parent ?? item.name).setScale(scaleX,ScaleY);
-      image.play(item.name.toUpperCase() + "_ANIM");
-      //image.setInteractive();
+
+      let spriteName = (item.name as string).toLowerCase().indexOf("covid19") != -1 ? item.name + "_GAMEPLAY" : item.name;
+
+      let image = this.physics.add.sprite(0, 0, parent ?? item.name).setScale(ScaleX, ScaleY);
+      image.play(spriteName.toUpperCase() + "_ANIM");
+      if ((item.name as string).toLowerCase().indexOf("covid") != -1) {
+        image.frame.setSize(100, 100);
+      }
+      // image.anims.currentFrame.frame.width = 20;
+
+      // let container = this.add.container(0,0);
+      // container.add(image);
+      // this.updateSize(container);
+      // image.setInteractive();
+
+      this.sizer.add(image);
+
       let text = this.make
         .text({
           x: 0,
@@ -183,7 +202,21 @@ export class GamePlayScene extends Phaser.Scene {
           },
         });
 
-      this.sizer.add(image);
+      text.setStroke('#fff', .5);
+      text.setShadow(0, 1, '#202020', 1, true, true);
+
+      if (CST.WINDOW.ISMOBILE) {
+        text.setWordWrapWidth(text.width - 100,true);  
+      }
+      else{
+        text.setWordWrapWidth(500,true);
+      }
+      
+      // container.add(text);
+      // this.updateSize(container);
+
+      this.sizer.add(text);
+      this.sizer.addNewLine();
     }
   };
 

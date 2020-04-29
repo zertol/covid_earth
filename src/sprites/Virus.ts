@@ -60,7 +60,7 @@ export default class Virus extends Phaser.GameObjects.Sprite {
     resetVirusPos = (): void => {
         this.y = 0;
         //@ts-ignore
-        let randomX = Math.floor(Math.random() * (this.scene.game.renderer.width - this.body.width - 11)) + this.body.width;
+        let randomX = Math.floor(Math.random() * (this.scene.game.renderer.width - this.body.width - 21)) + this.body.width;
         this.x = randomX;
     };
 
