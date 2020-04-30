@@ -21,3 +21,38 @@ body{
     align-items: center;
     background:#000;
 }
+
+#game-container.game-opening {
+    -webkit-transform: perspective(300px) rotateX(25deg);
+    transform: perspective(300px) rotateX(25deg);
+    -webkit-transform-origin: 50% 100%;
+    -ms-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+    text-align: justify;
+    position: absolute;
+    margin-left: -9em;
+    font-weight: bold;
+    overflow: hidden;
+    font-size: 350%;
+    height: 50em;
+    width: 18em;
+    bottom: 0;
+    left: 50%;
+  }
+
+
+  #game-container.game-opening #content {
+    animation: scroll 100s linear 16s;
+    position: absolute;
+    top: 100%;
+  }
+  
+
+@keyframes scroll {
+    0% {
+        top: 100%;
+    }
+    100% {
+        top: -170%;
+    }
+}

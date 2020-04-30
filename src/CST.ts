@@ -4,7 +4,8 @@ export const CST = {
     MAIN: "MAIN",
     GAME: "GAME",
     CONTROLS: "CONTROLS",
-    GAMEPLAY : "GAMEPLAY"
+    GAMEPLAY : "GAMEPLAY",
+    OPENING: "OPENING"
   },
   IMAGES: {
     LOGO: "LOGO",

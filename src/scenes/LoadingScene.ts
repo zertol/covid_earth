@@ -133,7 +133,7 @@ export class LoadingScene extends Phaser.Scene {
       }
 
       setTimeout(() => {
-        this.scene.start(CST.SCENES.MAIN);
+        this.scene.start(CST.SCENES.OPENING);
       }, 1000);
     });
 

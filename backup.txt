@@ -1254,3 +1254,137 @@ export class GameScene extends Phaser.Scene {
         powerUp.movePowerUp();
       }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // animation: scroll 100s linear 16s
+
+    // let gameContainer = document.getElementById("game-container") ?? document.createElement("div");
+
+    // gameContainer.className = "game-opening";
+
+    // let content = document.getElementById("content") ?? document.createElement("div");
+
+    // // gameContainer.style.transform = "perspective(300px) rotateX(15deg)";
+    // // gameContainer.style.transformOrigin = "50% 100%";
+    // // gameContainer.style.position = "absolute";
+    // // gameContainer.style.overflow = "hidden";
+    // // gameContainer.style.bottom = "0";
+
+    // // let content = document.createElement("div");
+    // // content.id = "content";
+
+
+
+    // // this.game.canvas.style.position = "absolute";
+    // // this.game.canvas.style.top = "100%";
+    // // this.game.canvas.style.animation = "scroll 50s linear .5s";
+
+
+    // let fullText = "Once upon a time in a far away galaxy, an abnoxious virus decided to come and conquer our planet. This virus in particular was discovered first when "+
+    // "our very own scientists were looking upon the skies and sightseeing the universe. It shaped like a normal virus would have, yet its long reaching envelops "+
+    // "grabs your genes and infects your body without you even realizing it. During close contact, you may exhibit a lot of symptoms that may be the result of the virus's "+
+    // "droplets. The destructive force can generate coughing, sneezing, low oxygen, chest pain, which lead to catastrophic results and the normal human might die. " + 
+    // "Filled with fear, humans and galaxy residents alike, decided to stay away from each other and take precautions to compensate their weaknesses.\nHowever, a brave soldier of the planet earth, "+
+    // "has taken upon himself to fight and restore peace once more to his galaxy, especially planet earth.\nThe fight is still on going despite the years passing by, the brave soldier named Lataka "+
+    // "is still not giving up, and the virus has finally revealed himself as 'COVID'...";
+
+
+    // content.getElementsByTagName("p")[0].innerHTML = fullText;
+
+    // this.crawlText = this.make.text({
+    //   x: this.game.renderer.width / 2,
+    //   y: this.game.renderer.height,
+    //   origin: {
+    //     x: .5,
+    //     y: 0
+    //   },
+    //   text: fullText,
+    //   style: {
+    //     font: "40px monospace",
+    //     fill: "#ffffff",
+    //     lineSpacing: 75,
+    //     align: "justify"
+    //   }
+    // });
+
+    // this.crawlText.setWordWrapWidth(this.game.renderer.width);
