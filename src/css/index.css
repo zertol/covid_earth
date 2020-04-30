@@ -21,3 +21,69 @@ body{
     align-items: center;
     background:#000;
 }
+
+#game-container.game-opening {
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-transform: perspective(450px) rotateX(25deg);
+    transform: perspective(300px) rotateX(25deg);
+    -webkit-transform-origin: 50% 100%;
+    -ms-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+    text-align: justify;
+    position: absolute;
+    margin-left: -9em;
+    font-weight: bold;
+    overflow: hidden;
+    font-size: 350%;
+    height: 50em;
+    width: 18em;
+    bottom: 0;
+    left: 50%;
+  }
+
+  #content{
+      display: none;
+  }
+
+  #game-container.game-opening #content {
+      display: block;
+    animation: scroll 60s linear .5s;
+    position: absolute;
+    top: 100%;
+    
+  }
+
+  #game-container.game-opening #content h1{
+    line-height: 4;
+    color: #fff;
+    margin:0;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  #game-container.game-opening #content p{
+    line-height: 2.5;
+    color: #fff;
+    margin:0
+  }
+
+  #game-container.game-opening canvas{
+    position: absolute;
+    z-index: -1;
+  }
+
+  
+@keyframes scroll {
+    0% {
+        top: 100%;
+    }
+    100% {
+        top: -170%;
+    }
+}
+
+@media screen and (max-width:576px){
+    #game-container.game-opening{
+        font-size: 150%;
+    }
+}
