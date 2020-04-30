@@ -1,10 +1,11 @@
 export const CST = {
+  TITLE: "COVID WAR",
   SCENES: {
     LOAD: "LOAD",
     MAIN: "MAIN",
     GAME: "GAME",
     CONTROLS: "CONTROLS",
-    GAMEPLAY : "GAMEPLAY",
+    GAMEPLAY: "GAMEPLAY",
     OPENING: "OPENING"
   },
   IMAGES: {
