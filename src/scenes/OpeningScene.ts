@@ -16,7 +16,38 @@ export class OpeningScene extends Phaser.Scene {
   }
 
   create() {
+    
+    let intro = this.sound.add(CST.SOUNDS.INTRO);
+    
+
+    intro.addMarker({
+      name: CST.SOUNDS.MARKERS.INTRO,
+      config: {
+        volume: .2,
+        loop: true
+      }
+    });
+    intro.play(CST.SOUNDS.MARKERS.INTRO);
+
     this.make.text({ x: 0, y: 0, text: " " });
+
+    let btnSkip = document.createElement("button");
+    btnSkip.innerText = "Skip Intro >>";
+    btnSkip.className = "skip-intro";
+
+    btnSkip.onclick = () => {
+      document.body.removeChild(btnSkip);
+      gameContainer.className = "";
+      content.innerHTML = "";
+      this.sound.remove(intro);
+      this.scene.start(CST.SCENES.MAIN);
+    };
+
+    document.body.appendChild(btnSkip);
+
+    setTimeout(() => {
+      btnSkip.className += " in";
+    }, 5000);
 
     let gameContainer = document.getElementById("game-container") ?? document.createElement("div");
 
@@ -53,8 +84,10 @@ export class OpeningScene extends Phaser.Scene {
 
     // Standard syntax
     content.addEventListener("animationend", () => {
+      document.body.removeChild(btnSkip);
       gameContainer.className = "";
       content.innerHTML = "";
+      this.sound.remove(intro);
       this.scene.start(CST.SCENES.MAIN);
     });
 

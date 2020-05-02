@@ -40,6 +40,8 @@ import FX_BOMB_FALLING from "../../sounds/fx_bomb_falling.mp3";
 //@ts-ignore
 import GAME_SOUND from "../../sounds/game_sound.mp3";
 //@ts-ignore
+import INTRO_SOUND from "../../sounds/intro.m4a";
+//@ts-ignore
 import EXIT_BUTTON from "../../images/exit_button.png";
 //@ts-ignore
 import OK_BUTTON from "../../images/ok_button.png";
@@ -70,6 +72,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.audio(CST.SOUNDS.FX_EXPLOSION,[FX_EXPLOSION]);
     this.load.audio(CST.SOUNDS.FX_BOMB_FALLING,[FX_BOMB_FALLING]);
     this.load.audio(CST.SOUNDS.GAME_SOUND,[GAME_SOUND]);
+    this.load.audio(CST.SOUNDS.INTRO,[INTRO_SOUND]);
 
     let loadingText = this.make.text({
       x: width / 2,

@@ -147,6 +147,10 @@ export class GameScene extends Phaser.Scene {
       .setScale(0.2, 0.2)
       .setDepth(1);
 
+    this.player.body.setSize(this.player.width - 120, this.player.height - 120, true);
+    this.player.body.setOffset(60, 60);
+
+
     this.playerContainer = this.physics.add.group();
     this.playerContainer.setOrigin(this.player.x, this.player.y);
     this.playerContainer.add(this.player);
@@ -202,12 +206,12 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
-    //Powerups are physical objects that logically don't get destroyed upon beam collision\
-    //Here the projectile get destroyed not the powerup!!!!!!!
-    this.physics.add.collider(this.projectiles, this.powerUps, (projectile, powerUp) => {
-      this.projectiles.remove(projectile);
-      projectile.destroy();
-    });
+    // //Powerups are physical objects that logically don't get destroyed upon beam collision\
+    // //Here the projectile get destroyed not the powerup!!!!!!!
+    // this.physics.add.collider(this.projectiles, this.powerUps, (projectile, powerUp) => {
+    //   this.projectiles.remove(projectile);
+    //   projectile.destroy();
+    // });
 
     //Get Powerup
     this.physics.add.overlap(
@@ -340,7 +344,10 @@ export class GameScene extends Phaser.Scene {
       case CST.ANIMATIONS.LIFEPOWERUP_ANIM:
         this.respawnMeter += 1;
         this.livesLabel.setText(String(this.respawnMeter));
-        this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter - 1), "Lives left: " + String(this.respawnMeter));
+        setTimeout(() => {
+          this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter - 1), "Lives left: " + String(this.respawnMeter));
+        }, 500);
+
         break;
       case CST.ANIMATIONS.BEAMPOWERUP_ANIM:
         if (this.beamLevel <= 3)
@@ -350,8 +357,10 @@ export class GameScene extends Phaser.Scene {
       case CST.ANIMATIONS.SCOREPOWERUP_ANIM:
         if (this.scoreMultiplication <= 3) {
           this.scoreMultiplication += 1;
+          setTimeout(() => {
+            this.animatePlayerLossGain("Score Multiplied By: " + String(this.scoreMultiplication - 1) + "X", "Score Multiplied By: " + String(this.scoreMultiplication) + "X");
+          }, 500);
 
-          this.animatePlayerLossGain("Score Multiplied By: " + String(this.scoreMultiplication - 1) + "X", "Score Multiplied By: " + String(this.scoreMultiplication) + "X");
         }
         break;
       case CST.ANIMATIONS.FINISHLVLPOWERUP_ANIM:
@@ -466,7 +475,12 @@ export class GameScene extends Phaser.Scene {
 
   resetPlayer = () => {
     //Reset Beams 
-    this.beamLevel = 1;
+    if (this.levelReach > 2) {
+      this.beamLevel = 2;
+    }
+    else {
+      this.beamLevel = 1;
+    }
 
     //@ts-ignore
     this.player.enableBody(
@@ -479,7 +493,6 @@ export class GameScene extends Phaser.Scene {
     );
     this.player.alpha = 0.5;
     this.beamLevel = 1;
-    this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter + 1), "Lives left: " + String(this.respawnMeter));
 
     let tween = this.tweens.add({
       targets: this.player,
@@ -490,13 +503,15 @@ export class GameScene extends Phaser.Scene {
       onComplete: () => {
         //@ts-ignore
         this.player.alpha = 1;
+        this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter + 1), "Lives left: " + String(this.respawnMeter));
+
+        if (this.scoreMultiplication > 1) {
+          this.scoreMultiplication = 1;
+        }
+        
       },
       callbackScope: this,
     });
-
-    if (this.scoreMultiplication > 1) {
-      this.animatePlayerLossGain("Score Multiplied By: " + String(this.scoreMultiplication) + "X", "Score Multiplied By: 1X");
-    }
 
   };
 
@@ -572,6 +587,10 @@ export class GameScene extends Phaser.Scene {
 
   gameOverScene = (): void => {
 
+    if (this.playerGainLossTween) {
+      this.playerGainLossTween.stop();
+      this.tweens.remove(this.playerGainLossTween);
+    }
 
     //To not add simultaneous tweens
     this.tweens.shutdown();
@@ -657,8 +676,11 @@ export class GameScene extends Phaser.Scene {
       let virusToAdd = new Virus(this, 0, Math.floor(Math.random() * 10) + 1, virusType, animationKey, 1, speed, this.virusId++, lifespan, bombInterval * 1000);
       //@ts-ignore
       virusToAdd.x = Math.floor(Math.random() * (this.game.renderer.width - virusToAdd.body.width - 21)) + virusToAdd.body.width;
+
       //@ts-ignore
-      virusToAdd.body.setSize(75, 75, true);
+      virusToAdd.body.setSize(60, 60, true);
+
+
       if (CST.WINDOW.ISMOBILE) {
         virusToAdd.setScale(.7);
       }
@@ -903,6 +925,7 @@ export class GameScene extends Phaser.Scene {
 
   //Play Explosion Sound based on random marker to generate multiple ones at the same time during the game.
   //We are saving the instance so that we can remove specific ones only and not the entire sound
+  //We are distinguishing 2 sounds at the same time 
   playExplosionSound = (explosionGroup: Phaser.GameObjects.Group) => {
     let guid = Phaser.Math.RND.between(1, 500);
 
@@ -944,6 +967,7 @@ export class GameScene extends Phaser.Scene {
 
   //Play Beam Sound based on random marker to generate multiple ones at the same time during the game.
   //We are saving the instance so that we can remove specific ones only and not the entire sound
+  //We are distinguishing 2 sounds at the same time 
   playBeamSound = (beamGroup: Phaser.GameObjects.Group) => {
     let guid = Phaser.Math.RND.between(1, 500);
     let fxBeamm: Phaser.Sound.BaseSound = this.sound.add(CST.SOUNDS.FX_BEAM);
@@ -983,7 +1007,6 @@ export class GameScene extends Phaser.Scene {
   };
 
   //Play Bomb Sound based on random marker to generate multiple ones at the same time during the game.
-  //This is different from the first two because it's long and we need to cut it once the object (bomb) has been destroyed
   //and since we need to keep track of the sounds that are in place in order to avoid parallel sounds collision
   //we add them to an array and delete them if they ever show up in the destroy event
   //If 2 bombs were to be active at the same time, this allows us to handle each sound alone.
@@ -1055,6 +1078,8 @@ export class GameScene extends Phaser.Scene {
     );
   };
 
+
+  //Kill every virus
   killAllEnemies = (bolt: any, virus: Virus) => {
     let explosion = new Explosion(this, virus.x, virus.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
     // explosion.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
@@ -1065,6 +1090,7 @@ export class GameScene extends Phaser.Scene {
     virus.resetVirusPos();
   };
 
+  //Kill every bomb
   killAllBombs = (bolt: any, bomb: Bomb) => {
     let explosion = new Explosion(this, bomb.x, bomb.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
 
