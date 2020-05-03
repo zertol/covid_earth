@@ -72,8 +72,8 @@
         "red": 2
       },
       "bombIntervals":{
-          "blue":0,
-          "green": 0,
+          "blue":14,
+          "green": 14,
           "red": 12
       }
     },
@@ -108,9 +108,9 @@
         "red": 2
       },
       "bombIntervals":{
-          "blue":12,
-          "green": 12,
-          "red": 10
+          "blue":10,
+          "green": 10,
+          "red": 8
       }
     },
     {
@@ -144,9 +144,9 @@
         "red": 2
       },
       "bombIntervals":{
-          "blue":10,
-          "green": 10,
-          "red": 8
+          "blue":8,
+          "green": 8,
+          "red": 6
       }
     },
     {
@@ -217,7 +217,7 @@
       },
       "bombIntervals":{
           "blue":3,
-          "green":3,
+          "green":2,
           "red": 2
       }
     },
@@ -255,9 +255,9 @@
         "red": 3
       },
       "bombIntervals":{
-          "blue":3,
+          "blue":2,
           "green":2,
-          "red": 2
+          "red": 1
       }
     }
   ]

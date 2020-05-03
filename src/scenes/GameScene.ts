@@ -79,6 +79,8 @@ export class GameScene extends Phaser.Scene {
   private bolt: Phaser.Physics.Arcade.Sprite;
   //@ts-ignore
   private playerGainLossTween: Phaser.Tweens.Tween;
+  //@ts-ignore
+  private timeoutId: integer;
 
   constructor() {
     super({
@@ -344,9 +346,7 @@ export class GameScene extends Phaser.Scene {
       case CST.ANIMATIONS.LIFEPOWERUP_ANIM:
         this.respawnMeter += 1;
         this.livesLabel.setText(String(this.respawnMeter));
-        setTimeout(() => {
-          this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter - 1), "Lives left: " + String(this.respawnMeter));
-        }, 500);
+        this.animatePlayerLossGain("Lives left: " + String(this.respawnMeter - 1), "Lives left: " + String(this.respawnMeter));
 
         break;
       case CST.ANIMATIONS.BEAMPOWERUP_ANIM:
@@ -357,9 +357,7 @@ export class GameScene extends Phaser.Scene {
       case CST.ANIMATIONS.SCOREPOWERUP_ANIM:
         if (this.scoreMultiplication <= 3) {
           this.scoreMultiplication += 1;
-          setTimeout(() => {
-            this.animatePlayerLossGain("Score Multiplied By: " + String(this.scoreMultiplication - 1) + "X", "Score Multiplied By: " + String(this.scoreMultiplication) + "X");
-          }, 500);
+          this.animatePlayerLossGain("Score Multiplied By: " + String(this.scoreMultiplication - 1) + "X", "Score Multiplied By: " + String(this.scoreMultiplication) + "X");
 
         }
         break;
@@ -402,6 +400,12 @@ export class GameScene extends Phaser.Scene {
   hurtPlayer = (hitObject: Phaser.Physics.Arcade.Sprite, enemy: Virus): void => {
     enemy.resetVirusPos();
 
+    if (this.playerContainer.getChildren().length > 1) {
+      //@ts-ignore
+      let shieldHit = this.levelsData.shieldDamageHit["level" + String(this.shieldLevel)];
+      return (this.shield as Shield).decreaseShieldAlpha(shieldHit);
+    }
+
     if (this.player.alpha < 1) {
       return;
     }
@@ -411,11 +415,6 @@ export class GameScene extends Phaser.Scene {
       return this.gameOverScene();
     }
 
-    if (this.playerContainer.getChildren().length > 1) {
-      //@ts-ignore
-      let shieldHit = this.levelsData.shieldDamageHit["level" + String(this.shieldLevel)];
-      return (this.shield as Shield).decreaseShieldAlpha(shieldHit);
-    }
     this.respawnMeter -= 1;
     this.livesLabel.setText(String(this.respawnMeter));
 
@@ -508,7 +507,7 @@ export class GameScene extends Phaser.Scene {
         if (this.scoreMultiplication > 1) {
           this.scoreMultiplication = 1;
         }
-        
+
       },
       callbackScope: this,
     });
@@ -519,6 +518,7 @@ export class GameScene extends Phaser.Scene {
   //Animate Life Value
   animatePlayerLossGain = (textFrom: string, textTo: string) => {
     if (this.playerGainLossTween) {
+      this.playerGainLossTween.complete();
       this.playerGainLossTween.stop();
       this.tweens.remove(this.playerGainLossTween);
     }
@@ -547,7 +547,7 @@ export class GameScene extends Phaser.Scene {
       repeat: 0,
       ease: 'Expo.easeOut',
       yoyo: true,
-      hold: 500,
+      hold: 300,
       onComplete: () => {
         lossGainText.setText("");
         lossGainText.destroy();
@@ -587,13 +587,18 @@ export class GameScene extends Phaser.Scene {
 
   gameOverScene = (): void => {
 
-    if (this.playerGainLossTween) {
-      this.playerGainLossTween.stop();
-      this.tweens.remove(this.playerGainLossTween);
+    try {
+      if (this.playerGainLossTween) {
+        this.playerGainLossTween.complete();
+        this.playerGainLossTween.stop();
+      }
+
+      //To not add simultaneous tweens
+      this.tweens.shutdown();
+    } catch (error) {
+      console.log(error);
     }
 
-    //To not add simultaneous tweens
-    this.tweens.shutdown();
 
     this.make
       .text({
@@ -608,18 +613,25 @@ export class GameScene extends Phaser.Scene {
         },
       })
       .setDepth(10);
-    this.physics.pause();
-    this.gameOver = true;
+
     this.time.addEvent({
       delay: 3000,
       callback: () => {
-        if (null != this.sound) {
-          this.sound.stopAll();
+        try {
+          if (null != this.sound) {
+            this.sound.stopAll();
+          }
+          this.scene.stop();
+          this.scene.start(CST.SCENES.MAIN);
+        } catch (error) {
+          console.log(error);
         }
-        this.scene.start(CST.SCENES.MAIN);
       },
       callbackScope: this,
     });
+
+    this.physics.pause();
+    this.gameOver = true;
   };
 
   adjustGlobeBarrier = () => {
