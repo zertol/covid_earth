@@ -813,11 +813,62 @@ export class GameScene extends Phaser.Scene {
       this.enemies.clear(true);
       this.enemies.getChildren().forEach(enemy => enemy.destroy());
       this.loadEnemiesByLevel();
-    } else {
-      // here it must be game ended !
-      this.levelReach -= 1;
       //@ts-ignore
-      this.levels = this.levelsData.levels.filter((x: any) => x.levelNumber == this.levelReach);
+    } else if(this.levelReach > this.levelsData.levels.length + 2000) {
+      // here it must be game ended !
+      this.enemies.clear(true);
+      this.enemies.getChildren().forEach(enemy => enemy.destroy());
+      this.bombs.clear(true);
+      this.bombs.getChildren().forEach(bomb => bomb.destroy());
+      this.projectiles.clear(true);
+      this.projectiles.getChildren().forEach((beam: Beam) => beam.destroy());
+
+      this.physics.pause();
+      this.gameOver = true;
+
+      let lossGainText = this.make
+        .text({
+          x: this.game.renderer.width / 2,
+          y: this.game.renderer.height / 2,
+          origin: { x: 0.5, y: 0.5 },
+          text: "Congratulations! You have completed all the levels. Tune in for more.",
+          padding: 0,
+          style: {
+            font: "30px monospace",
+            fill: "#ffffff",
+            align: "center"
+          },
+        })
+        .setDepth(10).setScale(0.2);
+
+      lossGainText.setStroke('#fff', .5);
+      lossGainText.setShadow(0, 1, '#202020', 1, true, true);
+      lossGainText.setWordWrapWidth(350, true)
+
+      this.playerGainLossTween = this.tweens.add({
+        targets: lossGainText,
+        scale: 1,
+        //@ts-ignore
+        duration: 2500,
+        repeat: 0,
+        ease: 'Expo.easeOut',
+        yoyo: false,
+        hold: 3000,
+        onComplete: () => {
+          try {
+            lossGainText.setText("");
+            lossGainText.destroy();
+            if (null != this.sound) {
+              this.sound.stopAll();
+            }
+            this.scene.stop();
+            this.scene.start(CST.SCENES.MAIN);
+          } catch (error) {
+            console.log(error);
+          }
+        },
+        callbackScope: this,
+      });
     }
   };
 

@@ -54,7 +54,7 @@
         "score": 1
       },
       "powerUpDelay": {
-        "beam": [12],
+        "beam": [16],
         "shield" : [10],
         "score" : [20]
       },
