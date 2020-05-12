@@ -1,5 +1,5 @@
 {
-  "scoreLevelModulo": 4000,
+  "scoreLevelModulo": 200,
   "player": {
     "speed": 750
   },

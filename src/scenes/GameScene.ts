@@ -88,7 +88,12 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  init(data:object){
+    console.log(data);
+  }
+
   preload() {
+    this.score = 0;
     this.levelReach = 1;
     this.lastFired = 0;
     this.lastBombFired = 0;
@@ -148,6 +153,10 @@ export class GameScene extends Phaser.Scene {
       .sprite(this.game.renderer.width / 2 - 8, this.game.renderer.height - 130, CST.SPRITES.PLAYER)
       .setScale(0.2, 0.2)
       .setDepth(1);
+
+      if (CST.WINDOW.ISMOBILE) {
+        this.player.setScale(.17,.17);
+      }
 
     this.player.body.setSize(this.player.width - 120, this.player.height - 120, true);
     this.player.body.setOffset(60, 60);
@@ -260,7 +269,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     //Score indicator
-    this.score = 0;
+    
     this.scoreLabel = this.make.text({
       x: 10,
       y: 5,
@@ -831,7 +840,7 @@ export class GameScene extends Phaser.Scene {
           x: this.game.renderer.width / 2,
           y: this.game.renderer.height / 2,
           origin: { x: 0.5, y: 0.5 },
-          text: "Congratulations! You have completed all the levels. Tune in for more.",
+          text: "Congratulations! You have completed all the levels. Tune in for future updates.",
           padding: 0,
           style: {
             font: "30px monospace",

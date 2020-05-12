@@ -2,7 +2,7 @@ import { CST } from "../CST";
 //@ts-ignore
 import PLAYER from "../../sprites/spaceship.png";
 //@ts-ignore
-import LOGO from "../../images/elslogo.png";
+import DEV_LOGO from "../../images/elslogo.png";
 //@ts-ignore
 import BACKGROUND from "../../images/background.jpg";
 //@ts-ignore
@@ -57,15 +57,19 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   preload() {
-    let width = this.game.renderer.width;
-    let height = this.game.renderer.height;
 
-    let progressBar = this.add.graphics();
-    let progressBox = this.add.graphics();
+    this.facebook.once('startgame', () => {this.scene.start(CST.SCENES.OPENING);}, this);
+    this.facebook.showLoadProgress(this);
 
-    progressBox.fillStyle(0x222222, 0.8);
-    progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
+    // let width = this.game.renderer.width;
+    // let height = this.game.renderer.height;
 
+    // let progressBar = this.add.graphics();
+    // let progressBox = this.add.graphics();
+
+    // progressBox.fillStyle(0x222222, 0.8);
+    // progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
+    
     this.load.json('levelsData', LEVELSJSON);
     this.load.json('gamePlayData', GAMEPLAY);
     this.load.audio(CST.SOUNDS.FX_BEAM,[FX_BEAM]);
@@ -74,75 +78,75 @@ export class LoadingScene extends Phaser.Scene {
     this.load.audio(CST.SOUNDS.GAME_SOUND,[GAME_SOUND]);
     this.load.audio(CST.SOUNDS.INTRO,[INTRO_SOUND]);
 
-    let loadingText = this.make.text({
-      x: width / 2,
-      y: height / 2 - 50,
-      text: "Loading...",
-      style: {
-        font: "20px monospace",
-        fill: "#ffffff"
-      }
-    });
-    loadingText.setOrigin(0.5, 0.5);
+    // let loadingText = this.make.text({
+    //   x: width / 2,
+    //   y: height / 2 - 50,
+    //   text: "Loading...",
+    //   style: {
+    //     font: "20px monospace",
+    //     fill: "#ffffff"
+    //   }
+    // });
+    // loadingText.setOrigin(0.5, 0.5);
 
-    let percentText = this.make.text({
-      x: width / 2,
-      y: height / 2,
-      text: "0%",
-      style: {
-        font: "18px monospace",
-        fill: "#ffffff"
-      }
-    });
-    percentText.setOrigin(0.5, 0.5);
+    // let percentText = this.make.text({
+    //   x: width / 2,
+    //   y: height / 2,
+    //   text: "0%",
+    //   style: {
+    //     font: "18px monospace",
+    //     fill: "#ffffff"
+    //   }
+    // });
+    // percentText.setOrigin(0.5, 0.5);
 
-    let assetText = this.make.text({
-      x: width / 2,
-      y: height / 2 + 50,
-      text: "",
-      style: {
-        font: "18px monospace",
-        fill: "#ffffff"
-      }
-    });
-    assetText.setOrigin(0.5, 0.5);
+    // let assetText = this.make.text({
+    //   x: width / 2,
+    //   y: height / 2 + 50,
+    //   text: "",
+    //   style: {
+    //     font: "18px monospace",
+    //     fill: "#ffffff"
+    //   }
+    // });
+    // assetText.setOrigin(0.5, 0.5);
 
-    this.load.on("progress", (value: number) => {
-      //@ts-ignore
-      percentText.setText(parseInt(value * 100) + "%");
-      progressBar.clear();
-      progressBar.fillStyle(0xffffff, 1);
-      //@ts-ignore
-      progressBar.fillRect(width / 2 - 140, height / 2 - 15, 280 * value, 30);
-    });
-    //@ts-ignore
-    let files = [];
-    this.load.on("fileprogress", (file: Phaser.GameObjects.Image) => {
-      //@ts-ignore
-      assetText.setText("Loading asset: " + file.key);
-      files.push(file);
-    });
+    // this.load.on("progress", (value: number) => {
+    //   //@ts-ignore
+    //   percentText.setText(parseInt(value * 100) + "%");
+    //   progressBar.clear();
+    //   progressBar.fillStyle(0xffffff, 1);
+    //   //@ts-ignore
+    //   progressBar.fillRect(width / 2 - 140, height / 2 - 15, 280 * value, 30);
+    // });
+    // //@ts-ignore
+    // let files = [];
+    // this.load.on("fileprogress", (file: Phaser.GameObjects.Image) => {
+    //   //@ts-ignore
+    //   assetText.setText("Loading asset: " + file.key);
+    //   files.push(file);
+    // });
 
-    this.load.on("complete", () => {
-      progressBar.destroy();
-      progressBox.destroy();
-      loadingText.destroy();
-      percentText.destroy();
-      assetText.destroy();
+    // this.load.on("complete", () => {
+    //   progressBar.destroy();
+    //   progressBox.destroy();
+    //   loadingText.destroy();
+    //   percentText.destroy();
+    //   assetText.destroy();
 
-      for (let i = 0; i < 10; i++) {
-        //@ts-ignore
-        files[i].destroy();
-      }
+    //   for (let i = 0; i < 10; i++) {
+    //     //@ts-ignore
+    //     files[i].destroy();
+    //   }
 
-      setTimeout(() => {
-        this.scene.start(CST.SCENES.OPENING);
-      }, 1000);
-    });
+    //   setTimeout(() => {
+    //     // this.scene.start(CST.SCENES.OPENING);
+    //   }, 1000);
+    // });
 
-    this.load.image(CST.IMAGES.LOGO, LOGO);
-    for (let i = 0; i < 10; i++) {
-      this.load.image(CST.IMAGES.LOGO + i, LOGO);
+    this.load.image(CST.IMAGES.DEV_LOGO, DEV_LOGO);
+    for (let i = 0; i < 50; i++) {
+      this.load.image(CST.IMAGES.DEV_LOGO + i, DEV_LOGO);
     }
 
     this.load.image(CST.IMAGES.BACKGROUND, BACKGROUND);
@@ -207,13 +211,17 @@ export class LoadingScene extends Phaser.Scene {
       frameWidth: 266,
       frameHeight: 266
     });
+    // setTimeout(() => {
+    //   this.scene.start(CST.SCENES.OPENING);  
+    // }, 4000);
+    
   }
 
   create() {
     let logo = this.add.image(
       this.game.renderer.width / 2,
       this.game.renderer.height / 2,
-      CST.IMAGES.LOGO
+      CST.IMAGES.DEV_LOGO
     );
     if(CST.WINDOW.ISMOBILE){
       logo.setScale(.7);

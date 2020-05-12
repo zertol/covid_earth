@@ -23,7 +23,7 @@ body{
 }
 
 #game-container.game-opening {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: monospace;
     -webkit-transform: perspective(450px) rotateX(25deg);
     transform: perspective(300px) rotateX(25deg);
     -webkit-transform-origin: 50% 100%;
@@ -31,12 +31,12 @@ body{
     transform-origin: 50% 100%;
     text-align: justify;
     position: absolute;
-    margin-left: -9em;
+    margin-left: -11em;
     font-weight: bold;
     overflow: hidden;
     font-size: 350%;
     height: 50em;
-    width: 18em;
+    width: 22em;
     bottom: 0;
     left: 50%;
   }
@@ -123,4 +123,10 @@ body{
 .skip-intro:active, .skip-intro:hover,.skip-intro:focus{
   outline: none;
   border: none;
+}
+
+@media screen and (max-width:576px){
+  .skip-intro{
+    font-size:18px;
+  }
 }

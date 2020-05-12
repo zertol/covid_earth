@@ -16,6 +16,9 @@ if (!CST.WINDOW.ISMOBILE) {
     w = 768;
 }
 
+
+FBInstant.initializeAsync()
+.then(() => {
 //Start the game object
 let game = new Phaser.Game({
     parent: 'game-container',
@@ -40,6 +43,9 @@ let game = new Phaser.Game({
     },
     //@ts-ignore
     clearBeforeRender: false,
-    type: Phaser.WEBGL,
+    type: Phaser.AUTO,
     multiTexture: true
 });
+
+});
+

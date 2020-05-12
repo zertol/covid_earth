@@ -10,6 +10,7 @@ export const CST = {
   },
   IMAGES: {
     LOGO: "LOGO",
+    DEV_LOGO: "DEV_LOGO",
     BACKGROUND: "BACKGROUND",
     HEARTMETER: "HEARTMETER",
     UP_ARROW: "UP_ARROW",

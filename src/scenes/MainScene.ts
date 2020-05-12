@@ -21,22 +21,32 @@ import SWIPE_FINGER from '../../images/swipe_finger.png';
 import BACK_BUTTON from '../../images/back_button.png';
 //@ts-ignore
 import PLAYCREDITS_GAME from '../../images/gameplay_button.png';
+//@ts-ignore
+import LOGO from "../../images/logo_covid.png";
 
 export class MainScene extends Phaser.Scene {
     //@ts-ignore
     private background: Phaser.GameObjects.TileSprite;
+    //@ts-ignore
+    private data: object;
 
     constructor() {
         super({
             key: CST.SCENES.MAIN
         });
     }
+
+    init(data: object) {
+        this.data = data;
+    }
+
     preload() {
         this.load.image('play-button', START_GAME);
         this.load.image('options-button', CONTROLS_GAME);
-        this.load.image('playcredits-button',PLAYCREDITS_GAME);
+        this.load.image('playcredits-button', PLAYCREDITS_GAME);
         this.load.image(CST.IMAGES.BACK_BUTTON, BACK_BUTTON);
-        
+        this.load.image(CST.IMAGES.LOGO, LOGO);
+
         if (!CST.WINDOW.ISMOBILE) {
             this.load.image(CST.IMAGES.UP_ARROW, UP_ARROW);
             this.load.image(CST.IMAGES.DOWN_ARROW, DOWN_ARROW);
@@ -52,6 +62,13 @@ export class MainScene extends Phaser.Scene {
     create() {
 
         this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
+        let logoPl = this.add.image(this.game.renderer.width / 2, 150, CST.IMAGES.LOGO).setScale(.35);
+
+        if (CST.WINDOW.ISMOBILE) {
+            logoPl.y = 115;
+            logoPl.setScale(.22);
+        }
+
 
         // let playButton = this.make.text({
         //     x: this.game.renderer.width / 2,
@@ -91,7 +108,7 @@ export class MainScene extends Phaser.Scene {
         });
 
         playButton.on("pointerup", () => {
-            this.scene.start(CST.SCENES.GAME);
+            this.scene.start(CST.SCENES.GAME, this.data);
         });
 
         controlsButton.setInteractive({
@@ -102,7 +119,7 @@ export class MainScene extends Phaser.Scene {
             this.scene.start(CST.SCENES.CONTROLS);
         });
 
-        this.input.keyboard.on('keydown-SPACE', () => this.scene.start(CST.SCENES.GAME));
+        this.input.keyboard.on('keydown-SPACE', () => this.scene.start(CST.SCENES.GAME, this.data));
 
 
     }

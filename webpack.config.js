@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 var htmlWebPlugin = require('html-webpack-plugin');
 var htmlWebConfig = new htmlWebPlugin({
@@ -18,7 +19,7 @@ module.exports = {
         //     ProjModules: path.resolve(__dirname, 'src/'),
         //     NodeModules: path.resolve(__dirname, 'node_modules/')
         // },
-        modules: [path.resolve(__dirname, 'src'),path.resolve(__dirname, 'node_modules/')],
+        modules: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'node_modules/')],
         extensions: ['.ts', '.js', '.png', '.jpg', '.json']
     },
     module: {
@@ -47,5 +48,12 @@ module.exports = {
             }
         ]
     },
-    plugins: [htmlWebConfig],
+    plugins: [
+        htmlWebConfig,
+        new webpack.DefinePlugin({
+            'CANVAS_RENDERER': JSON.stringify(true),
+            'WEBGL_RENDERER': JSON.stringify(true),
+            'PLUGIN_FBINSTANT': JSON.stringify(true)
+        })
+    ],
 }
