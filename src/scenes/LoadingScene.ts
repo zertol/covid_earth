@@ -58,7 +58,9 @@ export class LoadingScene extends Phaser.Scene {
 
   preload() {
 
-    this.facebook.once('startgame', () => {this.scene.start(CST.SCENES.OPENING);}, this);
+    this.facebook.once('startgame', () => {
+      this.scene.start(CST.SCENES.OPENING);
+    }, this);
     this.facebook.showLoadProgress(this);
 
     // let width = this.game.renderer.width;
@@ -69,14 +71,14 @@ export class LoadingScene extends Phaser.Scene {
 
     // progressBox.fillStyle(0x222222, 0.8);
     // progressBox.fillRect(width / 2 - 150, height / 2 - 25, 300, 50);
-    
+
     this.load.json('levelsData', LEVELSJSON);
     this.load.json('gamePlayData', GAMEPLAY);
-    this.load.audio(CST.SOUNDS.FX_BEAM,[FX_BEAM]);
-    this.load.audio(CST.SOUNDS.FX_EXPLOSION,[FX_EXPLOSION]);
-    this.load.audio(CST.SOUNDS.FX_BOMB_FALLING,[FX_BOMB_FALLING]);
-    this.load.audio(CST.SOUNDS.GAME_SOUND,[GAME_SOUND]);
-    this.load.audio(CST.SOUNDS.INTRO,[INTRO_SOUND]);
+    this.load.audio(CST.SOUNDS.FX_BEAM, [FX_BEAM]);
+    this.load.audio(CST.SOUNDS.FX_EXPLOSION, [FX_EXPLOSION]);
+    this.load.audio(CST.SOUNDS.FX_BOMB_FALLING, [FX_BOMB_FALLING]);
+    this.load.audio(CST.SOUNDS.GAME_SOUND, [GAME_SOUND]);
+    this.load.audio(CST.SOUNDS.INTRO, [INTRO_SOUND]);
 
     // let loadingText = this.make.text({
     //   x: width / 2,
@@ -154,7 +156,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image(CST.IMAGES.EXIT_BUTTON, EXIT_BUTTON);
     this.load.image(CST.IMAGES.OK_BUTTON, OK_BUTTON);
     this.load.image(CST.IMAGES.CANCEL_BUTTON, CANCEL_BUTTON);
-    
+
     this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
       frameWidth: 26,
       frameHeight: 82
@@ -214,7 +216,7 @@ export class LoadingScene extends Phaser.Scene {
     // setTimeout(() => {
     //   this.scene.start(CST.SCENES.OPENING);  
     // }, 4000);
-    
+
   }
 
   create() {
@@ -223,7 +225,7 @@ export class LoadingScene extends Phaser.Scene {
       this.game.renderer.height / 2,
       CST.IMAGES.DEV_LOGO
     );
-    if(CST.WINDOW.ISMOBILE){
+    if (CST.WINDOW.ISMOBILE) {
       logo.setScale(.7);
     }
     this.anims.create({

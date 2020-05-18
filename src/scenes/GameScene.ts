@@ -8,6 +8,15 @@ import Bomb from "../sprites/Bomb";
 import ConfirmationBox from "../utils/ConfirmationBox";
 import { Physics, GameObjects } from "phaser";
 
+let userData = {
+  level: 1,
+  score: 0,
+  beamPerLevelStart: [
+    { level: 1, beamLevel: 1 }
+  ],
+  maxScore: 0
+};
+
 export class GameScene extends Phaser.Scene {
   //@ts-ignore
   private background: Phaser.GameObjects.TileSprite;
@@ -81,6 +90,8 @@ export class GameScene extends Phaser.Scene {
   private playerGainLossTween: Phaser.Tweens.Tween;
   //@ts-ignore
   private timeoutId: integer;
+  //@ts-ignore
+  private leaderboard: any;
 
   constructor() {
     super({
@@ -88,17 +99,21 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  init(data:object){
-    console.log(data);
+  init(data: {}) {
+    if (Object.keys(data).length > 0) {
+      //@ts-ignore
+      userData = data;
+    }
+
   }
 
   preload() {
-    this.score = 0;
-    this.levelReach = 1;
+    this.score = userData.score;
+    this.levelReach = userData.level;
     this.lastFired = 0;
     this.lastBombFired = 0;
     this.respawnMeter = 3;
-    this.beamLevel = 1;
+    this.beamLevel = userData.beamPerLevelStart.filter(x => x.level == this.levelReach)[0].beamLevel;
     this.scoreMultiplication = 1;
     this.shieldLevel = 0;
     this.gameOver = false;
@@ -112,6 +127,10 @@ export class GameScene extends Phaser.Scene {
     this.fxBombs = [];
     this.fxBeams = [];
     this.fxExplosions = [];
+    this.facebook.on('getleaderboard', (leaderboard: any) => {
+      this.leaderboard = leaderboard;
+    });
+    this.facebook.getLeaderboard('global_board');
   }
 
   create() {
@@ -154,9 +173,9 @@ export class GameScene extends Phaser.Scene {
       .setScale(0.2, 0.2)
       .setDepth(1);
 
-      if (CST.WINDOW.ISMOBILE) {
-        this.player.setScale(.17,.17);
-      }
+    if (CST.WINDOW.ISMOBILE) {
+      this.player.setScale(.17, .17);
+    }
 
     this.player.body.setSize(this.player.width - 120, this.player.height - 120, true);
     this.player.body.setOffset(60, 60);
@@ -269,7 +288,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     //Score indicator
-    
+
     this.scoreLabel = this.make.text({
       x: 10,
       y: 5,
@@ -310,6 +329,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.pause();
       this.gameOver = true;
       let cfx = new ConfirmationBox(this, this.game.renderer.width / 2, this.game.renderer.height / 2, "Notice", "Are you sure you want to exit the game?", () => {
+        this.leaderboard.setScore(userData.maxScore);
         this.sound.stopAll();
         this.scene.start(CST.SCENES.MAIN);
       }, () => {
@@ -359,9 +379,30 @@ export class GameScene extends Phaser.Scene {
 
         break;
       case CST.ANIMATIONS.BEAMPOWERUP_ANIM:
-        if (this.beamLevel <= 3)
+        if (this.beamLevel <= 3) {
           // here to only augment till level 4 beam no need to add more
           this.beamLevel += 1;
+          // let beamData = userData.beamPerLevelStart.filter(x => x.level == this.levelReach);
+
+          let index = userData.beamPerLevelStart.findIndex(x => x.level == this.levelReach);
+          if (index >= 0) {
+            userData.beamPerLevelStart[index].beamLevel += 1;
+            userData = {
+              ...userData
+            }
+          }
+          else {
+            userData = {
+              ...userData,
+              beamPerLevelStart: [
+                ...userData.beamPerLevelStart,
+                { level: this.levelReach, beamLevel: this.beamLevel }
+              ]
+            }
+          }
+
+          this.facebook.saveData(userData);
+        }
         break;
       case CST.ANIMATIONS.SCOREPOWERUP_ANIM:
         if (this.scoreMultiplication <= 3) {
@@ -500,7 +541,7 @@ export class GameScene extends Phaser.Scene {
       true
     );
     this.player.alpha = 0.5;
-    this.beamLevel = 1;
+    // this.beamLevel = 1;
 
     let tween = this.tweens.add({
       targets: this.player,
@@ -520,6 +561,25 @@ export class GameScene extends Phaser.Scene {
       },
       callbackScope: this,
     });
+
+    let index = userData.beamPerLevelStart.findIndex(x => x.level == this.levelReach);
+    if (index >= 0) {
+      userData.beamPerLevelStart[index].beamLevel += 1;
+      userData = {
+        ...userData
+      }
+    }
+    else {
+      userData = {
+        ...userData,
+        beamPerLevelStart: [
+          ...userData.beamPerLevelStart,
+          { level: this.levelReach, beamLevel: this.beamLevel }
+        ]
+      }
+    }
+
+    this.facebook.saveData(userData);
 
   };
 
@@ -608,6 +668,14 @@ export class GameScene extends Phaser.Scene {
       console.log(error);
     }
 
+    userData.level = 1;
+    userData.score = 0;
+    userData.beamPerLevelStart = [
+      { level: 1, beamLevel: 1 }
+    ];
+    //userData.maxScore = 0;
+    this.leaderboard.setScore(userData.maxScore);
+    this.facebook.saveData(userData);
 
     this.make
       .text({
@@ -822,8 +890,15 @@ export class GameScene extends Phaser.Scene {
       this.enemies.clear(true);
       this.enemies.getChildren().forEach(enemy => enemy.destroy());
       this.loadEnemiesByLevel();
+      userData = {
+        ...userData,
+        beamPerLevelStart: [
+          ...userData.beamPerLevelStart,
+          { level: this.levelReach, beamLevel: this.beamLevel }
+        ]
+      }
       //@ts-ignore
-    } else if(this.levelReach > this.levelsData.levels.length + 2000) {
+    } else if (this.score > this.levelsData.scoreLevelModulo + 2000) {
       // here it must be game ended !
       this.enemies.clear(true);
       this.enemies.getChildren().forEach(enemy => enemy.destroy());
@@ -852,7 +927,15 @@ export class GameScene extends Phaser.Scene {
 
       lossGainText.setStroke('#fff', .5);
       lossGainText.setShadow(0, 1, '#202020', 1, true, true);
-      lossGainText.setWordWrapWidth(350, true)
+      lossGainText.setWordWrapWidth(350, true);
+      userData.level = 1;
+      userData.score = 0;
+      userData.beamPerLevelStart = [
+        { level: 1, beamLevel: 1 }
+      ];
+      //userData.maxScore = 0;
+      this.leaderboard.setScore(userData.maxScore);
+      this.facebook.saveData(userData);
 
       this.playerGainLossTween = this.tweens.add({
         targets: lossGainText,
@@ -870,6 +953,7 @@ export class GameScene extends Phaser.Scene {
             if (null != this.sound) {
               this.sound.stopAll();
             }
+
             this.scene.stop();
             this.scene.start(CST.SCENES.MAIN);
           } catch (error) {
@@ -919,11 +1003,15 @@ export class GameScene extends Phaser.Scene {
 
       let explosion = new Explosion(this, virus.x, virus.y, CST.SPRITES.COVID19_EXPLOSION, CST.ANIMATIONS.COVID19_EXPLOSION_ANIM);
 
-
       virus.resetVirusPos();
 
       //Update score
       this.score += (25 * this.scoreMultiplication);
+
+      if (userData.maxScore < this.score) {
+        userData.maxScore = this.score;
+      }
+
       this.scoreLabel.text = "Score: " + this.zeroPad(this.score, 6);
 
       if (
@@ -938,9 +1026,15 @@ export class GameScene extends Phaser.Scene {
           CST.MOD((this.score - this.levelsData.scoreLevelModulo), this.levelsData.scoreLevelModulo) == 0
         )
       ) {
+        // let scoreLen = String(this.score).length;
+        // userData.score = scoreLen <= 1 ? 0 : Math.floor((this.score / (scoreLen - 1))) * (scoreLen - 1);//This is used to start the level when re-entered from the beginning of the modulo * level
+        //@ts-ignore
+        userData.score = this.levelReach * this.levelsData.scoreLevelModulo;
         this.levelReach += 1;
+        userData.level = this.levelReach;
         this.processLevel();
       }
+      this.facebook.saveData(userData);
     }
     else {
       //@ts-ignore

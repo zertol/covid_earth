@@ -6,7 +6,8 @@ export const CST = {
     GAME: "GAME",
     CONTROLS: "CONTROLS",
     GAMEPLAY: "GAMEPLAY",
-    OPENING: "OPENING"
+    OPENING: "OPENING",
+    LEADERBOARD: "LEADERBOARD"
   },
   IMAGES: {
     LOGO: "LOGO",

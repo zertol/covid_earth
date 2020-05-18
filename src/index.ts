@@ -4,6 +4,7 @@ import { GameScene } from './scenes/GameScene';
 import { ControlsScene } from './scenes/ControlsScene';
 import { GamePlayScene } from './scenes/GamePlayScene';
 import { OpeningScene } from './scenes/OpeningScene';
+import { LeaderboardScene } from './scenes/LeaderboardScene';
 import { CST } from './CST';
 //@ts-ignore
 import ShakePositionPlugin from 'phaser3-rex-plugins/plugins/shakeposition-plugin.js';
@@ -18,34 +19,34 @@ if (!CST.WINDOW.ISMOBILE) {
 
 
 FBInstant.initializeAsync()
-.then(() => {
-//Start the game object
-let game = new Phaser.Game({
-    parent: 'game-container',
-    height: h,
-    width: w,
-    audio: {
-        disableWebAudio: true
-    },
-    scene: [LoadingScene, MainScene, GameScene, ControlsScene, GamePlayScene, OpeningScene],
-    physics: {
-        default: "arcade",
-        arcade: {
-            debug: false
-        },
-    },
-    plugins: {
-        global: [{
-            key: 'rexShakePosition',
-            plugin: ShakePositionPlugin,
-            start: true
-        }]
-    },
-    //@ts-ignore
-    clearBeforeRender: false,
-    type: Phaser.AUTO,
-    multiTexture: true
-});
+    .then(() => {
+        //Start the game object
+        let game = new Phaser.Game({
+            parent: 'game-container',
+            height: h,
+            width: w,
+            audio: {
+                disableWebAudio: true
+            },
+            scene: [LoadingScene, MainScene, GameScene, ControlsScene, GamePlayScene, OpeningScene, LeaderboardScene],
+            physics: {
+                default: "arcade",
+                arcade: {
+                    debug: false
+                },
+            },
+            plugins: {
+                global: [{
+                    key: 'rexShakePosition',
+                    plugin: ShakePositionPlugin,
+                    start: true
+                }]
+            },
+            //@ts-ignore
+            clearBeforeRender: false,
+            type: Phaser.AUTO,
+            multiTexture: true
+        });
 
-});
+    });
 

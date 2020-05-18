@@ -22,13 +22,15 @@ import BACK_BUTTON from '../../images/back_button.png';
 //@ts-ignore
 import PLAYCREDITS_GAME from '../../images/gameplay_button.png';
 //@ts-ignore
+import LEADERBOARD_BUTTON from '../../images/leaderboard_button.png';
+//@ts-ignore
 import LOGO from "../../images/logo_covid.png";
 
 export class MainScene extends Phaser.Scene {
     //@ts-ignore
     private background: Phaser.GameObjects.TileSprite;
     //@ts-ignore
-    private data: object;
+    private userData: object;
 
     constructor() {
         super({
@@ -36,14 +38,11 @@ export class MainScene extends Phaser.Scene {
         });
     }
 
-    init(data: object) {
-        this.data = data;
-    }
-
     preload() {
         this.load.image('play-button', START_GAME);
         this.load.image('options-button', CONTROLS_GAME);
         this.load.image('playcredits-button', PLAYCREDITS_GAME);
+        this.load.image('leaderboard-button', LEADERBOARD_BUTTON);
         this.load.image(CST.IMAGES.BACK_BUTTON, BACK_BUTTON);
         this.load.image(CST.IMAGES.LOGO, LOGO);
 
@@ -60,66 +59,79 @@ export class MainScene extends Phaser.Scene {
         }
     }
     create() {
-
         this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
-        let logoPl = this.add.image(this.game.renderer.width / 2, 150, CST.IMAGES.LOGO).setScale(.35);
 
-        if (CST.WINDOW.ISMOBILE) {
-            logoPl.y = 115;
-            logoPl.setScale(.22);
-        }
+        this.facebook.on('getdata', (data: object) => {
+            let logoPl = this.add.image(this.game.renderer.width / 2, 150, CST.IMAGES.LOGO).setScale(.35);
+
+            if (CST.WINDOW.ISMOBILE) {
+                logoPl.y = 115;
+                logoPl.setScale(.22);
+            }
 
 
-        // let playButton = this.make.text({
-        //     x: this.game.renderer.width / 2,
-        //     y: this.game.renderer.height / 2 - 25,
-        //     origin: { x: 0.5, y: 0.5 },
-        //     text: "Start Game",
-        //     padding: 10,
-        //     style: {
-        //         font: "40px monospace",
-        //         fill: "#fff",
-        //         backgroundColor: "rgba(0,0,0,0.8)"
-        //     }
-        // }).setDepth(1);
+            // let playButton = this.make.text({
+            //     x: this.game.renderer.width / 2,
+            //     y: this.game.renderer.height / 2 - 25,
+            //     origin: { x: 0.5, y: 0.5 },
+            //     text: "Start Game",
+            //     padding: 10,
+            //     style: {
+            //         font: "40px monospace",
+            //         fill: "#fff",
+            //         backgroundColor: "rgba(0,0,0,0.8)"
+            //     }
+            // }).setDepth(1);
 
-        let playButton = this.add.image(0, 0, 'play-button');
-        let controlsButton = this.add.image(0, playButton.height, 'options-button');
-        let playCreditsButton = this.add.image(0, controlsButton.height * 2, 'playcredits-button');
-        let container = this.add.container(this.game.renderer.width / 2, this.game.renderer.height / 2 - 25);
-        container.add(playButton);
-        container.add(controlsButton);
-        container.add(playCreditsButton);
-        this.updateSize(container);
-        container.y = this.game.renderer.height / 2 - container.height / 2;
+            let playButton = this.add.image(0, 0, 'play-button');
+            let controlsButton = this.add.image(0, playButton.height, 'options-button');
+            let playCreditsButton = this.add.image(0, controlsButton.height * 2, 'playcredits-button');
+            let leaderboardButton = this.add.image(0, playCreditsButton.height * 3, 'leaderboard-button');
+            let container = this.add.container(this.game.renderer.width / 2, this.game.renderer.height / 2 - 25);
+            container.add(playButton);
+            container.add(controlsButton);
+            container.add(playCreditsButton);
+            container.add(leaderboardButton);
+            this.updateSize(container);
+            container.y = this.game.renderer.height / 2 - container.height / 2;
 
-        if (CST.WINDOW.ISMOBILE) {
-            container.setScale(.7);
-        }
+            if (CST.WINDOW.ISMOBILE) {
+                container.setScale(.7);
+            }
 
-        playButton.setInteractive({
-            useHandCursor: true
+            playButton.setInteractive({
+                useHandCursor: true
+            });
+
+            playCreditsButton.setInteractive({
+                useHandCursor: true
+            }).on("pointerup", () => {
+                this.scene.start(CST.SCENES.GAMEPLAY);
+            });
+
+            playButton.on("pointerup", () => {
+                this.scene.start(CST.SCENES.GAME, data);
+            });
+
+            controlsButton.setInteractive({
+                useHandCursor: true
+            });
+
+            controlsButton.on("pointerup", () => {
+                this.scene.start(CST.SCENES.CONTROLS);
+            });
+
+            leaderboardButton.setInteractive({
+                useHandCursor: true
+            });
+
+            leaderboardButton.on("pointerup", () => {
+                this.scene.start(CST.SCENES.LEADERBOARD);
+            });
+
+            this.input.keyboard.on('keydown-SPACE', () => this.scene.start(CST.SCENES.GAME, data));
         });
-
-        playCreditsButton.setInteractive({
-            useHandCursor: true
-        }).on("pointerup", () => {
-            this.scene.start(CST.SCENES.GAMEPLAY);
-        });
-
-        playButton.on("pointerup", () => {
-            this.scene.start(CST.SCENES.GAME, this.data);
-        });
-
-        controlsButton.setInteractive({
-            useHandCursor: true
-        });
-
-        controlsButton.on("pointerup", () => {
-            this.scene.start(CST.SCENES.CONTROLS);
-        });
-
-        this.input.keyboard.on('keydown-SPACE', () => this.scene.start(CST.SCENES.GAME, this.data));
+        this.facebook.getData(['score', 'level', 'beamLevel', 'beamPerLevelStart', 'maxScore']);
 
 
     }

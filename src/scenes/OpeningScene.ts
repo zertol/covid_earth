@@ -17,7 +17,7 @@ export class OpeningScene extends Phaser.Scene {
 
   create() {
 
-    this.facebook.on('getstats', (data: object) => {
+    
       let intro = this.sound.add(CST.SOUNDS.INTRO);
 
       intro.addMarker({
@@ -79,7 +79,7 @@ export class OpeningScene extends Phaser.Scene {
 
       // Code for Chrome, Safari and Opera
       content.addEventListener("webkitAnimationEnd", () => {
-        this.scene.start(CST.SCENES.MAIN, data);
+        this.scene.start(CST.SCENES.MAIN);
       });
 
       // Standard syntax
@@ -88,12 +88,8 @@ export class OpeningScene extends Phaser.Scene {
         gameContainer.className = "";
         content.innerHTML = "";
         this.sound.remove(intro);
-        this.scene.start(CST.SCENES.MAIN, data);
+        this.scene.start(CST.SCENES.MAIN);
       });
-
-    });
-
-    this.facebook.getStats();
 
   }
 
