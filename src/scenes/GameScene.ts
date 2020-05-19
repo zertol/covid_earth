@@ -319,10 +319,35 @@ export class GameScene extends Phaser.Scene {
     this.levelLabel.setShadow(0, 1, '#202020', 1, true, true);
 
     //Exit Button
-    let exitBtn = this.add.image(10, this.levelLabel.height + 30, CST.IMAGES.EXIT_BUTTON).setScale(.7).setOrigin(0, 0).setDepth(2);;
+    let exitBtn = this.add.image(10, this.levelLabel.height + 30, CST.IMAGES.EXIT_BUTTON).setScale(.7).setOrigin(0, 0).setDepth(2);
     exitBtn.setInteractive({
       useHandCursor: true
     });
+
+    //Exit Button
+    let muteBtn = this.add.image(10, exitBtn.y + exitBtn.height + 15, CST.IMAGES.MUTE_BUTTON).setScale(.7).setOrigin(0, 0).setDepth(2);
+    muteBtn.setInteractive({
+      useHandCursor: true
+    });
+
+    muteBtn.on("pointerdown", () => {
+      // this.physics.pause();
+      // this.gameOver = true;
+      
+      if (this.game.sound.mute) {
+        muteBtn.setTexture(CST.IMAGES.MUTE_BUTTON);
+        this.game.sound.mute = false;
+      }
+      else {
+        muteBtn.setTexture(CST.IMAGES.UNMUTE_BUTTON);
+        this.game.sound.mute = true;
+      }
+    });
+
+    // muteBtn.on("pointerup",()=>{
+    //   this.physics.resume();
+    //     this.gameOver = false;
+    // });
 
     exitBtn.on("pointerdown", () => {
       // this.scene.start(CST.SCENES.MAIN);
@@ -1324,8 +1349,15 @@ export class GameScene extends Phaser.Scene {
 
       let pointer = this.input.activePointer;
       if (pointer && pointer.isDown) {
-        if (time > this.lastFired) {
-          this.lastFired = time + this.shootBeam();
+        
+        if ((pointer.x >= 6 &&  pointer.x <= 54)
+          && (pointer.y >= 143 && pointer.y <= 188)) {
+          
+        }
+        else{
+          if (time > this.lastFired) {
+            this.lastFired = time + this.shootBeam();
+          }
         }
       }
     }

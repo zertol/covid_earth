@@ -44,6 +44,10 @@ import INTRO_SOUND from "../../sounds/intro.m4a";
 //@ts-ignore
 import EXIT_BUTTON from "../../images/exit_button.png";
 //@ts-ignore
+import MUTE_BUTTON from "../../images/mute_button.png";
+//@ts-ignore
+import UNMUTE_BUTTON from "../../images/unmute_button.png";
+//@ts-ignore
 import OK_BUTTON from "../../images/ok_button.png";
 //@ts-ignore
 import CANCEL_BUTTON from "../../images/cancel_button.png";
@@ -156,6 +160,8 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image(CST.IMAGES.EXIT_BUTTON, EXIT_BUTTON);
     this.load.image(CST.IMAGES.OK_BUTTON, OK_BUTTON);
     this.load.image(CST.IMAGES.CANCEL_BUTTON, CANCEL_BUTTON);
+    this.load.image(CST.IMAGES.MUTE_BUTTON, MUTE_BUTTON);
+    this.load.image(CST.IMAGES.UNMUTE_BUTTON, UNMUTE_BUTTON);
 
     this.load.spritesheet(CST.SPRITES.BEAM, BEAM, {
       frameWidth: 26,
