@@ -3,12 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, minimal-ui, shrink-to-fit=no">
+    <meta name="viewport"
+        content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, minimal-ui, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="screen-orientation" content="portrait" />
     <script src="https://connect.facebook.net/en_US/fbinstant.6.2.js"></script>
     <!-- <script src="src/scripts/phaser.min.js"></script> -->
-    
+
     <script src="src/scripts/phaser-facebook-instant-games.min.js"></script>
 
     <link rel="stylesheet" href="./src/css/index.css" />
@@ -20,6 +21,11 @@
         <div id="content">
             <h1></h1>
             <p></p>
+            <audio id="intro-audio" loop>
+                <source src="sounds/game_intro.ogg" type="audio/ogg">
+                <source src="sounds/game_intro.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
         </div>
     </div>
 </body>

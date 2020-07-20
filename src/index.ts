@@ -20,11 +20,18 @@ if (!CST.WINDOW.ISMOBILE) {
 
 FBInstant.initializeAsync()
     .then(() => {
+
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+        if(windowWidth > windowHeight){
+            windowWidth = windowHeight / 1.8;
+        }
+        let gameWidth = windowWidth * h / windowHeight;
         //Start the game object
         let game = new Phaser.Game({
             parent: 'game-container',
             height: h,
-            width: w,
+            width: gameWidth,
             audio: {
                 disableWebAudio: true
             },
@@ -44,7 +51,7 @@ FBInstant.initializeAsync()
             },
             //@ts-ignore
             clearBeforeRender: false,
-            type: Phaser.AUTO,
+            type: Phaser.CANVAS,
             multiTexture: true
         });
 
