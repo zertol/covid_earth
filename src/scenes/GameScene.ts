@@ -99,11 +99,7 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  init(data: {}) {
-    if (Object.keys(data).length > 0) {
-      //@ts-ignore
-      userData = data;
-    }
+  init() {
 
   }
 
@@ -127,10 +123,6 @@ export class GameScene extends Phaser.Scene {
     this.fxBombs = [];
     this.fxBeams = [];
     this.fxExplosions = [];
-    this.facebook.on('getleaderboard', (leaderboard: any) => {
-      this.leaderboard = leaderboard;
-    });
-    this.facebook.getLeaderboard('global_board');
   }
 
   create() {
@@ -354,7 +346,6 @@ export class GameScene extends Phaser.Scene {
       this.physics.pause();
       this.gameOver = true;
       let cfx = new ConfirmationBox(this, this.game.renderer.width / 2, this.game.renderer.height / 2, "Notice", "Are you sure you want to exit the game?", () => {
-        this.leaderboard.setScore(userData.maxScore);
         this.sound.stopAll();
         this.scene.start(CST.SCENES.MAIN);
       }, () => {
@@ -426,7 +417,6 @@ export class GameScene extends Phaser.Scene {
             }
           }
 
-          this.facebook.saveData(userData);
         }
         break;
       case CST.ANIMATIONS.SCOREPOWERUP_ANIM:
@@ -604,8 +594,6 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    this.facebook.saveData(userData);
-
   };
 
 
@@ -699,8 +687,6 @@ export class GameScene extends Phaser.Scene {
       { level: 1, beamLevel: 1 }
     ];
     //userData.maxScore = 0;
-    this.leaderboard.setScore(userData.maxScore);
-    this.facebook.saveData(userData);
 
     this.make
       .text({
@@ -959,8 +945,6 @@ export class GameScene extends Phaser.Scene {
         { level: 1, beamLevel: 1 }
       ];
       //userData.maxScore = 0;
-      this.leaderboard.setScore(userData.maxScore);
-      this.facebook.saveData(userData);
 
       this.playerGainLossTween = this.tweens.add({
         targets: lossGainText,
@@ -1059,7 +1043,6 @@ export class GameScene extends Phaser.Scene {
         userData.level = this.levelReach;
         this.processLevel();
       }
-      this.facebook.saveData(userData);
     }
     else {
       //@ts-ignore

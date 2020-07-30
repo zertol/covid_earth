@@ -7,7 +7,7 @@
     "test": "test",
     "debug": "webpack --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
-    "start": "webpack-dev-server --config webpack.common.js --https --cert mycert.pem --key mykey.pem"
+    "start": "webpack-dev-server --config webpack.common.js"
   },
   "author": "",
   "license": "ISC",
