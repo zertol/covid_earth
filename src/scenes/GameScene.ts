@@ -316,7 +316,7 @@ export class GameScene extends Phaser.Scene {
       useHandCursor: true
     });
 
-    //Exit Button
+    //Mute Button
     let muteBtn = this.add.image(10, exitBtn.y + exitBtn.height + 15, CST.IMAGES.MUTE_BUTTON).setScale(.7).setOrigin(0, 0).setDepth(2);
     muteBtn.setInteractive({
       useHandCursor: true

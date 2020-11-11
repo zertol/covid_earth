@@ -17,22 +17,35 @@ export class OpeningScene extends Phaser.Scene {
 
   create() {
 
+    this.make.text({ x: 0, y: 0, text: " " });
+
     let container = document.getElementById("game-container");
     if (container) {
       container.focus();
     }
-    // let intro = this.sound.add(CST.SOUNDS.INTRO);
 
-    // intro.addMarker({
-    //   name: CST.SOUNDS.MARKERS.INTRO,
-    //   config: {
-    //     volume: .2,
-    //     loop: true
-    //   }
-    // });
-    // intro.play(CST.SOUNDS.MARKERS.INTRO);
+    let gameContainer = document.getElementById("game-container") ?? document.createElement("div");
 
-    this.make.text({ x: 0, y: 0, text: " " });
+    gameContainer.className = "game-opening";
+
+    let content = document.getElementById("content") ?? document.createElement("div");
+
+    let introAudio = content.getElementsByTagName("audio")[0];
+    introAudio.volume = .2;
+    introAudio.currentTime=3;
+
+    let divMute = document.createElement("div");
+    divMute.className = "div-mute";
+
+    divMute.onclick=()=>{
+      divMute.classList.toggle("unmuted");
+      introAudio.play();
+      if(!divMute.classList.contains("unmuted")){
+        introAudio.pause();
+      }
+    };
+
+    document.body.appendChild(divMute);    
 
     let btnSkip = document.createElement("button");
     btnSkip.innerText = "Skip Intro >>";
@@ -42,9 +55,8 @@ export class OpeningScene extends Phaser.Scene {
       document.body.removeChild(btnSkip);
       gameContainer.className = "";
       content.innerHTML = "";
-      introAudio.pause();
-      introAudio.currentTime = 0;
-      // this.sound.remove(intro);
+      introAudio.remove();
+      divMute.remove();
       this.scene.start(CST.SCENES.MAIN);
     };
 
@@ -53,28 +65,6 @@ export class OpeningScene extends Phaser.Scene {
     setTimeout(() => {
       btnSkip.className += " in";
     }, 3000);
-
-    let gameContainer = document.getElementById("game-container") ?? document.createElement("div");
-
-    gameContainer.className = "game-opening";
-
-    let content = document.getElementById("content") ?? document.createElement("div");
-
-    // let content = document.createElement("div");
-    // content.id = "content";
-
-
-
-    // this.game.canvas.style.position = "absolute";
-    // this.game.canvas.style.top = "100%";
-    // this.game.canvas.style.animation = "scroll 50s linear .5s";
-
-    let introAudio = content.getElementsByTagName("audio")[0];
-    introAudio.volume = .2;
-    introAudio.play();
-
-    window.addEventListener("blur", () => introAudio.pause());
-    window.addEventListener("focus", () => introAudio.play());
 
 
     let fullText = "Once upon a time in a far away galaxy, an abnoxious virus decided to come and conquer our planet. This virus in particular was discovered first when " +
@@ -91,6 +81,11 @@ export class OpeningScene extends Phaser.Scene {
 
     // Code for Chrome, Safari and Opera
     content.addEventListener("webkitAnimationEnd", () => {
+      document.body.removeChild(btnSkip);
+      gameContainer.className = "";
+      content.innerHTML = "";
+      introAudio.remove();
+      divMute.remove();
       this.scene.start(CST.SCENES.MAIN);
     });
 
@@ -99,9 +94,8 @@ export class OpeningScene extends Phaser.Scene {
       document.body.removeChild(btnSkip);
       gameContainer.className = "";
       content.innerHTML = "";
-      introAudio.pause();
-      introAudio.currentTime = 0;
-      // this.sound.remove(intro);
+      introAudio.remove();
+      divMute.remove();
       this.scene.start(CST.SCENES.MAIN);
     });
 

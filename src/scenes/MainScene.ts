@@ -60,7 +60,6 @@ export class MainScene extends Phaser.Scene {
     }
     create() {
         this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
-        console.log(this.background);
 
         // this.facebook.on('getdata', (data: object) => {
             let logoPl = this.add.image(this.game.renderer.width / 2, 150, CST.IMAGES.LOGO).setScale(.35);
