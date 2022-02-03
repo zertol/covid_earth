@@ -130,3 +130,20 @@ body{
     font-size:18px;
   }
 }
+
+.div-mute{
+  width: 50px;
+  height: 50px;
+  background-image: url('../../images/mute_button.png');
+  background-size: cover;
+  transform: translateY(-50%);
+  position: fixed;
+  top: 40px;
+  left: 25px;
+  z-index: 99;
+  cursor: pointer;
+}
+
+.div-mute.unmuted{
+  background-image: url('../../images/unmute_button.png');
+}

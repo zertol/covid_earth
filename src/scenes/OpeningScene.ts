@@ -17,79 +17,87 @@ export class OpeningScene extends Phaser.Scene {
 
   create() {
 
-    
-      let intro = this.sound.add(CST.SOUNDS.INTRO);
+    this.make.text({ x: 0, y: 0, text: " " });
 
-      intro.addMarker({
-        name: CST.SOUNDS.MARKERS.INTRO,
-        config: {
-          volume: .2,
-          loop: true
-        }
-      });
-      intro.play(CST.SOUNDS.MARKERS.INTRO);
+    let container = document.getElementById("game-container");
+    if (container) {
+      container.focus();
+    }
 
-      this.make.text({ x: 0, y: 0, text: " " });
+    let gameContainer = document.getElementById("game-container") ?? document.createElement("div");
 
-      let btnSkip = document.createElement("button");
-      btnSkip.innerText = "Skip Intro >>";
-      btnSkip.className = "skip-intro";
+    gameContainer.className = "game-opening";
 
-      btnSkip.onclick = () => {
-        document.body.removeChild(btnSkip);
-        gameContainer.className = "";
-        content.innerHTML = "";
-        this.sound.remove(intro);
-        this.scene.start(CST.SCENES.MAIN);
-      };
+    let content = document.getElementById("content") ?? document.createElement("div");
 
-      document.body.appendChild(btnSkip);
+    let introAudio = content.getElementsByTagName("audio")[0];
+    introAudio.volume = .2;
+    introAudio.currentTime=3;
 
-      setTimeout(() => {
-        btnSkip.className += " in";
-      }, 3000);
+    let divMute = document.createElement("div");
+    divMute.className = "div-mute";
 
-      let gameContainer = document.getElementById("game-container") ?? document.createElement("div");
+    divMute.onclick=()=>{
+      divMute.classList.toggle("unmuted");
+      introAudio.play();
+      if(!divMute.classList.contains("unmuted")){
+        introAudio.pause();
+      }
+    };
 
-      gameContainer.className = "game-opening";
+    document.body.appendChild(divMute);    
 
-      let content = document.getElementById("content") ?? document.createElement("div");
+    let btnSkip = document.createElement("button");
+    btnSkip.innerText = "Skip Intro >>";
+    btnSkip.className = "skip-intro";
 
-      // let content = document.createElement("div");
-      // content.id = "content";
+    btnSkip.onclick = () => {
+      document.body.removeChild(btnSkip);
+      gameContainer.className = "";
+      content.innerHTML = "";
+      introAudio.remove();
+      divMute.remove();
+      this.scene.start(CST.SCENES.MAIN);
+    };
 
+    document.body.appendChild(btnSkip);
 
-
-      // this.game.canvas.style.position = "absolute";
-      // this.game.canvas.style.top = "100%";
-      // this.game.canvas.style.animation = "scroll 50s linear .5s";
-
-
-      let fullText = "Once upon a time in a far away galaxy, an abnoxious virus decided to come and conquer our planet. This virus in particular was discovered first when " +
-        "our very own scientists were looking upon the skies and sightseeing the universe. It shaped like a normal virus would have, yet its long reaching envelops " +
-        "grabs your genes and infects your body without you even realizing it. During close contact, you may exhibit a lot of symptoms that may be the result of the virus's " +
-        "droplets. The destructive force can generate coughing, sneezing, low oxygen, chest pain, which lead to catastrophic results and the normal human might die. " +
-        "Filled with fear, humans and galaxy residents alike, decided to stay away from each other and take precautions to compensate their weaknesses.\nHowever, a brave soldier of the planet earth, " +
-        "has taken upon himself to fight and restore peace once more to his galaxy, especially planet earth.\nThe fight is still on going despite the years passing by, the brave soldier named Lataka " +
-        "is still not giving up, and the virus has finally revealed itself as 'COVID'...";
+    setTimeout(() => {
+      btnSkip.className += " in";
+    }, 3000);
 
 
-      content.getElementsByTagName("p")[0].innerHTML = fullText;
-      content.getElementsByTagName("h1")[0].innerHTML = CST.TITLE;
+    let fullText = "Once upon a time in a far away galaxy, an abnoxious virus decided to come and conquer our planet. This virus in particular was discovered first when " +
+      "our very own scientists were looking upon the skies and sightseeing the universe. It shaped like a normal virus would have, yet its long reaching envelops " +
+      "grabs your genes and infects your body without you even realizing it. During close contact, you may exhibit a lot of symptoms that may be the result of the virus's " +
+      "droplets. The destructive force can generate coughing, sneezing, low oxygen, chest pain, which lead to catastrophic results and the normal human might die. " +
+      "Filled with fear, humans and galaxy residents alike, decided to stay away from each other and take precautions to compensate their weaknesses.\nHowever, a brave soldier of the planet earth, " +
+      "has taken upon himself to fight and restore peace once more to his galaxy, especially planet earth.\nThe fight is still on going despite the years passing by, the brave soldier named Lataka " +
+      "is still not giving up, and the virus has finally revealed itself as 'COVID'...";
 
-      // Code for Chrome, Safari and Opera
-      content.addEventListener("webkitAnimationEnd", () => {
-        this.scene.start(CST.SCENES.MAIN);
-      });
 
-      // Standard syntax
-      content.addEventListener("animationend", () => {
-        document.body.removeChild(btnSkip);
-        gameContainer.className = "";
-        content.innerHTML = "";
-        this.sound.remove(intro);
-        this.scene.start(CST.SCENES.MAIN);
-      });
+    content.getElementsByTagName("p")[0].innerHTML = fullText;
+    content.getElementsByTagName("h1")[0].innerHTML = CST.TITLE;
+
+    // Code for Chrome, Safari and Opera
+    content.addEventListener("webkitAnimationEnd", () => {
+      document.body.removeChild(btnSkip);
+      gameContainer.className = "";
+      content.innerHTML = "";
+      introAudio.remove();
+      divMute.remove();
+      this.scene.start(CST.SCENES.MAIN);
+    });
+
+    // Standard syntax
+    content.addEventListener("animationend", () => {
+      document.body.removeChild(btnSkip);
+      gameContainer.className = "";
+      content.innerHTML = "";
+      introAudio.remove();
+      divMute.remove();
+      this.scene.start(CST.SCENES.MAIN);
+    });
 
   }
 

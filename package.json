@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "build": "webpack --mode development",
-    "start": "webpack-dev-server --https --cert mycert.pem --key mykey.pem"
+    "debug": "webpack --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack-dev-server --config webpack.common.js"
   },
   "author": "",
   "license": "ISC",
@@ -26,7 +27,8 @@
     "url-loader": "^4.1.0",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^4.2.2"
   },
   "dependencies": {
     "@types/facebook-instant-games": "^6.3.1",

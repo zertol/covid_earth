@@ -61,7 +61,7 @@ export class MainScene extends Phaser.Scene {
     create() {
         this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
 
-        this.facebook.on('getdata', (data: object) => {
+        // this.facebook.on('getdata', (data: object) => {
             let logoPl = this.add.image(this.game.renderer.width / 2, 150, CST.IMAGES.LOGO).setScale(.35);
 
             if (CST.WINDOW.ISMOBILE) {
@@ -86,12 +86,12 @@ export class MainScene extends Phaser.Scene {
             let playButton = this.add.image(0, 0, 'play-button');
             let controlsButton = this.add.image(0, playButton.height, 'options-button');
             let playCreditsButton = this.add.image(0, controlsButton.height * 2, 'playcredits-button');
-            let leaderboardButton = this.add.image(0, playCreditsButton.height * 3, 'leaderboard-button');
+            // let leaderboardButton = this.add.image(0, playCreditsButton.height * 3, 'leaderboard-button');
             let container = this.add.container(this.game.renderer.width / 2, this.game.renderer.height / 2 - 25);
             container.add(playButton);
             container.add(controlsButton);
             container.add(playCreditsButton);
-            container.add(leaderboardButton);
+            // container.add(leaderboardButton);
             this.updateSize(container);
             container.y = this.game.renderer.height / 2 - container.height / 2;
 
@@ -110,7 +110,7 @@ export class MainScene extends Phaser.Scene {
             });
 
             playButton.on("pointerup", () => {
-                this.scene.start(CST.SCENES.GAME, data);
+                this.scene.start(CST.SCENES.GAME);
             });
 
             controlsButton.setInteractive({
@@ -121,17 +121,17 @@ export class MainScene extends Phaser.Scene {
                 this.scene.start(CST.SCENES.CONTROLS);
             });
 
-            leaderboardButton.setInteractive({
-                useHandCursor: true
-            });
+            // leaderboardButton.setInteractive({
+            //     useHandCursor: true
+            // });
 
-            leaderboardButton.on("pointerup", () => {
-                this.scene.start(CST.SCENES.LEADERBOARD);
-            });
+            // leaderboardButton.on("pointerup", () => {
+            //     this.scene.start(CST.SCENES.LEADERBOARD);
+            // });
 
-            this.input.keyboard.on('keydown-SPACE', () => this.scene.start(CST.SCENES.GAME, data));
-        });
-        this.facebook.getData(['score', 'level', 'beamLevel', 'beamPerLevelStart', 'maxScore']);
+            this.input.keyboard.on('keydown-SPACE', () => this.scene.start(CST.SCENES.GAME));
+        // });
+        // this.facebook.getData(['score', 'level', 'beamLevel', 'beamPerLevelStart', 'maxScore']);
 
 
     }

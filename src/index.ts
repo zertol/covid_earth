@@ -17,36 +17,34 @@ if (!CST.WINDOW.ISMOBILE) {
     w = 768;
 }
 
-
-FBInstant.initializeAsync()
-    .then(() => {
-        //Start the game object
-        let game = new Phaser.Game({
-            parent: 'game-container',
-            height: h,
-            width: w,
-            audio: {
-                disableWebAudio: true
-            },
-            scene: [LoadingScene, MainScene, GameScene, ControlsScene, GamePlayScene, OpeningScene, LeaderboardScene],
-            physics: {
-                default: "arcade",
-                arcade: {
-                    debug: false
-                },
-            },
-            plugins: {
-                global: [{
-                    key: 'rexShakePosition',
-                    plugin: ShakePositionPlugin,
-                    start: true
-                }]
-            },
-            //@ts-ignore
-            clearBeforeRender: false,
-            type: Phaser.AUTO,
-            multiTexture: true
-        });
-
-    });
+let windowWidth = window.innerWidth;
+let windowHeight = window.innerHeight;
+if (windowWidth > windowHeight) {
+    windowWidth = windowHeight / 1.8;
+}
+let gameWidth = windowWidth * h / windowHeight;
+//Start the game object
+let game = new Phaser.Game({
+    parent: 'game-container',
+    height: h,
+    width: gameWidth,
+    audio: {
+        disableWebAudio: true
+    },
+    scene: [LoadingScene, MainScene, GameScene, ControlsScene, GamePlayScene, OpeningScene],
+    physics: {
+        default: "arcade",
+        arcade: {
+            debug: false
+        },
+    },
+    plugins: {
+        global: [{
+            key: 'rexShakePosition',
+            plugin: ShakePositionPlugin,
+            start: true
+        }]
+    },
+    //@ts-ignore
+});
 
