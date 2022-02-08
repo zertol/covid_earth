@@ -1,4 +1,5 @@
 import { CST } from "../CST";
+import {ScrollablePanel} from 'phaser3-rex-plugins/templates/ui/ui-components.js'
 
 const COLOR_PRIMARY = 0X000000;
 const COLOR_LIGHT = 0X00ffff;
@@ -28,16 +29,24 @@ export class GamePlayScene extends Phaser.Scene {
   preload() {
 
     this.gamePlayData = this.cache.json.get("gamePlayData");
+    // scene.load.plugin('rexroundrectangleplugin', 'https://raw.githubusercontent.com/rexrainbow/    phaser3-rex-notes/master/dist/rexroundrectangleplugin.min.js', true);
 
+    // this.load.plugin({
+    //   key: 'rexuiplugin',
+    //   url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
+    //   sceneKey: 'rexUI'
+    // });
     this.load.scenePlugin({
       key: 'rexuiplugin',
       url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
       sceneKey: 'rexUI'
-    });
+  });
   }
   create() {
 
     this.background = this.add.tileSprite(0, 0, this.game.renderer.width, this.game.renderer.height, CST.IMAGES.BACKGROUND).setOrigin(0, 0).setDepth(0);
+
+    console.log(this);
 
     //@ts-ignore
     this.scrollablePanel = this.rexUI.add.scrollablePanel({
@@ -86,7 +95,86 @@ export class GamePlayScene extends Phaser.Scene {
 
         panel: 10,
       }
-    }).layout().setOrigin(0, 0);
+    }).layout().setOrigin(0,0);
+
+  //   this.scrollablePanel = this.rexUI.add.scrollablePanel({
+  //     // x: 0,
+  //     // y: 0,
+  //     // anchor: undefined,
+  //     // width: undefined,
+  //     // height: undefined,
+  
+  //     scrollMode: 0,
+  
+  //     // Elements
+  //     background: backgroundGameObject,
+  
+  //     panel: {
+  //         child: panelGameObject,
+  //         mask: {
+  //             padding: 0,
+  //             // updateMode: 0,
+  //             // layer: undefined,
+  //         }
+  //     }.
+  
+  //     slider: {
+  //         background: sliderBackgroundGameObject,
+  //         track: trackGameObject,
+  //         thumb: thumbGameObject,
+  //         input: 'drag',
+  //         position: 'right',
+  //     },
+  
+  //     scroller: {
+  //         threshold: 10,
+  //         slidingDeceleration: 5000,
+  //         backDeceleration: 2000,
+  //         pointerOutRelease: true,
+  //     },
+  
+  //     mouseWheelScroller: false,
+  //     // mouseWheelScroller: {
+  //     //     focus: false,
+  //     //     speed: 0.1
+  //     // },
+  
+  //     clamplChildOY: false,
+  
+  //     header: headerGameObject,
+  //     footer: footerGameObject,
+  
+  //     space: {
+  //         left: 0,
+  //         right: 0,
+  //         top: 0,
+  //         bottom: 0,
+  
+  //         panel: 0,
+  //         // panel: {
+  //         //    top: 0,
+  //         //    bottom: 0,
+  //         //    left: 0,
+  //         //    right: 0,
+  //         //},
+  //         header: 0,
+  //         footer: 0,
+  //     },
+  
+  //     expand: {
+  //         header: true,
+  //         footer: true,
+  //     },
+  
+  //     align: {
+  //         header: 'center',
+  //         footer: 'center',
+  //     },
+  
+  //     // name: '',
+  //     // draggable: false,
+  //     // sizerEvents: false,
+  // });
 
     this.input.setTopOnly(false);
 
